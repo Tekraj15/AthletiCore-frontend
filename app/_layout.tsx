@@ -5,21 +5,18 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { Slot, useRouter, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "react-native-reanimated";
 import "./../global.css";
 
 import { useColorScheme } from "@/components/useColorScheme";
+import { AuthProvider, useAuth } from "@/context/auth-context";
 
-export {
-  // Catch any errors thrown by the Layout component.
-  ErrorBoundary,
-} from "expo-router";
+export { ErrorBoundary } from "expo-router";
 
 export const unstable_settings = {
-  // Ensure that reloading on `/modal` keeps a back button present.
   initialRouteName: "(tabs)",
 };
 
@@ -32,7 +29,6 @@ export default function RootLayout() {
     ...FontAwesome.font,
   });
 
-  // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
     if (error) throw error;
   }, [error]);
@@ -43,18 +39,37 @@ export default function RootLayout() {
     }
   }, [loaded]);
 
-  return loaded ? <RootLayoutNav /> : null;
+  return loaded ? (
+    <AuthProvider>
+      <RootLayoutNav />
+    </AuthProvider>
+  ) : null;
 }
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
+  const segments = useSegments();
+  const router = useRouter();
+  const { user } = useAuth(); // from your context
+
+ useEffect(() => {
+    const inAuthGroup = segments[0] === "(auth)";
+    // Add a tiny delay to ensure Slot is mounted
+    const timeout = setTimeout(() => {
+      if (!user && !inAuthGroup) {
+        router.replace("/(auth)");
+      } else if (user && inAuthGroup) {
+        router.replace("/(tabs)");
+      }
+    }, 0);
+
+    return () => clearTimeout(timeout);
+  }, [segments, user]);
+
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: "modal" }} />
-      </Stack>
+      <Slot />
     </ThemeProvider>
   );
 }
