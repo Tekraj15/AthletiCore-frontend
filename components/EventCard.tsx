@@ -31,36 +31,30 @@ export default function EventCard({
         </Text>
       </View>
 
-      {/* Main Content */}
-      <View className="flex-row p-4 pt-2">
-        {/* Image Section */}
-                <Image
+      {/* Image at top */}
+      <Image
           source={require("../assets/images/powerlifting.png")}
-          className="w-20 h-20 rounded-md ml-2"
-          resizeMode="cover"
-        />
+        className="w-full h-50"
+        resizeMode="cover"
+      />
 
-        {/* Event Details */}
-        <View className="flex-1 justify-between py-1">
-          <Text
-            className="text-white font-bold text-lg leading-tight mb-1"
-            numberOfLines={2}
-          >
-            {title}
-          </Text>
+      {/* Event Details */}
+      <View className="p-4">
+        <Text className="text-white font-bold text-lg leading-tight mb-2">
+          {title}
+        </Text>
 
-          <Text className="text-gray-300 text-sm mb-1">📍 {location}</Text>
-          <Text className="text-gray-400 text-sm mb-1">📅 {date}</Text>
-          <Text className="text-gray-400 text-sm mb-1">
-            🏋️ WeightCategory: {weightCategory}
-          </Text>
-          <Text className="text-gray-400 text-sm mb-1">
-            🚻 Gender: {gender}
-          </Text>
-          <Text className="text-red-400 text-sm">
-            🕒 Register by: {registrationDeadline}
-          </Text>
-        </View>
+        <Text className="text-gray-300 text-sm mb-1">📍 {location}</Text>
+        <Text className="text-gray-400 text-sm mb-1">📅 {date}</Text>
+        <Text className="text-gray-400 text-sm mb-1">
+          🏋️ Weight Category: {weightCategory}
+        </Text>
+        <Text className="text-gray-400 text-sm mb-1">
+          🚻 Gender: {gender}
+        </Text>
+        <Text className="text-red-400 text-sm">
+          🕒 Register by: {registrationDeadline}
+        </Text>
       </View>
 
       {/* Bottom Accent */}
