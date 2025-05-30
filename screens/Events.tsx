@@ -1,34 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
   ScrollView,
   Dimensions,
-} from 'react-native';
-import { Feather } from '@expo/vector-icons';
-import EventCard from '../components/EventCard';
+} from "react-native";
+import { Feather } from "@expo/vector-icons";
+import EventCard from "../components/EventCard";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
   runOnJS,
-} from 'react-native-reanimated';
+} from "react-native-reanimated";
 import {
   PanGestureHandler,
   GestureHandlerRootView,
-} from 'react-native-gesture-handler';
-import { GestureEvent, PanGestureHandlerEventPayload } from 'react-native-gesture-handler';
+} from "react-native-gesture-handler";
+import {
+  GestureEvent,
+  PanGestureHandlerEventPayload,
+} from "react-native-gesture-handler";
 
-const screenWidth = Dimensions.get('window').width;
+const screenWidth = Dimensions.get("window").width;
 
 export default function EventsScreen() {
   const translateX = useSharedValue(0);
-  const [activeTab, setActiveTab] = useState<'registered' | 'upcoming'>('registered');
+  const [activeTab, setActiveTab] = useState<"registered" | "upcoming">(
+    "registered"
+  );
 
-  const handleTabChange = (tab: 'upcoming' | 'registered') => {
+  const handleTabChange = (tab: "upcoming" | "registered") => {
     setActiveTab(tab);
-    translateX.value = withTiming(tab === 'registered' ? 0 : -screenWidth, {
+    translateX.value = withTiming(tab === "registered" ? 0 : -screenWidth, {
       duration: 300,
     });
   };
@@ -37,15 +42,17 @@ export default function EventsScreen() {
     transform: [{ translateX: translateX.value }],
   }));
 
-  const onGestureEvent = (event: GestureEvent<PanGestureHandlerEventPayload>) => {
+  const onGestureEvent = (
+    event: GestureEvent<PanGestureHandlerEventPayload>
+  ) => {
     const { translationX } = event.nativeEvent;
 
-    if (translationX > 50 && activeTab === 'upcoming') {
+    if (translationX > 50 && activeTab === "upcoming") {
       // Swipe right to switch to Registered
-      runOnJS(handleTabChange)('registered');
-    } else if (translationX < -50 && activeTab === 'registered') {
+      runOnJS(handleTabChange)("registered");
+    } else if (translationX < -50 && activeTab === "registered") {
       // Swipe left to switch to Upcoming
-      runOnJS(handleTabChange)('upcoming');
+      runOnJS(handleTabChange)("upcoming");
     }
   };
 
@@ -60,23 +67,23 @@ export default function EventsScreen() {
 
         {/* Tabs */}
         <View className="flex-row justify-around border-b border-gray-700 mb-4">
-          <TouchableOpacity onPress={() => handleTabChange('registered')}>
+          <TouchableOpacity onPress={() => handleTabChange("registered")}>
             <Text
               className={`pb-2 ${
-                activeTab === 'registered'
-                  ? 'text-white border-b-2 border-white'
-                  : 'text-gray-500'
+                activeTab === "registered"
+                  ? "text-white border-b-2 border-white"
+                  : "text-gray-500"
               }`}
             >
               Registered Events
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => handleTabChange('upcoming')}>
+          <TouchableOpacity onPress={() => handleTabChange("upcoming")}>
             <Text
               className={`pb-2 ${
-                activeTab === 'upcoming'
-                  ? 'text-white border-b-2 border-white'
-                  : 'text-gray-500'
+                activeTab === "upcoming"
+                  ? "text-white border-b-2 border-white"
+                  : "text-gray-500"
               }`}
             >
               Upcoming Events
@@ -88,27 +95,32 @@ export default function EventsScreen() {
         <PanGestureHandler onGestureEvent={onGestureEvent}>
           <Animated.View
             style={[
-              { flexDirection: 'row', width: screenWidth * 2 },
+              { flexDirection: "row", width: screenWidth * 2, flex: 1 },
               animatedStyles,
             ]}
           >
             {/* Upcoming Events */}
-            <View style={{ width: screenWidth }}>
-              <ScrollView showsVerticalScrollIndicator={false}>
-                <EventCard
-                  title="National Powerlifting Championship"
-                  location="123 Main St, Anytown, USA"
-                  date="Oct 26–28"
-                  image="https://via.placeholder.com/80"
-                />
-                <EventCard
-                  title="Regional Powerlifting Meet"
-                  location="456 Oak Ave, Anytown, USA"
-                  date="Nov 15–17"
-                  image="https://via.placeholder.com/80"
-                />
-              </ScrollView>
-            </View>
+            <PanGestureHandler onGestureEvent={onGestureEvent}>
+              <Animated.View style={{ width: screenWidth, flex: 1 }}>
+                <ScrollView
+                  showsVerticalScrollIndicator={false}
+                  contentContainerStyle={{ paddingBottom: 20 }}
+                >
+                  <EventCard
+                    title="National Powerlifting Championship"
+                    location="123 Main St, Anytown, USA"
+                    date="Oct 26–28"
+                    image="https://via.placeholder.com/80"
+                  />
+                  <EventCard
+                    title="Regional Powerlifting Meet"
+                    location="456 Oak Ave, Anytown, USA"
+                    date="Nov 15–17"
+                    image="https://via.placeholder.com/80"
+                  />
+                </ScrollView>
+              </Animated.View>
+            </PanGestureHandler>
 
             {/* Registered Events */}
             <View style={{ width: screenWidth }}>
