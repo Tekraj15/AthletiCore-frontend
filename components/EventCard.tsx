@@ -24,40 +24,33 @@ export default function EventCard({
 }: EventCardProps) {
   return (
     <View className="bg-gray-800 rounded-xl shadow-lg mb-4 mx-4 overflow-hidden">
-      {/* Category Label */}
       <View className="px-4 pt-3 pb-1">
         <Text className="text-xs text-blue-400 font-medium uppercase tracking-wide">
           {category}
         </Text>
       </View>
 
-      {/* Image at top */}
       <Image
-          source={require("../assets/images/powerlifting.png")}
+        source={require("../assets/images/powerlifting.png")}
         className="w-full h-50"
         resizeMode="cover"
       />
 
-      {/* Event Details */}
       <View className="p-4">
         <Text className="text-white font-bold text-lg leading-tight mb-2">
           {title}
         </Text>
-
         <Text className="text-gray-300 text-sm mb-1">📍 {location}</Text>
         <Text className="text-gray-400 text-sm mb-1">📅 {date}</Text>
         <Text className="text-gray-400 text-sm mb-1">
           🏋️ Weight Category: {weightCategory}
         </Text>
-        <Text className="text-gray-400 text-sm mb-1">
-          🚻 Gender: {gender}
-        </Text>
+        <Text className="text-gray-400 text-sm mb-1">🚻 Gender: {gender}</Text>
         <Text className="text-red-400 text-sm">
           🕒 Register by: {registrationDeadline}
         </Text>
       </View>
 
-      {/* Bottom Accent */}
       <View className="h-1 bg-gradient-to-r from-blue-500 to-purple-600" />
     </View>
   );

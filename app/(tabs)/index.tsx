@@ -1,2 +1,2 @@
-import Events from '../../screens/Events';
-export default Events;
+import EventsScreen from '../../screens/EventsScreen';
+export default EventsScreen;
