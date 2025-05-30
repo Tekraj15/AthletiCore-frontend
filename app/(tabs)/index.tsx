@@ -1,2 +1,2 @@
-import TabOneScreen from '../../screens/TabOneScreen';
-export default TabOneScreen;
+import Events from '../../screens/Events';
+export default Events;
