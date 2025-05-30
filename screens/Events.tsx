@@ -15,12 +15,9 @@ import Animated, {
   runOnJS,
 } from "react-native-reanimated";
 import {
-  PanGestureHandler,
+  GestureDetector,
+  Gesture,
   GestureHandlerRootView,
-} from "react-native-gesture-handler";
-import {
-  GestureEvent,
-  PanGestureHandlerEventPayload,
 } from "react-native-gesture-handler";
 
 const screenWidth = Dimensions.get("window").width;
@@ -42,19 +39,15 @@ export default function EventsScreen() {
     transform: [{ translateX: translateX.value }],
   }));
 
-  const onGestureEvent = (
-    event: GestureEvent<PanGestureHandlerEventPayload>
-  ) => {
-    const { translationX } = event.nativeEvent;
+  const panGesture = Gesture.Pan().onEnd((event) => {
+    const { translationX } = event;
 
     if (translationX > 50 && activeTab === "upcoming") {
-      // Swipe right to switch to Registered
       runOnJS(handleTabChange)("registered");
     } else if (translationX < -50 && activeTab === "registered") {
-      // Swipe left to switch to Upcoming
       runOnJS(handleTabChange)("upcoming");
     }
-  };
+  });
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -91,8 +84,8 @@ export default function EventsScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Gesture Swipe Wrapper */}
-        <PanGestureHandler onGestureEvent={onGestureEvent}>
+        {/* Gesture-based Content Swiper */}
+        <GestureDetector gesture={panGesture}>
           <Animated.View
             style={[
               { flexDirection: "row", width: screenWidth * 2, flex: 1 },
@@ -100,41 +93,51 @@ export default function EventsScreen() {
             ]}
           >
             {/* Upcoming Events */}
-            <PanGestureHandler onGestureEvent={onGestureEvent}>
-              <Animated.View style={{ width: screenWidth, flex: 1 }}>
-                <ScrollView
-                  showsVerticalScrollIndicator={false}
-                  contentContainerStyle={{ paddingBottom: 20 }}
-                >
-                  <EventCard
-                    title="National Powerlifting Championship"
-                    location="123 Main St, Anytown, USA"
-                    date="Oct 26–28"
-                    image="https://via.placeholder.com/80"
-                  />
-                  <EventCard
-                    title="Regional Powerlifting Meet"
-                    location="456 Oak Ave, Anytown, USA"
-                    date="Nov 15–17"
-                    image="https://via.placeholder.com/80"
-                  />
-                </ScrollView>
-              </Animated.View>
-            </PanGestureHandler>
+            <View style={{ width: screenWidth }}>
+              <ScrollView
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ paddingBottom: 20 }}
+              >
+                <EventCard
+                  title="National Powerlifting Championship"
+                  location="123 Main St, Anytown, USA"
+                  date="Oct 26–28"
+                  image="https://via.placeholder.com/80"
+                  weightCategory="74kg"
+                  gender="Male"
+                  registrationDeadline="Oct 15"
+                />
+                <EventCard
+                  title="Regional Powerlifting Meet"
+                  location="456 Oak Ave, Anytown, USA"
+                  date="Nov 15–17"
+                  image="https://via.placeholder.com/80"
+                  weightCategory="74kg"
+                  gender="Male"
+                  registrationDeadline="Oct 15"
+                />
+              </ScrollView>
+            </View>
 
             {/* Registered Events */}
             <View style={{ width: screenWidth }}>
-              <ScrollView showsVerticalScrollIndicator={false}>
+              <ScrollView
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ paddingBottom: 20 }}
+              >
                 <EventCard
                   title="State Powerlifting Challenge"
                   location="789 Pine Ln, Anytown, USA"
                   date="Dec 5–7"
                   image="https://via.placeholder.com/80"
+                  weightCategory="74kg"
+                  gender="Male"
+                  registrationDeadline="Oct 15"
                 />
               </ScrollView>
             </View>
           </Animated.View>
-        </PanGestureHandler>
+        </GestureDetector>
       </View>
     </GestureHandlerRootView>
   );
