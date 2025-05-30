@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -7,9 +7,11 @@ import {
   ScrollView,
   StyleSheet,
   Alert,
-} from 'react-native';
-import DocumentPicker from 'react-native-document-picker';
-
+  SafeAreaView,
+  Pressable,
+} from "react-native";
+import { useRouter } from "expo-router";
+import { Feather } from "@expo/vector-icons";
 interface FormData {
   fullName: string;
   email: string;
@@ -18,450 +20,316 @@ interface FormData {
   role: string;
   contactNumber: string;
   profilePicture: any;
+  gender?: string;
+  weight?: string;
+  age?: string;
 }
 
-type FormField = keyof Omit<FormData, 'profilePicture'>;
+type FormField = keyof Omit<FormData, "profilePicture">;
 
 const SignUpPage: React.FC = () => {
+  const router = useRouter();
+
   const [formData, setFormData] = useState<FormData>({
-    fullName: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    role: '',
-    contactNumber: '',
-    profilePicture: null
+    fullName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    role: "",
+    contactNumber: "",
+    profilePicture: null,
+    gender: "",
+    weight: "",
+    age: "",
   });
-  const [showRoleDropdown, setShowRoleDropdown] = useState<boolean>(false);
-  const [agreedToTerms, setAgreedToTerms] = useState<boolean>(false);
 
-  const roles: string[] = ['Student', 'Teacher', 'Administrator', 'Parent', 'Other'];
+  const [showRoleDropdown, setShowRoleDropdown] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [showGenderDropdown, setShowGenderDropdown] = useState(false);
 
-  const handleInputChange = (field: FormField, value: string): void => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+  const roles = ["Player", "Organizer", "Judge/Official"];
+  const genders = ["Male", "Female", "Other"];
+
+  const handleInputChange = (field: FormField, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleRoleSelect = (role: string): void => {
-    setFormData(prev => ({ ...prev, role }));
+  const handleRoleSelect = (role: string) => {
+    setFormData((prev) => ({ ...prev, role }));
     setShowRoleDropdown(false);
   };
 
-  const handleFileUpload = async (): Promise<void> => {
+  const handleGenderSelect = (gender: string) => {
+    setFormData((prev) => ({ ...prev, gender }));
+    setShowGenderDropdown(false);
+  };
+
+  const handleNext = async () => {
+    // Validation
+    const { fullName, email, password, confirmPassword, role, contactNumber } =
+      formData;
+
+    if (
+      !fullName ||
+      !email ||
+      !password ||
+      !confirmPassword ||
+      !role ||
+      !contactNumber
+    ) {
+      Alert.alert("Missing Fields", "Please fill in all required fields.");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      Alert.alert("Password Mismatch", "Passwords do not match.");
+      return;
+    }
+
+    if (!agreedToTerms) {
+      Alert.alert("Terms", "Please agree to the terms to continue.");
+      return;
+    }
+
     try {
-      const result = await DocumentPicker.pick({
-        type: [DocumentPicker.types.images],
-      });
-      setFormData(prev => ({ ...prev, profilePicture: result[0] }));
-    } catch (err) {
-      if (DocumentPicker.isCancel(err)) {
-        // User cancelled the picker
-      } else {
-        Alert.alert('Error', 'Failed to pick image');
-      }
-    }
-  };
+      // Simulated signup logic - replace with API call
+      console.log("Sign Up Data:", formData);
 
-  const handleNext = (): void => {
-    if (agreedToTerms) {
-      console.log('Form submitted:', formData);
-      // Handle form submission
+      // Redirect to login
+      Alert.alert("Success", "Account created successfully.");
+      router.push("./(auth)/index");
+    } catch (error) {
+      Alert.alert("Error", "Something went wrong. Please try again.");
     }
-  };
-
-  const toggleTerms = (): void => {
-    setAgreedToTerms(!agreedToTerms);
   };
 
   return (
-    <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton}>
-          <Text style={styles.backButtonText}>←</Text>
-        </TouchableOpacity>
-        <View style={styles.headerCenter}>
-          <Text style={styles.headerTitle}>Sign Up</Text>
+    <SafeAreaView className="flex-1 bg-[#171717]">
+      <ScrollView className="flex-1 px-6" showsVerticalScrollIndicator={false}>
+        <View className="items-center mt-12 mb-6">
+          <Text className="text-white text-2xl font-bold">Create Account</Text>
         </View>
-        <View style={styles.headerSpacer} />
-      </View>
 
-      {/* Progress */}
-      <View style={styles.progressContainer}>
-        <Text style={styles.progressText}>Step 1 of 5</Text>
-        <View style={styles.progressBar}>
-          <View style={styles.progressFill} />
+        {/* Full Name */}
+        <View className="mb-4">
+          <Text className="text-sm font-medium text-gray-300 mb-2">
+            Full Name
+          </Text>
+          <TextInput
+            className="bg-[#171717] text-white rounded-md p-4"
+            placeholder="Enter your full name"
+            placeholderTextColor="#C5BFBF"
+            value={formData.fullName}
+            onChangeText={(text) => handleInputChange("fullName", text)}
+          />
         </View>
-      </View>
 
-      {/* ScrollView Content */}
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        <View style={styles.formContainer}>
-          {/* Full Name */}
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Full Name</Text>
-            <TextInput
-              style={styles.textInput}
-              placeholder="Enter your full name"
-              placeholderTextColor="#9CA3AF"
-              value={formData.fullName}
-              onChangeText={(value) => handleInputChange('fullName', value)}
-            />
-          </View>
+        {/* Email */}
+        <View className="mb-4">
+          <Text className="text-sm font-medium text-gray-300 mb-2">Email</Text>
+          <TextInput
+            className="bg-[#171717] text-white rounded-md p-4"
+            placeholder="Enter your email"
+            placeholderTextColor="#C5BFBF"
+            keyboardType="email-address"
+            autoCapitalize="none"
+            value={formData.email}
+            onChangeText={(text) => handleInputChange("email", text)}
+          />
+        </View>
 
-          {/* Email Address */}
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Email Address</Text>
-            <TextInput
-              style={styles.textInput}
-              placeholder="Enter your email"
-              placeholderTextColor="#9CA3AF"
-              value={formData.email}
-              onChangeText={(value) => handleInputChange('email', value)}
-              keyboardType="email-address"
-              autoCapitalize="none"
-            />
-          </View>
+        {/* Phone Number */}
+        <View className="mb-4">
+          <Text className="text-sm font-medium text-gray-300 mb-2">
+            Phone Number
+          </Text>
+          <TextInput
+            className="bg-[#171717] text-white rounded-md p-4"
+            placeholder="Enter your phone number"
+            placeholderTextColor="#C5BFBF"
+            keyboardType="phone-pad"
+            value={formData.contactNumber}
+            onChangeText={(text) => handleInputChange("contactNumber", text)}
+          />
+        </View>
 
-          {/* Password */}
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Password</Text>
-            <TextInput
-              style={styles.textInput}
-              placeholder="Create a password"
-              placeholderTextColor="#9CA3AF"
-              value={formData.password}
-              onChangeText={(value) => handleInputChange('password', value)}
-              secureTextEntry
-            />
-          </View>
-
-          {/* Confirm Password */}
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Confirm Password</Text>
-            <TextInput
-              style={styles.textInput}
-              placeholder="Confirm your password"
-              placeholderTextColor="#9CA3AF"
-              value={formData.confirmPassword}
-              onChangeText={(value) => handleInputChange('confirmPassword', value)}
-              secureTextEntry
-            />
-          </View>
-
-          {/* Role Dropdown */}
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Role</Text>
-            <TouchableOpacity
-              style={styles.dropdown}
-              onPress={() => setShowRoleDropdown(!showRoleDropdown)}
-            >
-              <Text style={[styles.dropdownText, formData.role ? styles.selectedText : styles.placeholderText]}>
-                {formData.role || 'Select your role'}
-              </Text>
-              <Text style={[styles.dropdownArrow, showRoleDropdown && styles.dropdownArrowRotated]}>
-                ▼
-              </Text>
-            </TouchableOpacity>
-            
-            {showRoleDropdown && (
-              <View style={styles.dropdownMenu}>
-                {roles.map((role: string, index: number) => (
-                  <TouchableOpacity
-                    key={role}
-                    style={[
-                      styles.dropdownOption,
-                      index < roles.length - 1 && styles.dropdownOptionBorder
-                    ]}
-                    onPress={() => handleRoleSelect(role)}
-                  >
-                    <Text style={styles.dropdownOptionText}>{role}</Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            )}
-          </View>
-
-          {/* Contact Number */}
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Contact Number</Text>
-            <TextInput
-              style={styles.textInput}
-              placeholder="Enter your contact number"
-              placeholderTextColor="#9CA3AF"
-              value={formData.contactNumber}
-              onChangeText={(value) => handleInputChange('contactNumber', value)}
-              keyboardType="phone-pad"
-            />
-          </View>
-
-          {/* Upload Profile Picture */}
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Upload Profile Picture</Text>
-            <TouchableOpacity style={styles.fileUpload} onPress={handleFileUpload}>
-              <Text style={styles.fileIcon}>📁</Text>
-              <Text style={styles.fileText}>
-                {formData.profilePicture ? formData.profilePicture.name : 'Upload Profile Picture'}
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* Terms and Conditions */}
-          <View style={styles.termsContainer}>
-            <TouchableOpacity style={styles.checkbox} onPress={toggleTerms}>
-              <View style={[styles.checkboxInner, agreedToTerms && styles.checkboxChecked]}>
-                {agreedToTerms && <Text style={styles.checkmark}>✓</Text>}
-              </View>
-            </TouchableOpacity>
-            <Text style={styles.termsText}>I agree to the Terms and Conditions</Text>
-          </View>
-
-          <View style={styles.privacyContainer}>
-            <Text style={styles.privacyText}>
-              By signing up, you agree to our Terms and Conditions and Privacy Policy.
-            </Text>
-          </View>
-
-          {/* Next Button */}
+        {/* Role Dropdown */}
+        <View className="mb-6 relative">
+          <Text className="text-sm font-medium text-gray-300 mb-2">Role</Text>
           <TouchableOpacity
-            style={[styles.nextButton, agreedToTerms ? styles.nextButtonEnabled : styles.nextButtonDisabled]}
-            onPress={handleNext}
-            disabled={!agreedToTerms}
+            className="bg-[#171717] border border-gray-600 rounded-md px-4 py-3 flex-row justify-between items-center"
+            onPress={() => setShowRoleDropdown(!showRoleDropdown)}
           >
-            <Text style={styles.nextButtonText}>Next</Text>
+            <Text
+              className={`text-base ${
+                formData.role ? "text-white" : "text-gray-400"
+              }`}
+            >
+              {formData.role || "Select your role"}
+            </Text>
+            <Text className="text-white ml-2">
+              {showRoleDropdown ? "▲" : "▼"}
+            </Text>
           </TouchableOpacity>
 
-          {/* Sign In Link */}
-          <View style={styles.signInContainer}>
-            <Text style={styles.signInText}>
-              Already have an account?{' '}
-              <Text style={styles.signInLink}>Sign In</Text>
-            </Text>
-          </View>
+          {showRoleDropdown && (
+            <View className="absolute top-[72px] left-0 right-0 bg-[#1F1F1F] rounded-md border border-gray-600 z-50">
+              {roles.map((role, index) => (
+                <TouchableOpacity
+                  key={role}
+                  className={`px-4 py-3 ${
+                    index < roles.length - 1 ? "border-b border-gray-700" : ""
+                  }`}
+                  onPress={() => handleRoleSelect(role)}
+                >
+                  <Text className="text-white text-base">{role}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
         </View>
+
+        {/* Conditional Fields for Player */}
+        {formData.role === "Player" && (
+          <>
+            {/* Gender Dropdown */}
+            <View className="mb-6 relative">
+              <Text className="text-sm font-medium text-gray-300 mb-2">
+                Gender
+              </Text>
+              <TouchableOpacity
+                className="bg-[#171717] border border-gray-600 rounded-md px-4 py-3 flex-row justify-between items-center"
+                onPress={() => setShowGenderDropdown(!showGenderDropdown)}
+              >
+                <Text
+                  className={`text-base ${
+                    formData.gender ? "text-white" : "text-gray-400"
+                  }`}
+                >
+                  {formData.gender || "Select your gender"}
+                </Text>
+                <Text className="text-white ml-2">
+                  {showGenderDropdown ? "▲" : "▼"}
+                </Text>
+              </TouchableOpacity>
+
+              {showGenderDropdown && (
+                <View className="absolute top-[72px] left-0 right-0 bg-[#1F1F1F] rounded-md border border-gray-600 z-50">
+                  {genders.map((gender, index) => (
+                    <TouchableOpacity
+                      key={gender}
+                      className={`px-4 py-3 ${
+                        index < genders.length - 1
+                          ? "border-b border-gray-700"
+                          : ""
+                      }`}
+                      onPress={() => handleGenderSelect(gender)}
+                    >
+                      <Text className="text-white text-base">{gender}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              )}
+            </View>
+
+            {/* Weight */}
+            <View className="mb-6">
+              <Text className="text-sm font-medium text-gray-300 mb-2">
+                Weight
+              </Text>
+              <TextInput
+                className="bg-[#171717] border border-gray-600 rounded-md px-4 py-3 text-white"
+                placeholder="Enter your weight"
+                placeholderTextColor="#C5BFBF"
+                keyboardType="numeric"
+                value={formData.weight}
+                onChangeText={(text) => handleInputChange("weight", text)}
+              />
+            </View>
+
+            {/* Age */}
+            <View className="mb-6">
+              <Text className="text-sm font-medium text-gray-300 mb-2">
+                Age
+              </Text>
+              <TextInput
+                className="bg-[#171717] border border-gray-600 rounded-md px-4 py-3 text-white"
+                placeholder="Enter your age"
+                placeholderTextColor="#C5BFBF"
+                keyboardType="numeric"
+                value={formData.age}
+                onChangeText={(text) => handleInputChange("age", text)}
+              />
+            </View>
+          </>
+        )}
+
+        {/* Password */}
+        <View className="mb-4">
+          <Text className="text-sm font-medium text-gray-300 mb-2">
+            Password
+          </Text>
+          <TextInput
+            className="bg-[#171717] text-white rounded-md p-4"
+            placeholder="Enter your password"
+            placeholderTextColor="#C5BFBF"
+            secureTextEntry
+            value={formData.password}
+            onChangeText={(text) => handleInputChange("password", text)}
+          />
+        </View>
+
+        {/* Confirm Password */}
+        <View className="mb-4">
+          <Text className="text-sm font-medium text-gray-300 mb-2">
+            Confirm Password
+          </Text>
+          <TextInput
+            className="bg-[#171717] text-white rounded-md p-4"
+            placeholder="Re-enter your password"
+            placeholderTextColor="#C5BFBF"
+            secureTextEntry
+            value={formData.confirmPassword}
+            onChangeText={(text) => handleInputChange("confirmPassword", text)}
+          />
+        </View>
+
+        <TouchableOpacity
+          onPress={() => setAgreedToTerms(!agreedToTerms)}
+          className="flex-row items-center mb-4"
+        >
+          <View
+            className={`w-5 h-5 rounded-sm border-2 mr-2 items-center justify-center ${
+              agreedToTerms ? "border-white bg-white " : "border-gray-400"
+            }`}
+          >
+            {agreedToTerms && <Feather name="check" size={12} color="black" />}
+          </View>
+          <Text className="text-white">
+            I agree to the Terms and Conditions
+          </Text>
+        </TouchableOpacity>
+
+        {/* Sign Up Button */}
+        <TouchableOpacity
+          onPress={handleNext}
+          className="bg-[#0c0c0c] py-4 rounded-md mb-4 active:opacity-80"
+        >
+          <Text className="text-center text-white font-bold text-lg">
+            Sign Up
+          </Text>
+        </TouchableOpacity>
+
+        {/* Login Link */}
+        <Pressable onPress={() => router.push("./(auth)/index")}>
+          <Text className="text-center text-gray-300 mt-2 mb-14">
+            Already have an account?{" "}
+            <Text className="text-white font-semibold underline">Login</Text>
+          </Text>
+        </Pressable>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#111827',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#374151',
-  },
-  backButton: {
-    width: 24,
-    height: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  backButtonText: {
-    color: '#FFFFFF',
-    fontSize: 20,
-  },
-  headerCenter: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: '500',
-    color: '#FFFFFF',
-  },
-  headerSpacer: {
-    width: 24,
-  },
-  progressContainer: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
-  progressText: {
-    fontSize: 14,
-    color: '#9CA3AF',
-    marginBottom: 8,
-  },
-  progressBar: {
-    width: '100%',
-    height: 4,
-    backgroundColor: '#374151',
-    borderRadius: 2,
-  },
-  progressFill: {
-    width: '20%',
-    height: '100%',
-    backgroundColor: '#3B82F6',
-    borderRadius: 2,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  formContainer: {
-    paddingHorizontal: 16,
-    paddingVertical: 24,
-  },
-  inputContainer: {
-    marginBottom: 24,
-    position: 'relative',
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#D1D5DB',
-    marginBottom: 8,
-  },
-  textInput: {
-    backgroundColor: '#1F2937',
-    borderWidth: 1,
-    borderColor: '#4B5563',
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    color: '#FFFFFF',
-    fontSize: 16,
-    minHeight: 48,
-  },
-  dropdown: {
-    backgroundColor: '#1F2937',
-    borderWidth: 1,
-    borderColor: '#4B5563',
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    minHeight: 48,
-  },
-  dropdownText: {
-    fontSize: 16,
-  },
-  selectedText: {
-    color: '#FFFFFF',
-  },
-  placeholderText: {
-    color: '#9CA3AF',
-  },
-  dropdownArrow: {
-    color: '#9CA3AF',
-    fontSize: 18,
-  },
-  dropdownArrowRotated: {
-    transform: [{ rotate: '180deg' }],
-  },
-  dropdownMenu: {
-    position: 'absolute',
-    top: '100%',
-    left: 0,
-    right: 0,
-    marginTop: 4,
-    backgroundColor: '#1F2937',
-    borderWidth: 1,
-    borderColor: '#4B5563',
-    borderRadius: 8,
-    zIndex: 10,
-  },
-  dropdownOption: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
-  dropdownOptionBorder: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#374151',
-  },
-  dropdownOptionText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-  },
-  fileUpload: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  fileIcon: {
-    fontSize: 18,
-    marginRight: 8,
-  },
-  fileText: {
-    fontSize: 14,
-    color: '#9CA3AF',
-  },
-  termsContainer: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: 16,
-  },
-  checkbox: {
-    marginTop: 2,
-    marginRight: 12,
-  },
-  checkboxInner: {
-    width: 16,
-    height: 16,
-    borderWidth: 1,
-    borderColor: '#4B5563',
-    backgroundColor: '#1F2937',
-    borderRadius: 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  checkboxChecked: {
-    backgroundColor: '#3B82F6',
-    borderColor: '#3B82F6',
-  },
-  checkmark: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: 'bold',
-  },
-  termsText: {
-    fontSize: 14,
-    color: '#D1D5DB',
-    flex: 1,
-  },
-  privacyContainer: {
-    marginBottom: 32,
-  },
-  privacyText: {
-    fontSize: 12,
-    color: '#6B7280',
-    lineHeight: 18,
-  },
-  nextButton: {
-    borderRadius: 8,
-    paddingVertical: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: 48,
-    marginBottom: 16,
-  },
-  nextButtonEnabled: {
-    backgroundColor: '#2563EB',
-  },
-  nextButtonDisabled: {
-    backgroundColor: '#374151',
-  },
-  nextButtonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '500',
-  },
-  signInContainer: {
-    alignItems: 'center',
-  },
-  signInText: {
-    fontSize: 14,
-    color: '#9CA3AF',
-  },
-  signInLink: {
-    color: '#60A5FA',
-  },
-});
 
 export default SignUpPage;
