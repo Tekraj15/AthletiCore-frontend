@@ -1,4 +1,3 @@
-import SignUpPage from '../../screens/SignUpScreen'
+import SignUpPage from '../../screens/SignUpScreen';
+
 export default SignUpPage;
-
-
