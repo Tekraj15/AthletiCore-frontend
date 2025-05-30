@@ -13,7 +13,7 @@ export default function EventsScreen() {
 
   const handleTabChange = (tab: 'upcoming' | 'registered') => {
     setActiveTab(tab);
-    translateX.value = withTiming(tab === 'upcoming' ? 0 : -screenWidth, { duration: 300 });
+    translateX.value = withTiming(tab === 'registered' ? 0 : -screenWidth, { duration: 300 });
   };
 
   const animatedStyles = useAnimatedStyle(() => ({
