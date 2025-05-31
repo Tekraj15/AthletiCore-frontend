@@ -23,16 +23,17 @@ export default function EventCard({
   registrationDeadline = "N/A",
 }: EventCardProps) {
   return (
-    <View className="bg-gray-800 rounded-xl shadow-lg mb-4 mx-4 overflow-hidden">
+    <View className="bg-gray-800 rounded-xl shadow-lg mb-4  p-3 ">
+      <Text className="text-white text-lg font-bold">AthletiCore</Text>
       <View className="px-4 pt-3 pb-1">
-        <Text className="text-xs text-blue-400 font-medium uppercase tracking-wide">
+        <Text className="text-lg text-blue-400 font-medium uppercase tracking-wide">
           {category}
         </Text>
       </View>
 
       <Image
         source={require("../assets/images/powerlifting.png")}
-        className="w-full h-50"
+        className="w-full h-50 rounded-lg"
         resizeMode="cover"
       />
 

@@ -54,7 +54,7 @@ export default function EventsScreen() {
       <View className="flex-1 bg-black px-4 pt-12">
         {/* Header */}
         <View className="flex-row justify-between items-center mb-4">
-          <Text className="text-white text-lg font-bold">AthletiCore</Text>
+          <Text className="text-white  text-lg font-bold ">AthletiCore</Text>
           <Feather name="settings" size={20} color="white" />
         </View>
 
@@ -92,11 +92,32 @@ export default function EventsScreen() {
               animatedStyles,
             ]}
           >
-            {/* Upcoming Events */}
+            {/* Registered Events */}
             <View style={{ width: screenWidth }}>
               <ScrollView
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ paddingBottom: 20 }}
+                showsVerticalScrollIndicator={true}
+                contentContainerStyle={{
+                  paddingRight: 15,
+                  paddingBottom: 20,
+                }}
+              >
+                <EventCard
+                  title="State Powerlifting Challenge"
+                  location="789 Pine Ln, Anytown, USA"
+                  date="Dec 5–7"
+                  image="https://via.placeholder.com/80"
+                  weightCategory="74kg"
+                  gender="Male"
+                  registrationDeadline="Oct 15"
+                />
+              </ScrollView>
+            </View>
+
+            {/* Upcoming Events */}
+            <View style={{ width: screenWidth}}>
+              <ScrollView
+                showsVerticalScrollIndicator={true}
+                contentContainerStyle={{ paddingRight: 15, paddingBottom: 20 }}
               >
                 <EventCard
                   title="National Powerlifting Championship"
@@ -111,24 +132,6 @@ export default function EventsScreen() {
                   title="Regional Powerlifting Meet"
                   location="456 Oak Ave, Anytown, USA"
                   date="Nov 15–17"
-                  image="https://via.placeholder.com/80"
-                  weightCategory="74kg"
-                  gender="Male"
-                  registrationDeadline="Oct 15"
-                />
-              </ScrollView>
-            </View>
-
-            {/* Registered Events */}
-            <View style={{ width: screenWidth }}>
-              <ScrollView
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ paddingBottom: 20 }}
-              >
-                <EventCard
-                  title="State Powerlifting Challenge"
-                  location="789 Pine Ln, Anytown, USA"
-                  date="Dec 5–7"
                   image="https://via.placeholder.com/80"
                   weightCategory="74kg"
                   gender="Male"
