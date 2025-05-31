@@ -31,10 +31,12 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name="index"
+        name="events/index"
         options={{
           title: "Events",
-          tabBarIcon: ({ color }) => <TabBarIcon name="calendar" color={color} />,
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="calendar" color={color} />
+          ),
           headerRight: () => (
             <Link href="/modal" asChild>
               <Pressable>
@@ -51,11 +53,14 @@ export default function TabLayout() {
           ),
         }}
       />
+
       <Tabs.Screen
         name="statistics"
         options={{
           title: "Statistcis",
-          tabBarIcon: ({ color }) => <TabBarIcon name="line-chart" color={color} />,
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="line-chart" color={color} />
+          ),
         }}
       />
       <Tabs.Screen

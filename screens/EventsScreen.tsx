@@ -54,7 +54,7 @@ export default function EventsScreen() {
       <View className="flex-1 bg-black px-4 pt-12">
         {/* Header */}
         <View className="flex-row justify-between items-center mb-4">
-          <Text className="text-white  text-lg font-bold ">AthletiCore</Text>
+          <Text className="text-white text-lg font-bold">AthletiCore</Text>
           <Feather name="settings" size={20} color="white" />
         </View>
 
@@ -96,12 +96,10 @@ export default function EventsScreen() {
             <View style={{ width: screenWidth }}>
               <ScrollView
                 showsVerticalScrollIndicator={true}
-                contentContainerStyle={{
-                  paddingRight: 15,
-                  paddingBottom: 20,
-                }}
+                contentContainerStyle={{ paddingRight: 15, paddingBottom: 20 }}
               >
                 <EventCard
+                  id="event-001"
                   title="State Powerlifting Challenge"
                   location="789 Pine Ln, Anytown, USA"
                   date="Dec 5–7"
@@ -114,12 +112,13 @@ export default function EventsScreen() {
             </View>
 
             {/* Upcoming Events */}
-            <View style={{ width: screenWidth}}>
+            <View style={{ width: screenWidth }}>
               <ScrollView
                 showsVerticalScrollIndicator={true}
                 contentContainerStyle={{ paddingRight: 15, paddingBottom: 20 }}
               >
                 <EventCard
+                  id="event-002"
                   title="National Powerlifting Championship"
                   location="123 Main St, Anytown, USA"
                   date="Oct 26–28"
@@ -129,6 +128,7 @@ export default function EventsScreen() {
                   registrationDeadline="Oct 15"
                 />
                 <EventCard
+                  id="event-003"
                   title="Regional Powerlifting Meet"
                   location="456 Oak Ave, Anytown, USA"
                   date="Nov 15–17"

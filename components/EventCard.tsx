@@ -1,7 +1,10 @@
 import React from "react";
-import { View, Text, Image, ImageSourcePropType } from "react-native";
+import { View, Text, Image, Pressable } from "react-native";
+import { ImageSourcePropType } from "react-native";
+import { useRouter } from "expo-router";
 
 interface EventCardProps {
+  id: string; // ✅ Add this so you can navigate
   title: string;
   location: string;
   date: string;
@@ -13,6 +16,7 @@ interface EventCardProps {
 }
 
 export default function EventCard({
+  id,
   title,
   location,
   date,
@@ -22,37 +26,46 @@ export default function EventCard({
   gender = "All",
   registrationDeadline = "N/A",
 }: EventCardProps) {
+  const router = useRouter();
+
+  const handlePress = () => {
+    router.push(`/events/${id}`);
+  };
+
   return (
-    <View className="bg-gray-800 rounded-xl shadow-lg mb-4  p-3 ">
-      <Text className="text-white text-lg font-bold">AthletiCore</Text>
-      <View className="px-4 pt-3 pb-1">
-        <Text className="text-lg text-blue-400 font-medium uppercase tracking-wide">
-          {category}
-        </Text>
+    <Pressable onPress={handlePress}>
+      <View className="bg-gray-800 rounded-xl shadow-lg mb-4 p-3">
+        <Text className="text-white text-lg font-bold">AthletiCore</Text>
+
+        <View className="px-4 pt-3 pb-1">
+          <Text className="text-lg text-blue-400 font-medium uppercase tracking-wide">
+            {category}
+          </Text>
+        </View>
+
+        <Image
+          source={require("../assets/images/powerlifting.png")}
+          className="w-full h-48 rounded-lg"
+          resizeMode="cover"
+        />
+
+        <View className="p-4">
+          <Text className="text-white font-bold text-lg leading-tight mb-2">
+            {title}
+          </Text>
+          <Text className="text-gray-300 text-sm mb-1">📍 {location}</Text>
+          <Text className="text-gray-400 text-sm mb-1">📅 {date}</Text>
+          <Text className="text-gray-400 text-sm mb-1">
+            🏋️ Weight Category: {weightCategory}
+          </Text>
+          <Text className="text-gray-400 text-sm mb-1">🚻 Gender: {gender}</Text>
+          <Text className="text-red-400 text-sm">
+            🕒 Register by: {registrationDeadline}
+          </Text>
+        </View>
+
+        <View className="h-1 bg-gradient-to-r from-blue-500 to-purple-600" />
       </View>
-
-      <Image
-        source={require("../assets/images/powerlifting.png")}
-        className="w-full h-50 rounded-lg"
-        resizeMode="cover"
-      />
-
-      <View className="p-4">
-        <Text className="text-white font-bold text-lg leading-tight mb-2">
-          {title}
-        </Text>
-        <Text className="text-gray-300 text-sm mb-1">📍 {location}</Text>
-        <Text className="text-gray-400 text-sm mb-1">📅 {date}</Text>
-        <Text className="text-gray-400 text-sm mb-1">
-          🏋️ Weight Category: {weightCategory}
-        </Text>
-        <Text className="text-gray-400 text-sm mb-1">🚻 Gender: {gender}</Text>
-        <Text className="text-red-400 text-sm">
-          🕒 Register by: {registrationDeadline}
-        </Text>
-      </View>
-
-      <View className="h-1 bg-gradient-to-r from-blue-500 to-purple-600" />
-    </View>
+    </Pressable>
   );
 }
