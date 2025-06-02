@@ -67,7 +67,7 @@ export default function EventsScreen() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <View className="flex-1 bg-black px-4 pt-12">
+      <View className="flex-1 bg-black px-4 pt-12 ">
         {/* Header */}
         {/* <View className="flex-row justify-between items-center mb-4">
           <Text className="text-white text-lg font-bold">AthletiCore</Text>

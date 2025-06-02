@@ -65,8 +65,6 @@ export default function EventCard({
             🕒 Register by: {registrationDeadline}
           </Text>
         </View>
-
-        <View className="h-1 bg-gradient-to-r from-blue-500 to-purple-600" />
       </View>
     </Pressable>
   );

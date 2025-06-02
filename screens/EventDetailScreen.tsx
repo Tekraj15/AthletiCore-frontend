@@ -24,7 +24,7 @@ const event =
   }
 
   return (
-    <ScrollView className="flex-1 bg-black px-4 pt-8">
+    <ScrollView className="flex-1 bg-black px-4 pt-8 ">
       {/* Back Button */}
       <Pressable onPress={() => router.back()} className="mb-4">
         <Ionicons name="arrow-back" size={24} color="white" />
