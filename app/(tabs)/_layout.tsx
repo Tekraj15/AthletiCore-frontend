@@ -77,6 +77,13 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
         }}
       />
+      <Tabs.Screen
+        name="events/[eventId]"
+        options={{
+          href: null, // Hides it from bottom tab bar
+          headerShown: false, // Optional: hide header if you want full control
+        }}
+      />
     </Tabs>
   );
 }

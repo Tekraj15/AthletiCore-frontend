@@ -1,136 +1,101 @@
-import { useLocalSearchParams } from "expo-router";
-import {
-  View,
-  Text,
-  ScrollView,
-  Image,
-  TextInput,
-  Button,
-  KeyboardAvoidingView,
-  Platform,
-  KeyboardTypeOptions,
-} from "react-native";
 import React, { useState } from "react";
-
-const mockEventData: Record<string, any> = {
-  "event-001": {
-    id: "event-001",
-    title: "State Powerlifting Challenge",
-    location: "789 Pine Ln, Anytown, USA",
-    date: "Dec 5–7, 2025",
-    organizer: "John Doe",
-    status: "Registered",
-    image: require("../assets/images/powerlifting.png"),
-    category: "Full Power",
-    weightClass: "74kg",
-    gender: "Male",
-    division: "Junior",
-  },
-  "event-002": {
-    id: "event-002",
-    title: "National Powerlifting Championship",
-    location: "123 Main St, Anytown, USA",
-    date: "Oct 26–28, 2025",
-    organizer: "Jane Smith",
-    status: "Upcoming",
-    image: require("../assets/images/powerlifting.png"),
-    category: "Bench Only",
-    weightClass: "63kg",
-    gender: "Female",
-    division: "Open",
-  },
-};
+import { View, Text, Image, ScrollView, Pressable } from "react-native";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { mockEventData } from "../constants/mockEventData";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function EventDetailScreen() {
   const { eventId } = useLocalSearchParams<{ eventId: string }>();
-  const event = mockEventData[eventId ?? ""] ?? null;
+  const router = useRouter();
+const event =
+  eventId && eventId in mockEventData
+    ? mockEventData[eventId as keyof typeof mockEventData]
+    : null;
 
-  const [isRegistering, setIsRegistering] = useState(false);
-  const [form, setForm] = useState({
-    name: "",
-    age: "",
-    gender: "",
-    weightClass: "",
-    liftAttempts: "",
-    rackHeight: "",
-    division: "",
-    equipmentClass: "",
-  });
-
-  const fields: {
-    key: keyof typeof form;
-    label: string;
-    keyboardType?: KeyboardTypeOptions;
-  }[] = [
-    { key: "name", label: "Player's Name" },
-    { key: "age", label: "Age", keyboardType: "numeric" },
-    { key: "gender", label: "Gender (Male/Female)" },
-    { key: "weightClass", label: "Weight Class (e.g., 74kg)" },
-    { key: "division", label: "Division (Junior/Open/etc.)" },
-    { key: "liftAttempts", label: "Lift Attempts (e.g., 100/120/130)" },
-    { key: "rackHeight", label: "Rack Height" },
-    { key: "equipmentClass", label: "Equipment Class (Classic/Equipped)" },
-  ];
+  const [tab, setTab] = useState<"overview" | "schedule" | "rules">("overview");
+  const isRegistered = false; // 🔄 Replace with real registration check logic later
 
   if (!event) {
     return (
-      <View className="flex-1 justify-center items-center bg-black">
-        <Text className="text-white">Event not found</Text>
+      <View className="flex-1 items-center justify-center bg-black px-4">
+        <Text className="text-white text-lg font-semibold">Event not found</Text>
       </View>
     );
   }
 
   return (
-    <KeyboardAvoidingView
-      className="flex-1 bg-black px-4 pt-10"
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
-    >
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <Image
-          source={event.image}
-          className="w-full h-48 rounded-lg mb-4"
-          resizeMode="cover"
-        />
+    <ScrollView className="flex-1 bg-black px-4 pt-8">
+      {/* Back Button */}
+      <Pressable onPress={() => router.back()} className="mb-4">
+        <Ionicons name="arrow-back" size={24} color="white" />
+      </Pressable>
 
-        <Text className="text-white text-2xl font-bold mb-2">{event.title}</Text>
-        <Text className="text-gray-300 text-base mb-1">📍 {event.location}</Text>
-        <Text className="text-gray-300 text-base mb-1">📅 {event.date}</Text>
-        <Text className="text-gray-300 text-base mb-1">👤 Organizer: {event.organizer}</Text>
-        <Text className="text-yellow-400 text-base mb-4">📌 Status: {event.status}</Text>
+      {/* Event Image */}
+      <Image source={event.image} className="w-full h-48 rounded-xl mb-4" />
 
-        {event.status === "Upcoming" && !isRegistering && (
-          <Button title="Register for Event" onPress={() => setIsRegistering(true)} />
+      {/* Event Info */}
+      <Text className="text-white text-2xl font-bold mb-1">{event.title}</Text>
+      <Text className="text-gray-400 text-sm mb-1">📅 {event.date}</Text>
+      <Text className="text-gray-400 text-sm mb-1">📍 {event.location}</Text>
+      <Text className="text-gray-400 text-sm mb-1">🚻 Gender: {event.gender}</Text>
+      <Text className="text-gray-400 text-sm mb-4">
+        🏋️ Categories: {event.weightCategories.join(", ")}
+      </Text>
+      <Text className="text-red-400 text-sm mb-4">
+        🕒 Register by: {event.registrationDeadline}
+      </Text>
+
+      {/* Tabs */}
+      <View className="flex-row justify-around mb-4">
+        {["overview", "schedule", "rules"].map((item) => (
+          <Pressable
+            key={item}
+            onPress={() => setTab(item as typeof tab)}
+            className={`px-3 py-2 rounded-full ${
+              tab === item ? "bg-green-600" : "bg-gray-700"
+            }`}
+          >
+            <Text className="text-white capitalize text-sm">{item}</Text>
+          </Pressable>
+        ))}
+      </View>
+
+      {/* Tab Content */}
+      <View className="mb-8">
+        {tab === "overview" && (
+          <Text className="text-gray-200 text-sm">
+            This is the official {event.title} organized by {event.organizer}. Participants will
+            compete in various weight classes. Awards will be presented at the end of the meet.
+          </Text>
         )}
-
-        {isRegistering && (
-          <View className="mt-6 space-y-4">
-            <Text className="text-white text-lg font-bold mb-2">Register Player</Text>
-
-            {fields.map((field) => (
-              <TextInput
-                key={field.key}
-                placeholder={field.label}
-                keyboardType={field.keyboardType}
-                placeholderTextColor="#888"
-                className="border border-gray-600 text-white px-4 py-2 rounded-md"
-                value={form[field.key]}
-                onChangeText={(text) =>
-                  setForm((prev) => ({ ...prev, [field.key]: text }))
-                }
-              />
-            ))}
-
-            <Button
-              title="Submit Registration"
-              onPress={() => {
-                alert("Registered successfully!");
-                setIsRegistering(false);
-              }}
-              color="#22c55e"
-            />
-          </View>
+        {tab === "schedule" && (
+          <Text className="text-gray-200 text-sm">
+            Day 1: Weigh-in & Equipment Check {"\n"}
+            Day 2: Squat + Bench Press {"\n"}
+            Day 3: Deadlift + Awards
+          </Text>
         )}
-      </ScrollView>
-    </KeyboardAvoidingView>
+        {tab === "rules" && (
+          <Text className="text-gray-200 text-sm">
+            All lifters must comply with standard IPF rules. Approved gear only. {"\n"}
+            Disrespectful conduct will lead to disqualification.
+          </Text>
+        )}
+      </View>
+
+      {/* Register or Edit */}
+      <Pressable
+        onPress={() =>
+          router.push(
+            isRegistered ? `/register/${eventId}?edit=true` : `/register/${eventId}`
+          )
+        }
+        className="bg-green-600 py-3 rounded-xl items-center"
+      >
+        <Text className="text-white font-semibold">
+          {isRegistered ? "Edit Registration" : "Register for Event"}
+        </Text>
+      </Pressable>
+    </ScrollView>
   );
 }

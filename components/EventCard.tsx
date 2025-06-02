@@ -4,7 +4,7 @@ import { ImageSourcePropType } from "react-native";
 import { useRouter } from "expo-router";
 
 interface EventCardProps {
-  id: string; // ✅ Add this so you can navigate
+  id: string;
   title: string;
   location: string;
   date: string;
@@ -35,16 +35,16 @@ export default function EventCard({
   return (
     <Pressable onPress={handlePress}>
       <View className="bg-gray-800 rounded-xl shadow-lg mb-4 p-3">
-        <Text className="text-white text-lg font-bold">AthletiCore</Text>
+        {/* <Text className="text-white text-lg font-bold">AthletiCore</Text> */}
 
-        <View className="px-4 pt-3 pb-1">
+        <View className=" pb-2">
           <Text className="text-lg text-blue-400 font-medium uppercase tracking-wide">
             {category}
           </Text>
         </View>
 
         <Image
-          source={require("../assets/images/powerlifting.png")}
+          source={typeof image === "string" ? { uri: image } : image}
           className="w-full h-48 rounded-lg"
           resizeMode="cover"
         />
@@ -58,7 +58,9 @@ export default function EventCard({
           <Text className="text-gray-400 text-sm mb-1">
             🏋️ Weight Category: {weightCategory}
           </Text>
-          <Text className="text-gray-400 text-sm mb-1">🚻 Gender: {gender}</Text>
+          <Text className="text-gray-400 text-sm mb-1">
+            🚻 Gender: {gender}
+          </Text>
           <Text className="text-red-400 text-sm">
             🕒 Register by: {registrationDeadline}
           </Text>
