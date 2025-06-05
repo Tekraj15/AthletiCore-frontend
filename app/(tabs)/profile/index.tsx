@@ -1,11 +1,24 @@
+// app/(tabs)/profile/index.tsx
+
 import React from 'react';
-import { View, Text, Image, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+  Dimensions,
+} from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
+import { useNavigation } from 'expo-router';
+import { DrawerActions } from '@react-navigation/native';
+import { FontAwesome } from '@expo/vector-icons';
+import { useLayoutEffect } from 'react';
 
 const screenWidth = Dimensions.get('window').width;
 
 const dummyData = {
-  profileImage: 'https://i.pravatar.cc/40',
+  profileImage: 'https://i.pravatar.cc/150',
   name: 'Jane Doe',
   email: 'janedoe@example.com',
   gender: 'Female',
@@ -24,12 +37,32 @@ const dummyData = {
   },
 };
 
-const ProfileScreen = () => {
+export default function ProfileScreen() {
+  const navigation = useNavigation();
+
+  // useLayoutEffect(() => {
+  //   navigation.setOptions({
+  //     title: 'Profile',
+  //     headerRight: () => (
+  //       <TouchableOpacity
+  //         className="mr-4"
+  //         onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
+  //       >
+  //         <FontAwesome name="bars" size={24} color="black" />
+  //       </TouchableOpacity>
+  //     ),
+  //   });
+  // }, [navigation]);
+
   return (
-    <ScrollView className="bg-black flex-1">
+    <ScrollView className="flex-1 bg-black">
+      {/* Profile Header */}
       <View className="items-center p-4">
         <View className="relative">
-          <Image source={{ uri: dummyData.profileImage }} className="w-32 h-32 rounded-full" />
+          <Image
+            source={{ uri: dummyData.profileImage }}
+            className="w-32 h-32 rounded-full"
+          />
           <TouchableOpacity className="absolute bottom-0 right-0 bg-white p-1 rounded-full">
             <Text className="text-xs">📸</Text>
           </TouchableOpacity>
@@ -38,12 +71,13 @@ const ProfileScreen = () => {
         <View className="mt-1 bg-red-600 px-3 py-1 rounded-full">
           <Text className="text-white text-sm">{dummyData.weightCategory}</Text>
         </View>
-        <View className="flex-row items-center mt-2">
-          <Text className="text-white text-sm">🔢 Total Events: {dummyData.totalEvents}</Text>
-        </View>
+        <Text className="text-white text-sm mt-2">
+          🔢 Total Events: {dummyData.totalEvents}
+        </Text>
       </View>
 
-      <View className="p-4 bg-zinc-900 rounded-xl m-4">
+      {/* Personal Info Card */}
+      <View className="bg-zinc-900 rounded-xl m-4 p-4">
         <Text className="text-white text-xl mb-3">👤 Personal Information</Text>
         <View className="flex flex-wrap flex-row justify-between">
           <Text className="text-white w-1/2 mb-2">Name: {dummyData.name}</Text>
@@ -56,7 +90,8 @@ const ProfileScreen = () => {
         </TouchableOpacity>
       </View>
 
-      <View className="p-4 bg-zinc-900 rounded-xl m-4">
+      {/* Performance Chart */}
+      <View className="bg-zinc-900 rounded-xl m-4 p-4">
         <Text className="text-white text-xl mb-3">🏋️‍♂️ Performance Overview</Text>
         <LineChart
           data={dummyData.performance}
@@ -84,6 +119,7 @@ const ProfileScreen = () => {
         </TouchableOpacity>
       </View>
 
+      {/* Action Buttons */}
       <View className="m-4">
         <TouchableOpacity className="bg-green-600 px-4 py-3 rounded-md mb-2">
           <Text className="text-white text-center">📥 Download Records</Text>
@@ -100,6 +136,4 @@ const ProfileScreen = () => {
       </View>
     </ScrollView>
   );
-};
-
-export default ProfileScreen;
+}

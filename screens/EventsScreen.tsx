@@ -28,7 +28,7 @@ export default function EventsScreen() {
   const [activeTab, setActiveTab] = useState<"registered" | "upcoming">(
     "registered"
   );
-// ----- Need to update Later--------------------------------------------//
+  // ----- Need to update Later--------------------------------------------//
   // Simulated registered event IDs (would come from backend normally)
   const registeredEventIds = ["event-001"];
 
@@ -55,15 +55,17 @@ export default function EventsScreen() {
     transform: [{ translateX: translateX.value }],
   }));
 
-  const panGesture = Gesture.Pan().onEnd((event) => {
-    const { translationX } = event;
+  const panGesture = Gesture.Pan()
+    .onEnd((event) => {
+      const { translationX } = event;
 
-    if (translationX > 50 && activeTab === "upcoming") {
-      runOnJS(handleTabChange)("registered");
-    } else if (translationX < -50 && activeTab === "registered") {
-      runOnJS(handleTabChange)("upcoming");
-    }
-  });
+      if (translationX > 50 && activeTab === "upcoming") {
+        runOnJS(handleTabChange)("registered");
+      } else if (translationX < -50 && activeTab === "registered") {
+        runOnJS(handleTabChange)("upcoming");
+      }
+    })
+    .simultaneousWithExternalGesture(Gesture.Native()); // ✅ allow ScrollView
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -126,8 +128,7 @@ export default function EventsScreen() {
                     gender={event.gender as "Male" | "Female" | "All"}
                     registrationDeadline={event.registrationDeadline}
                   />
-                ))
-                }
+                ))}
               </ScrollView>
             </View>
 
@@ -135,7 +136,7 @@ export default function EventsScreen() {
             <View style={{ width: screenWidth }}>
               <ScrollView
                 showsVerticalScrollIndicator={true}
-                contentContainerStyle={{ paddingRight: 15, paddingBottom: 20 }}
+                contentContainerStyle={{ paddingBottom: 20 }}
               >
                 {upcomingEvents.map((event) => (
                   <EventCard
