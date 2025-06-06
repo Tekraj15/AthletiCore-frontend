@@ -59,7 +59,7 @@ function RootLayoutNav() {
       if (!user && !inAuthGroup) {
         router.replace("/(auth)");
       } else if (user && inAuthGroup) {
-        router.replace("/(tabs)");
+        router.replace("./(tabs)/events");
       }
     }, 0);
 

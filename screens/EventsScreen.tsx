@@ -19,6 +19,7 @@ import {
   Gesture,
   GestureHandlerRootView,
 } from "react-native-gesture-handler";
+import { mockEventData } from "../constants/mockEventData"; // Import mock data
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -27,6 +28,21 @@ export default function EventsScreen() {
   const [activeTab, setActiveTab] = useState<"registered" | "upcoming">(
     "registered"
   );
+  // ----- Need to update Later--------------------------------------------//
+  // Simulated registered event IDs (would come from backend normally)
+  const registeredEventIds = ["event-001"];
+
+  // Get all events from mock data
+  const allEvents = Object.values(mockEventData);
+
+  const registeredEvents = allEvents.filter((e) =>
+    registeredEventIds.includes(e.id)
+  );
+  const upcomingEvents = allEvents.filter(
+    (e) => !registeredEventIds.includes(e.id)
+  );
+
+  //-------------------------------------------//
 
   const handleTabChange = (tab: "upcoming" | "registered") => {
     setActiveTab(tab);
@@ -39,24 +55,26 @@ export default function EventsScreen() {
     transform: [{ translateX: translateX.value }],
   }));
 
-  const panGesture = Gesture.Pan().onEnd((event) => {
-    const { translationX } = event;
+  const panGesture = Gesture.Pan()
+    .onEnd((event) => {
+      const { translationX } = event;
 
-    if (translationX > 50 && activeTab === "upcoming") {
-      runOnJS(handleTabChange)("registered");
-    } else if (translationX < -50 && activeTab === "registered") {
-      runOnJS(handleTabChange)("upcoming");
-    }
-  });
+      if (translationX > 50 && activeTab === "upcoming") {
+        runOnJS(handleTabChange)("registered");
+      } else if (translationX < -50 && activeTab === "registered") {
+        runOnJS(handleTabChange)("upcoming");
+      }
+    })
+    .simultaneousWithExternalGesture(Gesture.Native()); // ✅ allow ScrollView
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <View className="flex-1 bg-black px-4 pt-12">
+      <View className="flex-1 bg-black px-4 pt-12 ">
         {/* Header */}
-        <View className="flex-row justify-between items-center mb-4">
-          <Text className="text-white  text-lg font-bold ">AthletiCore</Text>
+        {/* <View className="flex-row justify-between items-center mb-4">
+          <Text className="text-white text-lg font-bold">AthletiCore</Text>
           <Feather name="settings" size={20} color="white" />
-        </View>
+        </View> */}
 
         {/* Tabs */}
         <View className="flex-row justify-around border-b border-gray-700 mb-4">
@@ -96,47 +114,43 @@ export default function EventsScreen() {
             <View style={{ width: screenWidth }}>
               <ScrollView
                 showsVerticalScrollIndicator={true}
-                contentContainerStyle={{
-                  paddingRight: 15,
-                  paddingBottom: 20,
-                }}
+                contentContainerStyle={{ paddingRight: 15, paddingBottom: 20 }}
               >
-                <EventCard
-                  title="State Powerlifting Challenge"
-                  location="789 Pine Ln, Anytown, USA"
-                  date="Dec 5–7"
-                  image="https://via.placeholder.com/80"
-                  weightCategory="74kg"
-                  gender="Male"
-                  registrationDeadline="Oct 15"
-                />
+                {registeredEvents.map((event) => (
+                  <EventCard
+                    key={event.id}
+                    id={event.id}
+                    title={event.title}
+                    location={event.location}
+                    date={event.date}
+                    image={event.image}
+                    weightCategory={event.weightCategories[0]}
+                    gender={event.gender as "Male" | "Female" | "All"}
+                    registrationDeadline={event.registrationDeadline}
+                  />
+                ))}
               </ScrollView>
             </View>
 
             {/* Upcoming Events */}
-            <View style={{ width: screenWidth}}>
+            <View style={{ width: screenWidth }}>
               <ScrollView
                 showsVerticalScrollIndicator={true}
-                contentContainerStyle={{ paddingRight: 15, paddingBottom: 20 }}
+                contentContainerStyle={{ paddingBottom: 20 }}
               >
-                <EventCard
-                  title="National Powerlifting Championship"
-                  location="123 Main St, Anytown, USA"
-                  date="Oct 26–28"
-                  image="https://via.placeholder.com/80"
-                  weightCategory="74kg"
-                  gender="Male"
-                  registrationDeadline="Oct 15"
-                />
-                <EventCard
-                  title="Regional Powerlifting Meet"
-                  location="456 Oak Ave, Anytown, USA"
-                  date="Nov 15–17"
-                  image="https://via.placeholder.com/80"
-                  weightCategory="74kg"
-                  gender="Male"
-                  registrationDeadline="Oct 15"
-                />
+                {upcomingEvents.map((event) => (
+                  <EventCard
+                    key={event.id}
+                    id={event.id}
+                    title={event.title}
+                    location={event.location}
+                    date={event.date}
+                    image={event.image}
+                    weightCategory={event.weightCategories[0]}
+                    gender={event.gender as "Male" | "Female" | "All"}
+                    registrationDeadline={event.registrationDeadline}
+                  />
+                ))}
               </ScrollView>
             </View>
           </Animated.View>
