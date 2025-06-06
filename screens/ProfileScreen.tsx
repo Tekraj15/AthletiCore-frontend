@@ -7,14 +7,13 @@ import {
   Dimensions,
   Animated,
   Easing,
-  ScrollView, 
+  ScrollView, // Add this import
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LineChart } from 'react-native-chart-kit';
 
 const { width } = Dimensions.get("window");
 const screenWidth = Dimensions.get('window').width;
-
 
 const menuItems = [
   { icon: "✏️", label: "Update Profile" },
@@ -101,7 +100,7 @@ export default function ProfileWithDrawer() {
           <Text className="text-white text-xl mb-3">🏋️‍♂️ Performance Overview</Text>
           <LineChart
             data={dummyData.performance}
-            width={screenWidth - 40}
+            width={screenWidth - 80} // Reduced width to account for container margins/padding
             height={220}
             chartConfig={{
               backgroundColor: '#1f2937',
