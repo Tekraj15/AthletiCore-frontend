@@ -1,32 +1,4 @@
-// components/ui/button.tsx
-// import React from 'react';
-// import { TouchableOpacity, Text } from 'react-native';
 
-// const Button = ({ onPress, children, style = {}, textStyle = {} }) => {
-//   return (
-//     <TouchableOpacity
-//       onPress={onPress}
-//       style={[
-//         {
-//           backgroundColor: '#3B82F6',
-//           paddingVertical: 12,
-//           paddingHorizontal: 20,
-//           borderRadius: 16,
-//           alignItems: 'center',
-//         },
-//         style,
-//       ]}
-//     >
-//       <Text style={[{ color: '#fff', fontSize: 16, fontWeight: '600' }, textStyle]}>
-//         {children}
-//       </Text>
-//     </TouchableOpacity>
-//   );
-// };
-
-// export default Button;
-
-// components/ui/button.tsx
 import React, { ReactNode } from 'react';
 import { TouchableOpacity, Text, GestureResponderEvent, StyleProp, TextStyle, ViewStyle } from 'react-native';
 
