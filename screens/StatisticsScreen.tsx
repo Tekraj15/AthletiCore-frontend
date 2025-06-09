@@ -79,8 +79,7 @@ const StatisticsDashboard = () => {
     backgroundGradientFrom: colors.surface,
     backgroundGradientTo: colors.surface,
     decimalPlaces: 0,
-    color: (opacity = 1) =>
-      `${colors.primary}${Math.floor(opacity * 255).toString(16)}`,
+    color: (opacity = 1) => `${colors.primary}${Math.floor(opacity * 255).toString(16)}`,
     labelColor: () => colors.onSurfaceVariant,
     style: {
       borderRadius: 16,
@@ -100,18 +99,18 @@ const StatisticsDashboard = () => {
   const performanceData = {
     labels: ["Jan", "Feb", "Mar", "Apr"],
     datasets: [
-      {
-        data: [100, 110, 120, 130],
+      { 
+        data: [100, 110, 120, 130], 
         color: () => colors.error,
         strokeWidth: 3,
       },
-      {
-        data: [90, 95, 100, 105],
+      { 
+        data: [90, 95, 100, 105], 
         color: () => colors.primary,
         strokeWidth: 3,
       },
-      {
-        data: [120, 125, 130, 135],
+      { 
+        data: [120, 125, 130, 135], 
         color: () => colors.success,
         strokeWidth: 3,
       },
@@ -121,16 +120,14 @@ const StatisticsDashboard = () => {
 
   const scoringData = {
     labels: ["Event 1", "Event 2", "Event 3"],
-    datasets: [
-      {
-        data: [80, 90, 85],
-        colors: [
-          () => colors.primary,
-          () => colors.accent,
-          () => colors.success,
-        ],
-      },
-    ],
+    datasets: [{ 
+      data: [80, 90, 85],
+      colors: [
+        () => colors.primary,
+        () => colors.accent,
+        () => colors.success,
+      ],
+    }],
   };
 
   const performanceTable: PerformanceItem[] = [
@@ -163,111 +160,162 @@ const StatisticsDashboard = () => {
     },
   ];
 
-  const renderTableRow = ({
-    item,
-    index,
-  }: {
-    item: PerformanceItem;
-    index: number;
-  }) => (
-    <Pressable
+  // Mobile-friendly card layout for each performance item
+  const renderPerformanceCard = ({ item, index }: { item: PerformanceItem; index: number }) => (
+    <Pressable 
       style={[
-        styles.tableRow,
+        styles.performanceCard,
         {
-          backgroundColor:
-            index % 2 === 0 ? colors.surface : colors.surfaceVariant,
-          borderBottomColor: colors.border,
-        },
+          backgroundColor: colors.surface,
+          borderColor: colors.border,
+        }
       ]}
-      android_ripple={{ color: colors.primary + "20" }}
+      android_ripple={{ color: colors.primary + "10" }}
     >
-      <Text
-        style={[styles.cell, { color: colors.onSurface }]}
-        numberOfLines={2}
-      >
-        {item.eventName}
-      </Text>
-      <Text style={[styles.cell, { color: colors.onSurfaceVariant }]}>
-        {format(new Date(item.date), "MMM dd")}
-      </Text>
-      <View style={styles.liftTypeContainer}>
-        <Text
-          style={[
-            styles.liftTypeText,
-            {
-              backgroundColor:
-                item.liftType === "Squat"
-                  ? colors.error + "20"
-                  : item.liftType === "Bench Press"
-                  ? colors.primary + "20"
-                  : colors.success + "20",
-              color:
-                item.liftType === "Squat"
-                  ? colors.error
-                  : item.liftType === "Bench Press"
-                  ? colors.primary
-                  : colors.success,
-            },
-          ]}
-        >
-          {item.liftType}
-        </Text>
+      <View style={styles.cardTopRow}>
+        <View style={styles.eventInfo}>
+          <Text style={[styles.eventName, { color: colors.onSurface }]} numberOfLines={2}>
+            {item.eventName}
+          </Text>
+          <Text style={[styles.eventDate, { color: colors.onSurfaceVariant }]}>
+            {format(new Date(item.date), "MMM dd, yyyy")}
+          </Text>
+        </View>
+        <View style={styles.liftBadgeContainer}>
+          <Text style={[styles.liftBadge, { 
+            backgroundColor: item.liftType === 'Squat' ? colors.error + "20" : 
+                           item.liftType === 'Bench Press' ? colors.primary + "20" : 
+                           colors.success + "20",
+            color: item.liftType === 'Squat' ? colors.error : 
+                   item.liftType === 'Bench Press' ? colors.primary : 
+                   colors.success,
+          }]}>
+            {item.liftType}
+          </Text>
+        </View>
       </View>
-      {item.attempts.map((attempt, i) => (
-        <Text
-          key={i}
-          style={[
-            styles.smallCell,
-            styles.centerText,
-            { color: colors.onSurfaceVariant },
-          ]}
-        >
-          {attempt}kg ✓
+
+      <View style={styles.attemptsSection}>
+        <Text style={[styles.attemptsLabel, { color: colors.onSurfaceVariant }]}>
+          Attempts
         </Text>
-      ))}
-      <Text
-        style={[
-          styles.smallCell,
-          styles.boldText,
-          styles.centerText,
-          { color: colors.primary },
-        ]}
-      >
-        {item.best}kg
-      </Text>
-      <View
-        style={[styles.pointsBadge, { backgroundColor: colors.accent + "20" }]}
-      >
-        <Text style={[styles.pointsText, { color: colors.accent }]}>
-          {item.points}
-        </Text>
+        <View style={styles.attemptsRow}>
+          {item.attempts.map((attempt, i) => (
+            <View key={i} style={[styles.attemptItem, { backgroundColor: colors.surfaceVariant }]}>
+              <Text style={[styles.attemptNumber, { color: colors.onSurfaceVariant }]}>
+                A{i + 1}
+              </Text>
+              <Text style={[styles.attemptWeight, { color: colors.onSurface }]}>
+                {attempt}kg
+              </Text>
+              <Text style={[styles.attemptStatus, { color: colors.success }]}>
+                ✓
+              </Text>
+            </View>
+          ))}
+        </View>
+      </View>
+
+      <View style={styles.resultsSection}>
+        <View style={styles.resultItem}>
+          <Text style={[styles.resultLabel, { color: colors.onSurfaceVariant }]}>
+            Best Lift
+          </Text>
+          <Text style={[styles.resultValue, { color: colors.primary }]}>
+            {item.best}kg
+          </Text>
+        </View>
+        <View style={styles.resultItem}>
+          <Text style={[styles.resultLabel, { color: colors.onSurfaceVariant }]}>
+            Points
+          </Text>
+          <View style={[styles.pointsBadgeCard, { backgroundColor: colors.accent + "20" }]}>
+            <Text style={[styles.pointsValueCard, { color: colors.accent }]}>
+              {item.points}
+            </Text>
+          </View>
+        </View>
       </View>
     </Pressable>
   );
 
-  const DatePickerButton = ({
-    date,
-    onPress,
-    label,
-  }: {
-    date: Date;
-    onPress: () => void;
+  // Horizontal scrollable table for wider screens
+  const renderTableRow = ({ item, index }: { item: PerformanceItem; index: number }) => (
+    <View 
+      style={[
+        styles.tableRow,
+        {
+          backgroundColor: index % 2 === 0 ? colors.surface : colors.surfaceVariant,
+          borderBottomColor: colors.border,
+        }
+      ]}
+    >
+      <Text style={[styles.tableCell, { color: colors.onSurface, minWidth: 120 }]} numberOfLines={2}>
+        {item.eventName}
+      </Text>
+      <Text style={[styles.tableCell, { color: colors.onSurfaceVariant, minWidth: 80 }]}>
+        {format(new Date(item.date), "MMM dd")}
+      </Text>
+      <View style={[styles.tableCellContainer, { minWidth: 100 }]}>
+        <Text style={[styles.liftTypeText, { 
+          backgroundColor: item.liftType === 'Squat' ? colors.error + "20" : 
+                         item.liftType === 'Bench Press' ? colors.primary + "20" : 
+                         colors.success + "20",
+          color: item.liftType === 'Squat' ? colors.error : 
+                 item.liftType === 'Bench Press' ? colors.primary : 
+                 colors.success,
+        }]}>
+          {item.liftType}
+        </Text>
+      </View>
+      {item.attempts.map((attempt, i) => (
+        <Text 
+          key={i} 
+          style={[
+            styles.tableCell, 
+            styles.centerText,
+            { color: colors.onSurfaceVariant, minWidth: 60 }
+          ]}
+        >
+          {attempt}kg
+        </Text>
+      ))}
+      <Text style={[
+        styles.tableCell, 
+        styles.boldText, 
+        styles.centerText,
+        { color: colors.primary, minWidth: 70 }
+      ]}>
+        {item.best}kg
+      </Text>
+      <View style={[styles.tableCellContainer, { minWidth: 60 }]}>
+        <View style={[styles.pointsBadge, { backgroundColor: colors.accent + "20" }]}>
+          <Text style={[styles.pointsText, { color: colors.accent }]}>
+            {item.points}
+          </Text>
+        </View>
+      </View>
+    </View>
+  );
+
+  const DatePickerButton = ({ 
+    date, 
+    onPress, 
+    label 
+  }: { 
+    date: Date; 
+    onPress: () => void; 
     label: string;
   }) => (
-    <Pressable
+    <Pressable 
       onPress={onPress}
-      style={[
-        styles.dateButton,
-        {
-          backgroundColor: colors.surfaceVariant,
-          borderColor: colors.border,
-        },
-      ]}
+      style={[styles.dateButton, { 
+        backgroundColor: colors.surfaceVariant,
+        borderColor: colors.border,
+      }]}
       android_ripple={{ color: colors.primary + "20" }}
     >
-      <Text
-        style={[styles.dateButtonLabel, { color: colors.onSurfaceVariant }]}
-      >
+      <Text style={[styles.dateButtonLabel, { color: colors.onSurfaceVariant }]}>
         {label}
       </Text>
       <Text style={[styles.dateButtonText, { color: colors.onSurface }]}>
@@ -289,26 +337,19 @@ const StatisticsDashboard = () => {
         <Text style={[styles.subtitle, { color: colors.onSurfaceVariant }]}>
           Track your powerlifting progress over time
         </Text>
-
+        
         <View style={styles.filterSection}>
-          <Text
-            style={[styles.filterLabel, { color: colors.onSurfaceVariant }]}
-          >
+          <Text style={[styles.filterLabel, { color: colors.onSurfaceVariant }]}>
             Filter by:
           </Text>
-          <View
-            style={[
-              styles.pickerContainer,
-              {
-                backgroundColor: colors.surfaceVariant,
-                borderColor: colors.border,
-              },
-            ]}
-          >
+          <View style={[styles.pickerContainer, { 
+            backgroundColor: colors.surfaceVariant,
+            borderColor: colors.border,
+          }]}>
             <Picker
               selectedValue={viewBy}
               onValueChange={(val) => setViewBy(val)}
-              style={[styles.picker, { color: "#000000" }]} // Set text color to black
+              style={[styles.picker, { color: '#000000' }]}
               dropdownIconColor={colors.onSurfaceVariant}
             >
               <Picker.Item label="All Events" value="All Events" />
@@ -319,9 +360,7 @@ const StatisticsDashboard = () => {
         </View>
 
         <View style={styles.dateRangeSection}>
-          <Text
-            style={[styles.filterLabel, { color: colors.onSurfaceVariant }]}
-          >
+          <Text style={[styles.filterLabel, { color: colors.onSurfaceVariant }]}>
             Date Range:
           </Text>
           <View style={styles.dateRangeContainer}>
@@ -330,9 +369,7 @@ const StatisticsDashboard = () => {
               onPress={() => setShowStartPicker(true)}
               label="From"
             />
-            <View
-              style={[styles.dateSeparator, { backgroundColor: colors.border }]}
-            />
+            <View style={[styles.dateSeparator, { backgroundColor: colors.border }]} />
             <DatePickerButton
               date={endDate}
               onPress={() => setShowEndPicker(true)}
@@ -363,7 +400,7 @@ const StatisticsDashboard = () => {
           />
         )}
 
-        <Pressable
+        <Pressable 
           style={[styles.downloadButton, { backgroundColor: colors.primary }]}
           onPress={() => console.log("Download Report clicked")}
           android_ripple={{ color: "rgba(255,255,255,0.2)" }}
@@ -379,12 +416,7 @@ const StatisticsDashboard = () => {
             <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>
               Lift Progress Trends
             </Text>
-            <Text
-              style={[
-                styles.sectionSubtitle,
-                { color: colors.onSurfaceVariant },
-              ]}
-            >
+            <Text style={[styles.sectionSubtitle, { color: colors.onSurfaceVariant }]}>
               Track your strength gains over time
             </Text>
           </View>
@@ -402,25 +434,14 @@ const StatisticsDashboard = () => {
           <View style={styles.legendContainer}>
             {performanceData.legend?.map((item, index) => (
               <View key={index} style={styles.legendItem}>
-                <View
-                  style={[
-                    styles.legendColor,
-                    {
-                      backgroundColor:
-                        index === 0
-                          ? colors.error
-                          : index === 1
-                          ? colors.primary
-                          : colors.success,
-                    },
-                  ]}
-                />
-                <Text
-                  style={[
-                    styles.legendText,
-                    { color: colors.onSurfaceVariant },
-                  ]}
-                >
+                <View style={[
+                  styles.legendColor,
+                  { 
+                    backgroundColor: index === 0 ? colors.error : 
+                                   index === 1 ? colors.primary : colors.success 
+                  }
+                ]} />
+                <Text style={[styles.legendText, { color: colors.onSurfaceVariant }]}>
                   {item}
                 </Text>
               </View>
@@ -436,12 +457,7 @@ const StatisticsDashboard = () => {
             <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>
               Competition Points
             </Text>
-            <Text
-              style={[
-                styles.sectionSubtitle,
-                { color: colors.onSurfaceVariant },
-              ]}
-            >
+            <Text style={[styles.sectionSubtitle, { color: colors.onSurfaceVariant }]}>
               GL/IPF scoring comparison
             </Text>
           </View>
@@ -461,69 +477,69 @@ const StatisticsDashboard = () => {
         </CardContent>
       </Card>
 
-      {/* Performance Table */}
+      {/* Performance Table - Responsive Layout */}
       <Card style={[styles.card, { backgroundColor: colors.surface }]}>
         <CardContent style={styles.cardContent}>
           <View style={styles.cardHeader}>
             <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>
               Competition History
             </Text>
-            <Text
-              style={[
-                styles.sectionSubtitle,
-                { color: colors.onSurfaceVariant },
-              ]}
-            >
+            <Text style={[styles.sectionSubtitle, { color: colors.onSurfaceVariant }]}>
               Detailed attempt breakdown
             </Text>
           </View>
-
-          <View
-            style={[styles.tableHeader, { borderBottomColor: colors.border }]}
-          >
-            <Text style={[styles.tableHeaderCell, { color: colors.onSurface }]}>
-              Event
-            </Text>
-            <Text style={[styles.tableHeaderCell, { color: colors.onSurface }]}>
-              Date
-            </Text>
-            <Text style={[styles.tableHeaderCell, { color: colors.onSurface }]}>
-              Lift
-            </Text>
-            <Text
-              style={[styles.tableHeaderSmall, { color: colors.onSurface }]}
-            >
-              A1
-            </Text>
-            <Text
-              style={[styles.tableHeaderSmall, { color: colors.onSurface }]}
-            >
-              A2
-            </Text>
-            <Text
-              style={[styles.tableHeaderSmall, { color: colors.onSurface }]}
-            >
-              A3
-            </Text>
-            <Text
-              style={[styles.tableHeaderSmall, { color: colors.onSurface }]}
-            >
-              Best
-            </Text>
-            <Text
-              style={[styles.tableHeaderSmall, { color: colors.onSurface }]}
-            >
-              Points
-            </Text>
-          </View>
-
-          <FlatList
-            data={performanceTable}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={renderTableRow}
-            scrollEnabled={false}
-            showsVerticalScrollIndicator={false}
-          />
+          
+          {/* Mobile Card Layout (screenWidth < 768) */}
+          {screenWidth < 768 ? (
+            <FlatList
+              data={performanceTable}
+              keyExtractor={(item) => item.id.toString()}
+              renderItem={renderPerformanceCard}
+              scrollEnabled={false}
+              showsVerticalScrollIndicator={false}
+              ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
+            />
+          ) : (
+            /* Desktop Table Layout */
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              <View style={styles.tableContainer}>
+                <View style={[styles.tableHeader, { borderBottomColor: colors.border }]}>
+                  <Text style={[styles.tableHeaderCell, { color: colors.onSurface, minWidth: 120 }]}>
+                    Event
+                  </Text>
+                  <Text style={[styles.tableHeaderCell, { color: colors.onSurface, minWidth: 80 }]}>
+                    Date
+                  </Text>
+                  <Text style={[styles.tableHeaderCell, { color: colors.onSurface, minWidth: 100 }]}>
+                    Lift
+                  </Text>
+                  <Text style={[styles.tableHeaderSmall, { color: colors.onSurface, minWidth: 60 }]}>
+                    A1
+                  </Text>
+                  <Text style={[styles.tableHeaderSmall, { color: colors.onSurface, minWidth: 60 }]}>
+                    A2
+                  </Text>
+                  <Text style={[styles.tableHeaderSmall, { color: colors.onSurface, minWidth: 60 }]}>
+                    A3
+                  </Text>
+                  <Text style={[styles.tableHeaderSmall, { color: colors.onSurface, minWidth: 70 }]}>
+                    Best
+                  </Text>
+                  <Text style={[styles.tableHeaderSmall, { color: colors.onSurface, minWidth: 60 }]}>
+                    Points
+                  </Text>
+                </View>
+                
+                <FlatList
+                  data={performanceTable}
+                  keyExtractor={(item) => item.id.toString()}
+                  renderItem={renderTableRow}
+                  scrollEnabled={false}
+                  showsVerticalScrollIndicator={false}
+                />
+              </View>
+            </ScrollView>
+          )}
         </CardContent>
       </Card>
     </ScrollView>
@@ -692,19 +708,22 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   tableHeaderCell: {
-    flex: 1,
     fontSize: 12,
     fontWeight: "700",
     textTransform: "uppercase",
     letterSpacing: 0.5,
+    paddingHorizontal: 8,
+    paddingVertical: 12,
+    textAlign: "left",
   },
   tableHeaderSmall: {
-    width: 50,
     fontSize: 12,
     fontWeight: "700",
     textAlign: "center",
     textTransform: "uppercase",
     letterSpacing: 0.5,
+    paddingHorizontal: 8,
+    paddingVertical: 12,
   },
   tableRow: {
     flexDirection: "row",
@@ -715,15 +734,124 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 4,
   },
-  cell: {
-    flex: 1,
-    fontSize: 14,
-    fontWeight: "500",
-    lineHeight: 18,
+  // Mobile performance card styles
+  performanceCard: {
+    borderRadius: 12,
+    borderWidth: 1,
+    padding: 16,
+    marginBottom: 4,
   },
-  liftTypeContainer: {
-    flex: 1,
+  cardTopRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "flex-start",
+    marginBottom: 16,
+  },
+  eventInfo: {
+    flex: 1,
+    marginRight: 12,
+  },
+  eventName: {
+    fontSize: 16,
+    fontWeight: "600",
+    marginBottom: 4,
+    lineHeight: 20,
+  },
+  eventDate: {
+    fontSize: 12,
+    fontWeight: "400",
+  },
+  liftBadgeContainer: {
+    alignItems: "flex-end",
+  },
+  liftBadge: {
+    fontSize: 11,
+    fontWeight: "700",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+  },
+  attemptsSection: {
+    marginBottom: 16,
+  },
+  attemptsLabel: {
+    fontSize: 12,
+    fontWeight: "600",
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+    marginBottom: 8,
+  },
+  attemptsRow: {
+    flexDirection: "row",
+    gap: 8,
+  },
+  attemptItem: {
+    flex: 1,
+    padding: 8,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  attemptNumber: {
+    fontSize: 10,
+    fontWeight: "600",
+    marginBottom: 2,
+  },
+  attemptWeight: {
+    fontSize: 14,
+    fontWeight: "600",
+    marginBottom: 2,
+  },
+  attemptStatus: {
+    fontSize: 12,
+    fontWeight: "600",
+  },
+  resultsSection: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  resultItem: {
+    alignItems: "center",
+  },
+  resultLabel: {
+    fontSize: 12,
+    fontWeight: "600",
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+    marginBottom: 4,
+  },
+  resultValue: {
+    fontSize: 18,
+    fontWeight: "700",
+  },
+  pointsBadgeCard: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    minWidth: 50,
+    alignItems: "center",
+  },
+  pointsValueCard: {
+    fontSize: 16,
+    fontWeight: "700",
+  },
+  // Table styles
+  tableContainer: {
+    minWidth: screenWidth + 100, // Ensure horizontal scroll
+  },
+  tableCell: {
+    fontSize: 13,
+    fontWeight: "500",
+    paddingHorizontal: 8,
+    paddingVertical: 12,
+    textAlign: "left",
+  },
+  tableCellContainer: {
+    paddingHorizontal: 8,
+    paddingVertical: 12,
+    justifyContent: "center",
   },
   liftTypeText: {
     fontSize: 12,
@@ -735,9 +863,12 @@ const styles = StyleSheet.create({
     letterSpacing: 0.3,
   },
   smallCell: {
-    width: 50,
     fontSize: 13,
     fontWeight: "500",
+    paddingHorizontal: 8,
+    paddingVertical: 12,
+    textAlign: "center",
+    minWidth: 60,
   },
   centerText: {
     textAlign: "center",
