@@ -19,7 +19,7 @@ import {
   Gesture,
   GestureHandlerRootView,
 } from "react-native-gesture-handler";
-import { mockEventData } from "../constants/mockEventData"; // Import mock data
+import { mockEventData } from "../constants/mockEventData"; 
 
 const screenWidth = Dimensions.get("window").width;
 

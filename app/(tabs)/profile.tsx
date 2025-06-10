@@ -1,3 +1,3 @@
 
-import ProfileWithDrawer from '../../screens/ProfileScreen'
-export default ProfileWithDrawer
+import Profile from '../../screens/ProfileScreen'
+export default Profile
