@@ -12,6 +12,9 @@ import { useAuth } from "@/context/auth-context";
 import { useEffect, useRef, useState } from "react";
 import Feather from "react-native-vector-icons/Feather";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { theme } from "@/constants/theme"; 
+
+const colors = theme.dark; 
 
 export default function SignInScreen() {
   const router = useRouter();
@@ -61,7 +64,6 @@ export default function SignInScreen() {
 
     if (!valid) return;
 
-    // Mock login logic
     if (email === "user@player.com" && password === "Player") {
       if (rememberMe) {
         await AsyncStorage.setItem("rememberedEmail", email);
@@ -69,12 +71,7 @@ export default function SignInScreen() {
         await AsyncStorage.removeItem("rememberedEmail");
       }
 
-      login({
-        name: "Demo Player",
-        email,
-        role: "player",
-      });
-
+      login({ name: "Demo Player", email, role: "player" });
       router.replace("/(tabs)/events");
 
     } else if (email === "user@official.com" && password === "Official") {
@@ -84,12 +81,7 @@ export default function SignInScreen() {
         await AsyncStorage.removeItem("rememberedEmail");
       }
 
-      login({
-        name: "Judge John",
-        email,
-        role: "official",
-      });
-
+      login({ name: "Judge John", email, role: "official" });
       router.replace("/(official)/dashboard");
 
     } else {
@@ -98,36 +90,49 @@ export default function SignInScreen() {
   };
 
   return (
-    <View className="flex-1 justify-center px-6 bg-[#000000]">
-      <Text className="text-3xl font-bold text-white text-center mb-8">
+    <View style={{ flex: 1, justifyContent: "center", paddingHorizontal: 24, backgroundColor: colors.background }}>
+      <Text style={{ fontSize: 28, fontWeight: "bold", color: colors.onSurface, textAlign: "center", marginBottom: 16 }}>
         Welcome To Athleticore
       </Text>
-      <Text className="text-3xl font-bold text-white text-center mb-8">
+      <Text style={{ fontSize: 28, fontWeight: "bold", color: colors.onSurface, textAlign: "center", marginBottom: 16 }}>
         Login Page
       </Text>
 
       {/* Email */}
       <TextInput
-        className="bg-[#171717] text-white rounded-md p-4 mb-1"
+        style={{
+          backgroundColor: colors.surface,
+          color: colors.onSurface,
+          borderRadius: 8,
+          padding: 16,
+          marginBottom: 4,
+        }}
         placeholder="Email"
-        placeholderTextColor="#C5BFBF"
+        placeholderTextColor={colors.onSurfaceVariant}
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
         autoCapitalize="none"
       />
       {emailError ? (
-        <Text className="text-red-400 mb-2">{emailError}</Text>
+        <Text style={{ color: colors.error, marginBottom: 8 }}>{emailError}</Text>
       ) : (
-        <View className="mb-2" />
+        <View style={{ marginBottom: 8 }} />
       )}
 
       {/* Password */}
-      <View className="flex-row items-center bg-[#171717] rounded-md px-4 mb-1">
+      <View style={{
+        flexDirection: "row",
+        alignItems: "center",
+        backgroundColor: colors.surface,
+        borderRadius: 8,
+        paddingHorizontal: 16,
+        marginBottom: 4
+      }}>
         <TextInput
-          className="flex-1 text-white py-4"
+          style={{ flex: 1, color: colors.onSurface, paddingVertical: 16 }}
           placeholder="Password"
-          placeholderTextColor="#C5BFBF"
+          placeholderTextColor={colors.onSurfaceVariant}
           value={password}
           onChangeText={setPassword}
           secureTextEntry={!showPassword}
@@ -136,47 +141,59 @@ export default function SignInScreen() {
           <Feather
             name={showPassword ? "eye-off" : "eye"}
             size={20}
-            color="#C5BFBF"
+            color={colors.onSurfaceVariant}
           />
         </TouchableOpacity>
       </View>
       {passwordError ? (
-        <Text className="text-red-400 mb-2">{passwordError}</Text>
+        <Text style={{ color: colors.error, marginBottom: 8 }}>{passwordError}</Text>
       ) : (
-        <View className="mb-2" />
+        <View style={{ marginBottom: 8 }} />
       )}
 
       {/* Remember Me + Forgot Password */}
-      <View className="flex-row justify-between items-center mb-6">
+      <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
         <TouchableOpacity
           onPress={() => setRememberMe(!rememberMe)}
-          className="px-4 py-2 bg-[#211c1c] rounded-md"
+          style={{
+            paddingHorizontal: 16,
+            paddingVertical: 8,
+            backgroundColor: colors.surfaceVariant,
+            borderRadius: 8,
+          }}
         >
-          <Text className="text-white font-semibold">Remember Me</Text>
+          <Text style={{ color: colors.onSurface, fontWeight: "600" }}>Remember Me</Text>
         </TouchableOpacity>
 
         <Pressable onPress={() => router.push("/(auth)/forgot-password")}>
-          <Text className="text-white font-semibold">Forgot Password</Text>
+          <Text style={{ color: colors.onSurface, fontWeight: "600" }}>Forgot Password</Text>
         </Pressable>
       </View>
 
       {/* Login Button */}
       <TouchableOpacity
         onPress={handleLogin}
-        className="bg-[#0c0c0c] py-4 rounded-md mb-4 active:opacity-80"
+        style={{
+          backgroundColor: colors.primary,
+          paddingVertical: 16,
+          borderRadius: 8,
+          marginBottom: 16,
+        }}
       >
-        <Text className="text-center text-white font-bold text-lg">Login</Text>
+        <Text style={{ textAlign: "center", color: colors.onSurface, fontWeight: "bold", fontSize: 18 }}>
+          Login
+        </Text>
       </TouchableOpacity>
 
       {/* Sign Up */}
       <Pressable onPress={() => router.push("/(auth)/register")}>
-        <Text className="text-center text-gray-300 mt-2">
+        <Text style={{ textAlign: "center", color: colors.onSurfaceVariant, marginTop: 8 }}>
           Don’t have an account?{" "}
-          <Text className="text-white font-semibold underline">Sign Up</Text>
+          <Text style={{ color: colors.onSurface, fontWeight: "600", textDecorationLine: "underline" }}>
+            Sign Up
+          </Text>
         </Text>
       </Pressable>
     </View>
   );
 }
-
-
