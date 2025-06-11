@@ -4,7 +4,6 @@ import {
   TextInput,
   Pressable,
   Alert,
-  Image,
   TouchableOpacity,
   Animated,
 } from "react-native";
@@ -14,9 +13,10 @@ import { useEffect, useRef, useState } from "react";
 import Feather from "react-native-vector-icons/Feather";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function LoginScreen() {
+export default function SignInScreen() {
   const router = useRouter();
   const { login } = useAuth();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -27,14 +27,12 @@ export default function LoginScreen() {
   const logoOpacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    // Fade-in animation for logo
     Animated.timing(logoOpacity, {
       toValue: 1,
       duration: 800,
       useNativeDriver: true,
     }).start();
 
-    // Load saved email from AsyncStorage
     (async () => {
       const savedEmail = await AsyncStorage.getItem("rememberedEmail");
       if (savedEmail) {
@@ -63,6 +61,7 @@ export default function LoginScreen() {
 
     if (!valid) return;
 
+    // Mock login logic
     if (email === "user@player.com" && password === "Player") {
       if (rememberMe) {
         await AsyncStorage.setItem("rememberedEmail", email);
@@ -70,27 +69,36 @@ export default function LoginScreen() {
         await AsyncStorage.removeItem("rememberedEmail");
       }
 
-      login({ name: "Player User", email });
+      login({
+        name: "Demo Player",
+        email,
+        role: "player",
+      });
+
+      router.replace("/(tabs)/events");
+
+    } else if (email === "user@official.com" && password === "Official") {
+      if (rememberMe) {
+        await AsyncStorage.setItem("rememberedEmail", email);
+      } else {
+        await AsyncStorage.removeItem("rememberedEmail");
+      }
+
+      login({
+        name: "Judge John",
+        email,
+        role: "official",
+      });
+
+      router.replace("/(official)/dashboard");
+
     } else {
-      Alert.alert(
-        "Invalid credentials",
-        "Please check your email and password."
-      );
+      Alert.alert("Invalid credentials", "Please check your email and password.");
     }
   };
 
   return (
     <View className="flex-1 justify-center px-6 bg-[#000000]">
-      {/* Logo */}
-      {/* <Animated.View
-        style={{ opacity: logoOpacity, alignItems: "center", marginBottom: 24 }}
-      >
-        <Image 
-          source={require("../assets/images/image.png")}
-          style={{ width: 100, height: 100, borderRadius: 100 }}
-        />
-      </Animated.View> */}
-
       <Text className="text-3xl font-bold text-white text-center mb-8">
         Welcome To Athleticore
       </Text>
@@ -98,7 +106,7 @@ export default function LoginScreen() {
         Login Page
       </Text>
 
-      {/* Email Input */}
+      {/* Email */}
       <TextInput
         className="bg-[#171717] text-white rounded-md p-4 mb-1"
         placeholder="Email"
@@ -114,7 +122,7 @@ export default function LoginScreen() {
         <View className="mb-2" />
       )}
 
-      {/* Password Input */}
+      {/* Password */}
       <View className="flex-row items-center bg-[#171717] rounded-md px-4 mb-1">
         <TextInput
           className="flex-1 text-white py-4"
@@ -138,13 +146,11 @@ export default function LoginScreen() {
         <View className="mb-2" />
       )}
 
-      {/* Remember Me & Forgot Password */}
+      {/* Remember Me + Forgot Password */}
       <View className="flex-row justify-between items-center mb-6">
         <TouchableOpacity
           onPress={() => setRememberMe(!rememberMe)}
-          className={`px-4 py-2 rounded-md ${
-            rememberMe ? "bg-[#211c1c]" : "bg-[#211c1c]"
-          }`}
+          className="px-4 py-2 bg-[#211c1c] rounded-md"
         >
           <Text className="text-white font-semibold">Remember Me</Text>
         </TouchableOpacity>
@@ -162,13 +168,15 @@ export default function LoginScreen() {
         <Text className="text-center text-white font-bold text-lg">Login</Text>
       </TouchableOpacity>
 
-      {/* Sign Up Link */}
+      {/* Sign Up */}
       <Pressable onPress={() => router.push("/(auth)/register")}>
         <Text className="text-center text-gray-300 mt-2">
-          Don’t have an account?{"  "}
+          Don’t have an account?{" "}
           <Text className="text-white font-semibold underline">Sign Up</Text>
         </Text>
       </Pressable>
     </View>
   );
 }
+
+
