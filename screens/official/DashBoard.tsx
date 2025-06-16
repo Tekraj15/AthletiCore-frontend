@@ -1,155 +1,241 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, Image, ScrollView, StyleSheet } from 'react-native';
-import { Feather } from '@expo/vector-icons';
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Dimensions,
+  StyleSheet,
+  Animated,
+  Pressable,
+} from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 
-export default function Dashboard() {
+const { width } = Dimensions.get('window');
+
+// Tab labels
+const tabs = ['Events', 'Announcements'];
+
+// Event card type
+interface EventItem {
+  title: string;
+  subtitle: string;
+  action?: string;
+  tag?: string;
+}
+
+// Static event data
+const events: EventItem[] = [
+  {
+    title: '3 Days Left',
+    subtitle: 'Regional Powerlifting Championship',
+    action: 'Manage',
+  },
+  {
+    title: 'National Championship',
+    subtitle: 'Squat · Round 2',
+    tag: 'Open',
+  },
+  {
+    title: 'State Qualifier',
+    subtitle: 'Deadlift · Round 1',
+    tag: 'Open',
+  },
+];
+
+export default function OfficialDashboard() {
+  const [tabIndex, setTabIndex] = useState<number>(0);
+  const scrollX = useState<Animated.Value>(new Animated.Value(0))[0];
+  const [hovered, setHovered] = useState<boolean>(false);
+
+  const handleTabPress = (index: number) => {
+    setTabIndex(index);
+    Animated.spring(scrollX, {
+      toValue: index * width,
+      useNativeDriver: false,
+    }).start();
+  };
+
+  const handleManagePress = (item: EventItem) => {
+    alert(`Manage ${item.subtitle}`);
+  };
+
+  const renderEventCard = (item: EventItem, index: number) => (
+    <View key={index} style={styles.card}>
+      <Text style={styles.cardTitle}>{item.title}</Text>
+      <Text style={styles.cardSubtitle}>{item.subtitle}</Text>
+
+      {item.action && (
+        <TouchableOpacity
+          style={styles.manageButton}
+          onPress={() => handleManagePress(item)}
+        >
+          <Text style={styles.manageText}>{item.action}</Text>
+        </TouchableOpacity>
+      )}
+
+      {item.tag && <Text style={styles.statusTag}>{item.tag}</Text>}
+    </View>
+  );
+
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Image
-          source={{ uri: 'https://via.placeholder.com/50' }}
-          style={styles.avatar}
-        />
-        <Text style={styles.headerText}>Official Dashboard</Text>
+    <View style={styles.container}>
+      <Text style={styles.header}>Official Dashboard</Text>
+
+      {/* Tab Buttons */}
+      <View style={styles.tabContainer}>
+        {tabs.map((tab, idx) => (
+          <TouchableOpacity key={idx} onPress={() => handleTabPress(idx)}>
+            <Text
+              style={[
+                styles.tabText,
+                tabIndex === idx && styles.activeTabText,
+              ]}
+            >
+              {tab}
+            </Text>
+          </TouchableOpacity>
+        ))}
       </View>
 
-      {/* Upcoming Events */}
-      <Text style={styles.sectionTitle}>Upcoming Events</Text>
-      <View style={styles.eventCard}>
-        <Image
-          source={{ uri: 'https://images.unsplash.com/photo-1605296867304-46d5465a13f1' }}
-          style={styles.eventImage}
-        />
-        <Text style={styles.eventTitle}>Regional Powerlifting Championship</Text>
-        <Text style={styles.eventDate}>June 15–17, 2024</Text>
-      </View>
-
-      {/* Ongoing Games */}
-      <Text style={styles.sectionTitle}>Ongoing Games</Text>
-      <View style={styles.gameItem}>
-        <Feather name="award" size={20} color="#000" />
-        <View style={styles.gameInfo}>
-          <Text style={styles.gameTitle}>National Championship</Text>
-          <Text style={styles.gameSub}>Squat - Round 2</Text>
+      {/* Sliding Content */}
+      <Animated.View
+        style={{
+          flexDirection: 'row',
+          width: width * 2,
+          transform: [{ translateX: Animated.multiply(scrollX, -1) }],
+        }}
+      >
+        {/* Events Section */}
+        <View style={{ width }}>
+          {events.map((item, index) => renderEventCard(item, index))}
         </View>
-        <TouchableOpacity style={styles.viewButton}>
-          <Text style={styles.viewText}>View</Text>
-        </TouchableOpacity>
-      </View>
 
-      <View style={styles.gameItem}>
-        <Feather name="award" size={20} color="#000" />
-        <View style={styles.gameInfo}>
-          <Text style={styles.gameTitle}>State Qualifier</Text>
-          <Text style={styles.gameSub}>Deadlift - Round 1</Text>
+        {/* Announcements Section */}
+        <View style={{ width }}>
+          <View style={styles.announcementSection}>
+            <Text style={styles.announcementHeader}>Announcements</Text>
+            <Text style={styles.announcementPlaceholder}>
+              No announcements yet. You can add a new one using the "+" button.
+            </Text>
+          </View>
         </View>
-        <TouchableOpacity style={styles.viewButton}>
-          <Text style={styles.viewText}>View</Text>
-        </TouchableOpacity>
-      </View>
+      </Animated.View>
 
-      {/* Floating Action Button */}
-      <View style={styles.fabWrapper}>
-        <TouchableOpacity style={styles.fab}>
-          <Feather name="plus" size={24} color="#000" />
-        </TouchableOpacity>
-        <Text style={styles.fabLabel}>Create New Event</Text>
-      </View>
-    </ScrollView>
+      {/* Hover FAB */}
+      <Pressable
+        onHoverIn={() => setHovered(true)}
+        onHoverOut={() => setHovered(false)}
+        onPress={() =>
+          alert(
+            tabIndex === 0 ? 'Create new event' : 'Add new announcement'
+          )
+        }
+        style={styles.fabContainer}
+      >
+        <MaterialIcons name="add" size={24} color="#fff" />
+        {hovered && (
+          <Text style={styles.fabLabel}>
+            {tabIndex === 0 ? 'Create new event' : 'Add new announcement'}
+          </Text>
+        )}
+      </Pressable>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
-    paddingBottom: 60,
-    backgroundColor: '#fff',
+    flex: 1,
+    backgroundColor: '#0c0c0c',
+    paddingTop: 60,
+    paddingHorizontal: 20,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    color: 'white',
+    fontSize: 22,
+    fontWeight: '700',
     marginBottom: 20,
   },
-  avatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 10,
+  tabContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginBottom: 20,
   },
-  headerText: {
-    fontSize: 20,
-    fontWeight: 'bold',
+  tabText: {
+    fontSize: 16,
+    color: '#888',
   },
-  sectionTitle: {
+  activeTabText: {
+    color: '#ff3b3b',
+    borderBottomWidth: 2,
+    borderBottomColor: '#ff3b3b',
+    paddingBottom: 5,
+  },
+  card: {
+    backgroundColor: '#111827',
+    borderRadius: 12,
+    padding: 20,
+    marginBottom: 16,
+  },
+  cardTitle: {
+    color: 'white',
     fontSize: 18,
     fontWeight: 'bold',
-    marginVertical: 10,
   },
-  eventCard: {
-    backgroundColor: '#f5f5f5',
-    borderRadius: 10,
-    overflow: 'hidden',
-    marginBottom: 20,
+  cardSubtitle: {
+    color: '#ccc',
+    marginTop: 4,
   },
-  eventImage: {
-    width: '100%',
-    height: 180,
+  manageButton: {
+    marginTop: 12,
+    backgroundColor: '#ff3b3b',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 6,
+    alignSelf: 'flex-start',
   },
-  eventTitle: {
-    fontSize: 16,
+  manageText: {
+    color: 'white',
     fontWeight: '600',
-    padding: 10,
   },
-  eventDate: {
-    fontSize: 14,
-    color: '#555',
-    paddingHorizontal: 10,
-    paddingBottom: 10,
+  statusTag: {
+    marginTop: 8,
+    backgroundColor: '#374151',
+    color: '#d1d5db',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    alignSelf: 'flex-start',
+    borderRadius: 6,
   },
-  gameItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#f0f0f0',
-    borderRadius: 10,
-    padding: 10,
+  announcementSection: {
+    flex: 1,
+    padding: 20,
+    justifyContent: 'center',
+  },
+  announcementHeader: {
+    color: '#ff3b3b',
+    fontSize: 20,
+    fontWeight: 'bold',
     marginBottom: 10,
   },
-  gameInfo: {
-    flex: 1,
-    marginLeft: 10,
+  announcementPlaceholder: {
+    color: '#999',
+    fontSize: 16,
   },
-  gameTitle: {
-    fontWeight: '600',
-  },
-  gameSub: {
-    color: '#607D8B',
-  },
-  viewButton: {
-    backgroundColor: '#e0e0e0',
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 8,
-  },
-  viewText: {
-    color: '#000',
-  },
-  fabWrapper: {
+  fabContainer: {
+    position: 'absolute',
+    flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 30,
-  },
-  fab: {
-    width: 60,
-    height: 60,
-    backgroundColor: '#d0e7ff',
+    backgroundColor: '#ff3b3b',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
     borderRadius: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 3,
+    right: 20,
+    bottom: 30,
   },
   fabLabel: {
-    marginTop: 8,
-    fontSize: 14,
-    color: '#555',
+    color: '#fff',
+    marginLeft: 10,
+    fontWeight: '600',
   },
 });
