@@ -6,15 +6,18 @@ import {
   Alert,
   TouchableOpacity,
   Animated,
+  ActivityIndicator,
 } from "react-native";
+import { styles } from "@/styles/signInScreenStyles";
 import { useRouter } from "expo-router";
 import { useAuth } from "@/context/auth-context";
 import { useEffect, useRef, useState } from "react";
 import Feather from "react-native-vector-icons/Feather";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { theme } from "@/constants/theme"; 
+import { theme } from "@/constants/theme";
+import { useLogin } from "@/hooks/useLogin";
 
-const colors = theme.dark; 
+const colors = theme.dark;
 
 export default function SignInScreen() {
   const router = useRouter();
@@ -28,6 +31,8 @@ export default function SignInScreen() {
   const [passwordError, setPasswordError] = useState("");
 
   const logoOpacity = useRef(new Animated.Value(0)).current;
+
+  const { mutate: loginMutation, isPending } = useLogin();
 
   useEffect(() => {
     Animated.timing(logoOpacity, {
@@ -45,7 +50,7 @@ export default function SignInScreen() {
     })();
   }, []);
 
-  const handleLogin = async () => {
+  const handleLogin = () => {
     let valid = true;
 
     if (!email.includes("@")) {
@@ -64,49 +69,44 @@ export default function SignInScreen() {
 
     if (!valid) return;
 
-    if (email === "user@player.com" && password === "Player") {
-      if (rememberMe) {
-        await AsyncStorage.setItem("rememberedEmail", email);
-      } else {
-        await AsyncStorage.removeItem("rememberedEmail");
+    loginMutation(
+      { email, password },
+      {
+        onSuccess: async (data) => {
+          const { name, role, email: userEmail } = data.user;
+
+          if (rememberMe) {
+            await AsyncStorage.setItem("rememberedEmail", email);
+          } else {
+            await AsyncStorage.removeItem("rememberedEmail");
+          }
+
+          login({ name, email: userEmail, role });
+
+          if (role === "official") {
+            router.replace("/(official)/dashboard");
+          } else {
+            router.replace("/(tabs)/events");
+          }
+        },
+        onError: (err: any) => {
+          Alert.alert(
+            "Login Failed",
+            err?.response?.data?.message || "Invalid credentials"
+          );
+        },
       }
-
-      login({ name: "Demo Player", email, role: "player" });
-      router.replace("/(tabs)/events");
-
-    } else if (email === "user@official.com" && password === "Official") {
-      if (rememberMe) {
-        await AsyncStorage.setItem("rememberedEmail", email);
-      } else {
-        await AsyncStorage.removeItem("rememberedEmail");
-      }
-
-      login({ name: "Judge John", email, role: "official" });
-      router.replace("/(official)/dashboard");
-
-    } else {
-      Alert.alert("Invalid credentials", "Please check your email and password.");
-    }
+    );
   };
 
   return (
-    <View style={{ flex: 1, justifyContent: "center", paddingHorizontal: 24, backgroundColor: colors.background }}>
-      <Text style={{ fontSize: 28, fontWeight: "bold", color: colors.onSurface, textAlign: "center", marginBottom: 16 }}>
-        Welcome To Athleticore
-      </Text>
-      <Text style={{ fontSize: 28, fontWeight: "bold", color: colors.onSurface, textAlign: "center", marginBottom: 16 }}>
-        Login Page
-      </Text>
+    <View style={styles.container}>
+      <Text style={styles.heading}>Welcome To Athleticore</Text>
+      <Text style={styles.heading}>Login Page</Text>
 
       {/* Email */}
       <TextInput
-        style={{
-          backgroundColor: colors.surface,
-          color: colors.onSurface,
-          borderRadius: 8,
-          padding: 16,
-          marginBottom: 4,
-        }}
+        style={styles.input}
         placeholder="Email"
         placeholderTextColor={colors.onSurfaceVariant}
         value={email}
@@ -115,22 +115,15 @@ export default function SignInScreen() {
         autoCapitalize="none"
       />
       {emailError ? (
-        <Text style={{ color: colors.error, marginBottom: 8 }}>{emailError}</Text>
+        <Text style={styles.errorText}>{emailError}</Text>
       ) : (
-        <View style={{ marginBottom: 8 }} />
+        <View style={styles.spacer} />
       )}
 
       {/* Password */}
-      <View style={{
-        flexDirection: "row",
-        alignItems: "center",
-        backgroundColor: colors.surface,
-        borderRadius: 8,
-        paddingHorizontal: 16,
-        marginBottom: 4
-      }}>
+      <View style={styles.passwordContainer}>
         <TextInput
-          style={{ flex: 1, color: colors.onSurface, paddingVertical: 16 }}
+          style={styles.passwordInput}
           placeholder="Password"
           placeholderTextColor={colors.onSurfaceVariant}
           value={password}
@@ -146,52 +139,42 @@ export default function SignInScreen() {
         </TouchableOpacity>
       </View>
       {passwordError ? (
-        <Text style={{ color: colors.error, marginBottom: 8 }}>{passwordError}</Text>
+        <Text style={styles.errorText}>{passwordError}</Text>
       ) : (
-        <View style={{ marginBottom: 8 }} />
+        <View style={styles.spacer} />
       )}
 
       {/* Remember Me + Forgot Password */}
-      <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+      <View style={styles.rememberForgotContainer}>
         <TouchableOpacity
           onPress={() => setRememberMe(!rememberMe)}
-          style={{
-            paddingHorizontal: 16,
-            paddingVertical: 8,
-            backgroundColor: colors.surfaceVariant,
-            borderRadius: 8,
-          }}
+          style={styles.rememberButton}
         >
-          <Text style={{ color: colors.onSurface, fontWeight: "600" }}>Remember Me</Text>
+          <Text style={styles.rememberText}>Remember Me</Text>
         </TouchableOpacity>
 
         <Pressable onPress={() => router.push("/(auth)/forgot-password")}>
-          <Text style={{ color: colors.onSurface, fontWeight: "600" }}>Forgot Password</Text>
+          <Text style={styles.forgotText}>Forgot Password</Text>
         </Pressable>
       </View>
 
       {/* Login Button */}
       <TouchableOpacity
         onPress={handleLogin}
-        style={{
-          backgroundColor: colors.primary,
-          paddingVertical: 16,
-          borderRadius: 8,
-          marginBottom: 16,
-        }}
+        disabled={isPending}
+        style={[styles.loginButton, { opacity: isPending ? 0.6 : 1 }]}
       >
-        <Text style={{ textAlign: "center", color: colors.onSurface, fontWeight: "bold", fontSize: 18 }}>
-          Login
-        </Text>
+        {isPending ? (
+          <ActivityIndicator color={colors.onSurface} />
+        ) : (
+          <Text style={styles.loginText}>Login</Text>
+        )}
       </TouchableOpacity>
 
       {/* Sign Up */}
       <Pressable onPress={() => router.push("/(auth)/register")}>
-        <Text style={{ textAlign: "center", color: colors.onSurfaceVariant, marginTop: 8 }}>
-          Don’t have an account?{" "}
-          <Text style={{ color: colors.onSurface, fontWeight: "600", textDecorationLine: "underline" }}>
-            Sign Up
-          </Text>
+        <Text style={styles.signUpText}>
+          Don’t have an account? <Text style={styles.signUpLink}>Sign Up</Text>
         </Text>
       </Pressable>
     </View>

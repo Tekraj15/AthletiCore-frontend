@@ -7,12 +7,13 @@ import {
 import { useFonts } from "expo-font";
 import { Slot, useRouter, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import "react-native-reanimated";
 import "./../global.css";
 
 import { useColorScheme } from "@/components/existingComponent/useColorScheme";
 import { AuthProvider, useAuth } from "@/context/auth-context";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 export { ErrorBoundary } from "expo-router";
 
@@ -20,7 +21,6 @@ export const unstable_settings = {
   initialRouteName: "(tabs)",
 };
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -28,6 +28,9 @@ export default function RootLayout() {
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
     ...FontAwesome.font,
   });
+
+  // React Query client instance stored in state to avoid recreation on rerenders
+  const [queryClient] = useState(() => new QueryClient());
 
   useEffect(() => {
     if (error) throw error;
@@ -39,38 +42,43 @@ export default function RootLayout() {
     }
   }, [loaded]);
 
-  return loaded ? (
-    <AuthProvider>
-      <RootLayoutNav />
-    </AuthProvider>
-  ) : null;
+  if (!loaded) return null;
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <RootLayoutNav />
+      </AuthProvider>
+    </QueryClientProvider>
+  );
 }
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
   const segments = useSegments();
   const router = useRouter();
-  const { user } = useAuth(); // from your context
+  const { user } = useAuth();
 
-useEffect(() => {
-  const inAuthGroup = segments[0] === "(auth)";
+  useEffect(() => {
+    // Check if user is inside auth group routes
+    const inAuthGroup = segments[0] === "(auth)";
 
-  const timeout = setTimeout(() => {
-    if (!user && !inAuthGroup) {
-      router.replace("/(auth)");
-    } else if (user && inAuthGroup) {
-      if (user.role === "official") {
-        router.replace("/(official)/dashboard");
-      } else {
-        router.replace("/(tabs)/events");
+    // Redirect logic based on authentication and current segment
+    // Timeout 0 to ensure navigation after render cycle
+    const timeout = setTimeout(() => {
+      if (!user && !inAuthGroup) {
+        router.replace("/(auth)");
+      } else if (user && inAuthGroup) {
+        if (user.role === "official") {
+          router.replace("/(official)/dashboard");
+        } else {
+          router.replace("/(tabs)/events");
+        }
       }
-    }
-  }, 0);
+    }, 0);
 
-  return () => clearTimeout(timeout);
-}, [segments, user]);
-
-
+    return () => clearTimeout(timeout);
+  }, [segments, user, router]);
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
