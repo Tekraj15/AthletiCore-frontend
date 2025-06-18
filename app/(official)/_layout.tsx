@@ -31,6 +31,15 @@ export default function OfficialLayout() {
           ),
         }}
       />
+        <Tabs.Screen
+        name="liveGame"
+        options={{
+          title: 'Live Game',
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="bullhorn" color={color} />
+          ),
+        }}
+      />
       <Tabs.Screen
         name="attempts"
         options={{
@@ -40,15 +49,7 @@ export default function OfficialLayout() {
           ),
         }}
       />
-      <Tabs.Screen
-        name="announcements"
-        options={{
-          title: 'Announcements',
-          tabBarIcon: ({ color }) => (
-            <TabBarIcon name="bullhorn" color={color} />
-          ),
-        }}
-      />
+    
     </Tabs>
   );
 }

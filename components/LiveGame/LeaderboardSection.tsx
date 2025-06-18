@@ -2,7 +2,7 @@
 
 import React from "react";
 import { View, Text, TouchableOpacity, FlatList } from "react-native";
-import { LeaderboardEntry } from "../../constants/liveGameTypes";
+import { LeaderboardEntry } from "../../constants/Player/liveGameTypes";
 import LeaderboardRow from "./LeaderboardRow";
 import { styles } from "../../styles/competitionStyles";
 

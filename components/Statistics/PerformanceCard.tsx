@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, Pressable } from "react-native";
 import { format } from "date-fns";
 import { styles } from "../../styles/statisticsStyles";
-import { PerformanceItem } from "../../constants/PerformanceData";
+import { PerformanceItem } from "../../constants/Player/PerformanceData";
 
 const PerformanceCard = ({ item, colors }: { item: PerformanceItem; colors: any }) => (
   <Pressable

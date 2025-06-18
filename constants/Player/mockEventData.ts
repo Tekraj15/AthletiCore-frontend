@@ -1,4 +1,4 @@
-const event1Img = require("../assets/images/event1.png");
+const event1Img = require("../../assets/images/event1.png");
 
 export const mockEventData = {
   "event-001": {

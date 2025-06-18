@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
-import { Attempt, AttemptStatus, AttemptResult, LiftType } from "../../constants/liveGameTypes";
+import { Attempt, AttemptStatus, AttemptResult, LiftType } from "../../constants/Player/liveGameTypes";
 
 interface AttemptCardProps {
   attempt: Attempt;

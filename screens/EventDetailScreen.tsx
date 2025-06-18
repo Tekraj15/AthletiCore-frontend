@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, Image, ScrollView, Pressable } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { mockEventData } from "../constants/mockEventData";
+import { mockEventData } from "../constants/Player/mockEventData";
 import { Ionicons } from "@expo/vector-icons";
 
 export default function EventDetailScreen() {
