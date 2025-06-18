@@ -7,15 +7,16 @@ import {
   StyleSheet,
   Animated,
   Pressable,
+  useColorScheme,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import {styles} from "../../styles/OfficialDashboardStyles"
+import { styles } from '../../styles/OfficialDashboardStyles';
+import { theme } from '../../constants/theme';
+
 const { width } = Dimensions.get('window');
 
-// Tab labels
 const tabs = ['Events', 'Announcements'];
 
-// Event card type
 interface OfficialContact {
   name: string;
   email: string;
@@ -39,11 +40,9 @@ interface EventItem {
   otherOfficial?: OfficialContact;
   organizerPhoneNumber?: string;
   eventImage?: string;
-  createdby?: string; // or full User object depending on how you fetch
+  createdby?: string;
 }
 
-
-// Static event data
 const events: EventItem[] = [
   {
     title: 'Regional Powerlifting Championship',
@@ -83,11 +82,14 @@ const events: EventItem[] = [
   },
 ];
 
-
 export default function OfficialDashboard() {
   const [tabIndex, setTabIndex] = useState<number>(0);
   const scrollX = useState<Animated.Value>(new Animated.Value(0))[0];
   const [hovered, setHovered] = useState<boolean>(false);
+
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
+  const colors = isDark ? theme.dark : theme.light;
 
   const handleTabPress = (index: number) => {
     setTabIndex(index);
@@ -102,55 +104,60 @@ export default function OfficialDashboard() {
   };
 
   const renderEventCard = (item: EventItem, index: number) => (
-    <View key={index} style={styles.card}>
-      <Text style={styles.cardTitle}>{item.title}</Text>
-      <Text style={styles.cardSubtitle}>{item.description}</Text>
-      <Text style={styles.cardDetail}>📍 {item.venue}</Text>
-      <Text style={styles.cardDetail}>📅 {new Date(item.date).toDateString()}</Text>
-      <Text style={styles.cardDetail}>🏋️ Type: {item.competitionType}</Text>
-      <Text style={styles.cardDetail}>🧷 Categories: {item.weightCategories.join(', ')}</Text>
+    <View key={index} style={[styles.card, { backgroundColor: colors.surface }]}>
+      <Text style={[styles.cardTitle, { color: colors.onSurface }]}>{item.title}</Text>
+      <Text style={[styles.cardSubtitle, { color: colors.onSurfaceVariant }]}>{item.description}</Text>
+      <Text style={[styles.cardDetail, { color: colors.onSurface }]}>📍 {item.venue}</Text>
+      <Text style={[styles.cardDetail, { color: colors.onSurface }]}>📅 {new Date(item.date).toDateString()}</Text>
+      <Text style={[styles.cardDetail, { color: colors.onSurface }]}>🏋️ Type: {item.competitionType}</Text>
+      <Text style={[styles.cardDetail, { color: colors.onSurface }]}>🧷 Categories: {item.weightCategories.join(', ')}</Text>
 
       {item.prizes.length > 0 && (
         <View style={{ marginTop: 6 }}>
-          <Text style={styles.cardDetail}>🏆 Prizes:</Text>
+          <Text style={[styles.cardDetail, { color: colors.onSurface }]}>🏆 Prizes:</Text>
           {item.prizes.map((prize, i) => (
-            <Text key={i} style={styles.cardPrize}>
-              • {prize.prizeTitle} {prize.weightCategory ? `(${prize.weightCategory})` : ''}
-            </Text>
+            <Text key={i} style={[styles.cardPrize, { color: colors.onSurfaceVariant }]}>• {prize.prizeTitle} {prize.weightCategory ? `(${prize.weightCategory})` : ''}</Text>
           ))}
         </View>
       )}
 
       {item.coordinator && (
-        <Text style={styles.cardDetail}>👨‍💼 Coordinator: {item.coordinator.name}</Text>
+        <Text style={[styles.cardDetail, { color: colors.onSurface }]}>👨‍💼 Coordinator: {item.coordinator.name}</Text>
       )}
 
       {item.organizerPhoneNumber && (
-        <Text style={styles.cardDetail}>📞 Contact: {item.organizerPhoneNumber}</Text>
+        <Text style={[styles.cardDetail, { color: colors.onSurface }]}>📞 Contact: {item.organizerPhoneNumber}</Text>
       )}
 
-      <TouchableOpacity style={styles.manageButton} onPress={() => handleManagePress(item)}>
-        <Text style={styles.manageText}>Manage</Text>
+      <TouchableOpacity
+        style={[styles.manageButton, { backgroundColor: colors.primary }]}
+        onPress={() => handleManagePress(item)}
+      >
+        <Text style={[styles.manageText, { color: '#fff' }]}>Manage</Text>
       </TouchableOpacity>
     </View>
   );
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Official Dashboard</Text>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <Text style={[styles.header, { color: colors.onSurface }]}>Official Dashboard</Text>
 
-      {/* Tabs */}
       <View style={styles.tabContainer}>
         {tabs.map((tab, idx) => (
           <TouchableOpacity key={idx} onPress={() => handleTabPress(idx)}>
-            <Text style={[styles.tabText, tabIndex === idx && styles.activeTabText]}>
+            <Text
+              style={[
+                styles.tabText,
+                { color: colors.onSurfaceVariant },
+                tabIndex === idx && { color: colors.primary },
+              ]}
+            >
               {tab}
             </Text>
           </TouchableOpacity>
         ))}
       </View>
 
-      {/* Sliding Content */}
       <Animated.View
         style={{
           flexDirection: 'row',
@@ -158,40 +165,27 @@ export default function OfficialDashboard() {
           transform: [{ translateX: Animated.multiply(scrollX, -1) }],
         }}
       >
-        {/* Events */}
-        <View style={{ width }}>
-          {events.map((item, index) => renderEventCard(item, index))}
-        </View>
+        <View style={{ width }}>{events.map((item, index) => renderEventCard(item, index))}</View>
 
-        {/* Announcements */}
         <View style={{ width }}>
-          <View style={styles.announcementSection}>
-            <Text style={styles.announcementHeader}>Announcements</Text>
-            <Text style={styles.announcementPlaceholder}>
-              No announcements yet. You can add a new one using the "+" button.
-            </Text>
+          <View style={[styles.announcementSection, { backgroundColor: colors.surfaceVariant }]}>
+            <Text style={[styles.announcementHeader, { color: colors.onSurface }]}>Announcements</Text>
+            <Text style={[styles.announcementPlaceholder, { color: colors.onSurfaceVariant }]}>No announcements yet. You can add a new one using the "+" button.</Text>
           </View>
         </View>
       </Animated.View>
 
-      {/* FAB */}
       <Pressable
         onHoverIn={() => setHovered(true)}
         onHoverOut={() => setHovered(false)}
-        onPress={() =>
-          alert(tabIndex === 0 ? 'Create new event' : 'Add new announcement')
-        }
-        style={styles.fabContainer}
+        onPress={() => alert(tabIndex === 0 ? 'Create new event' : 'Add new announcement')}
+        style={[styles.fabContainer, { backgroundColor: colors.accent }]}
       >
         <MaterialIcons name="add" size={24} color="#fff" />
         {hovered && (
-          <Text style={styles.fabLabel}>
-            {tabIndex === 0 ? 'Create new event' : 'Add new announcement'}
-          </Text>
+          <Text style={[styles.fabLabel, { color: colors.onSurface }]}> {tabIndex === 0 ? 'Create new event' : 'Add new announcement'}</Text>
         )}
       </Pressable>
     </View>
   );
 }
-
-
