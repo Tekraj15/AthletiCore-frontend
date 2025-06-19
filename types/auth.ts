@@ -7,7 +7,7 @@ export interface ILoginResponse {
   user: {
     name: string;
     email: string;
-    role: "player" | "official";
+    role: "Player" | "Official";
   };
   token: string;
 }

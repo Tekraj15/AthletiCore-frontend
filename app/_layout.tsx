@@ -69,7 +69,7 @@ function RootLayoutNav() {
       if (!user && !inAuthGroup) {
         router.replace("/(auth)");
       } else if (user && inAuthGroup) {
-        if (user.role === "official") {
+        if (user.role === "Official" ) {
           router.replace("/(official)/dashboard");
         } else {
           router.replace("/(tabs)/events");

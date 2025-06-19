@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState } from 'react';
 export type User = {
   name: string;
   email: string;
-  role: 'player' | 'official'; // add role here
+  role: 'Player' | 'Official'; 
 };
 
 // Step 2: Update context type to use full User object
