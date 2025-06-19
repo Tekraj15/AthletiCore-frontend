@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { ScrollView, useColorScheme } from "react-native";
 import { styles } from "../styles/statisticsStyles";
-import { performanceTable } from "../constants/PerformanceData";
+import { performanceTable } from "../constants/Player/PerformanceData";
 import { theme } from "../constants/theme";
 import HeaderFilterSection from "../components/Statistics/HeaderFilterSection";
 import LiftProgressChart from "../components/Statistics/LiftProgressChart";

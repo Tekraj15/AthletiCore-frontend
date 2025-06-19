@@ -19,7 +19,7 @@ import { theme } from "../constants/theme";
 import {
   mockLiftData,
   mockLeaderboardData,
-} from "../constants/liftAttemptMockData";
+} from "../constants/Player/liftAttemptMockData";
 
 import { styles } from "../styles/competitionStyles";
 import {
@@ -38,7 +38,7 @@ import {
   LiftType,
   PendingSubmission,
   SortConfig,
-} from "../constants/liveGameTypes";
+} from "../constants/Player/liveGameTypes";
 
 const LiveGameScreen = () => {
   const [isDark, setIsDark] = useState(true);

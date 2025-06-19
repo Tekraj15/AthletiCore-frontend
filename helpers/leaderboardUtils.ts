@@ -1,6 +1,11 @@
 // /helpers/leaderboardUtils.ts
 
-import { AttemptStatus, AttemptResult, SortConfig, LeaderboardEntry } from "../constants/liveGameTypes";
+import {
+  AttemptStatus,
+  AttemptResult,
+  SortConfig,
+  LeaderboardEntry,
+} from "../constants/Player/liveGameTypes";
 
 /**
  * Get color based on attempt status and result
@@ -60,6 +65,7 @@ export const sortLeaderboard = (
 export const toggleSort = (current: SortConfig, key: string): SortConfig => {
   return {
     key,
-    direction: current.key === key && current.direction === "asc" ? "desc" : "asc",
+    direction:
+      current.key === key && current.direction === "asc" ? "desc" : "asc",
   };
 };

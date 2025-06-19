@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { LeaderboardEntry } from "../../constants/liveGameTypes";
+import { LeaderboardEntry } from "../../constants/Player/liveGameTypes";
 import { styles } from '../../styles/competitionStyles';
 
 interface LeaderboardRowProps {
