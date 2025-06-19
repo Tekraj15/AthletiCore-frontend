@@ -1,6 +1,6 @@
 import axios, { AxiosRequestConfig } from "axios";
 
-export const BASE_URL = "http://localhost:5000/api"; // use IP for real devices
+export const BASE_URL = "https://athleticore-backend-1.onrender.com/api";
 
 export const baseFetcher = async <T>(
   endpoint: string,
