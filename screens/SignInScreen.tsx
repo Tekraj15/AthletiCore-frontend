@@ -83,7 +83,7 @@ export default function SignInScreen() {
 
           login({ name, email: userEmail, role });
 
-          if (role === "official") {
+          if (role === "Official") {
             router.replace("/(official)/dashboard");
           } else {
             router.replace("/(tabs)/events");
