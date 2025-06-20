@@ -96,7 +96,7 @@ const getStatusColor = (status: string) => {
   }
 };
 
-export default function EventsScreen() {
+export default function EventsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
 
@@ -119,8 +119,16 @@ export default function EventsScreen() {
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
-      <View >
-      
+      <View style={styles.header}>
+        <View style={styles.headerTop}>
+          <View>
+            <Text style={styles.headerTitle}>Powerlifting Events</Text>
+            <Text style={styles.headerSubtitle}>Discover and join competitions</Text>
+          </View>
+          <TouchableOpacity style={styles.createButton} onPress={handleCreateEvent}>
+            <Plus size={20} color="#FFFFFF" />
+          </TouchableOpacity>
+        </View>
 
         {/* Search Bar */}
         <View style={styles.searchContainer}>
