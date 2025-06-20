@@ -7,7 +7,6 @@ import {
   Image,
   TouchableOpacity,
   TextInput,
-  Platform,
 } from 'react-native';
 import {
   MapPin,
@@ -100,12 +99,35 @@ export default function EventsScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
 
-  const filteredEvents = sampleEvents.filter(event => {
-    const matchesSearch = event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         event.venue.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesFilter = selectedFilter === 'all' || event.competitionType.toLowerCase() === selectedFilter;
-    return matchesSearch && matchesFilter;
-  });
+  
+  const filteredEvents = sampleEvents.filter((event) => {
+  const matchesSearch =
+    event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    event.venue.toLowerCase().includes(searchQuery.toLowerCase());
+
+  const today = new Date();
+  const eventDate = new Date(event.date); // make sure this is a parseable format
+
+  let matchesFilter = false;
+
+  switch (selectedFilter) {
+    case 'all':
+      matchesFilter = true;
+      break;
+    case 'upcoming':
+      matchesFilter = eventDate > today;
+      break;
+    case 'registered':
+      // TODO: Implement logic for registered events
+      // matchesFilter = registeredEventIds.includes(event.id);
+      break;
+    default:
+      matchesFilter = event.competitionType.toLowerCase() === selectedFilter;
+  }
+
+  return matchesSearch && matchesFilter;
+});
+
 
   const handleEventPress = (eventId: string) => {
   router.push(`/events/${eventId}`);
@@ -119,9 +141,7 @@ export default function EventsScreen() {
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
-      <View >
-      
-
+      <View style={styles.header}>
         {/* Search Bar */}
         <View style={styles.searchContainer}>
           <Search size={20} color="#6B7280" style={styles.searchIcon} />
@@ -139,7 +159,7 @@ export default function EventsScreen() {
 
         {/* Filter Tabs */}
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterTabs}>
-          {['all', 'open', 'male', 'female'].map((filter) => (
+          {['all', 'open', 'male', 'female','upcoming','registered'].map((filter) => (
             <TouchableOpacity
               key={filter}
               style={[
