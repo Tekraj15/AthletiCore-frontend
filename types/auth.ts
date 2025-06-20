@@ -11,3 +11,32 @@ export interface ILoginResponse {
   };
   token: string;
 }
+
+// ------------Register (SignUp) -------------
+
+export interface IRegisterRequest {
+  fullName: string;
+  email: string;
+  phone_number: string;
+  username: string;
+  role: "Player" | "Official";
+  gender: "Male" | "Female" | "Other";
+  password: string;
+  age?: number;
+  weight?: number;
+}
+
+export interface IRegisterResponse {
+  message: string;
+  user: {
+    _id: string;
+    fullName: string;
+    email: string;
+    username: string;
+    phone_number: string;
+    role: "Player" | "Official";
+    gender: string;
+    age?: number;
+    weight?: number;
+  };
+}

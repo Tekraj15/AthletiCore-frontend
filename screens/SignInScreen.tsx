@@ -75,6 +75,11 @@ export default function SignInScreen() {
         onSuccess: async (data) => {
           const { name, role, email: userEmail } = data.user;
 
+          // Save token securely
+          if (data.token) {
+            await AsyncStorage.setItem("accessToken", data.token);
+          }
+
           if (rememberMe) {
             await AsyncStorage.setItem("rememberedEmail", email);
           } else {
