@@ -2,8 +2,7 @@ import React from "react";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Link, Tabs } from "expo-router";
 import { Pressable, useColorScheme } from "react-native";
-
-import Colors from "@/constants/Colors";
+import { theme } from "@/constants/theme";
 
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>["name"];
@@ -14,20 +13,22 @@ function TabBarIcon(props: {
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-
   const isDark = colorScheme === "dark";
+  const colors = isDark ? theme.dark : theme.light;
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: isDark ? Colors.dark.tint : Colors.light.tint,
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.secondary,
         tabBarStyle: {
-          backgroundColor: isDark ? "#000" : "#fff",
+          backgroundColor: colors.background,
+          borderTopWidth: 0,
         },
         headerStyle: {
-          backgroundColor: isDark ? "#000" : "#fff",
+          backgroundColor: colors.background,
         },
-        headerTintColor: isDark ? "#fff" : "#000",
+        headerTintColor: colors.onSurface,
       }}
     >
       <Tabs.Screen
@@ -44,7 +45,7 @@ export default function TabLayout() {
                   <FontAwesome
                     name="info-circle"
                     size={25}
-                    color={isDark ? Colors.dark.text : Colors.light.text}
+                    color={colors.onSurface}
                     style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
                   />
                 )}
@@ -57,7 +58,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="statistics"
         options={{
-          title: "Statistcis",
+          title: "Statistics",
           tabBarIcon: ({ color }) => (
             <TabBarIcon name="line-chart" color={color} />
           ),
@@ -74,15 +75,22 @@ export default function TabLayout() {
         name="profile"
         options={{
           title: "Profile",
-          headerShown: false, 
+          headerShown: false,
           tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
         }}
       />
       <Tabs.Screen
         name="events/[eventId]"
         options={{
-          href: null, // Hides it from bottom tab bar
-          headerShown: false, // Optional: hide header if you want full control
+          href: null,
+          headerShown: false,
+        }}
+      />
+      <Tabs.Screen
+        name="events/create"
+        options={{
+          href: null,
+          headerShown: false,
         }}
       />
     </Tabs>
