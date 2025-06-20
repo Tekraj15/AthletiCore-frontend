@@ -4,8 +4,8 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#0c0c0c",
-    paddingTop: 60,
-    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingHorizontal: 10,
   },
   header: {
     color: "white",
