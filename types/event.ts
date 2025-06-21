@@ -69,15 +69,15 @@ export interface IEvent {
     title: string;
     prize: string;
   }[];
-  coordinator: {
-    name: string;
-    phone: string;
-    email: string;
+  coordinator?: {
+    name?: string;
+    phone?: string;
+    email?: string;
   };
-  otherOfficial: {
-    name: string;
-    phone: string;
-    email: string;
+  otherOfficial?: {
+    name?: string;
+    phone?: string;
+    email?: string;
   };
   organizerPhoneNumber?: string;
   eventImage?: string;

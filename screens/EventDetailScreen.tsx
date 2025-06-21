@@ -87,7 +87,7 @@ export default function EventDetailScreen() {
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
       >
-        {/* Header */}
+        {/* Header Section */}
         <View style={styles.header}>
           <Image
             source={{ uri: event.eventImage }}
@@ -101,11 +101,11 @@ export default function EventDetailScreen() {
               <ArrowLeft size={24} color="#FFFFFF" />
             </TouchableOpacity>
             <View style={styles.headerContent}>
-              <View style={styles.competitionBadge}>
+              {/* <View style={styles.competitionBadge}>
                 <Text style={styles.competitionBadgeText}>
                   {event.competitionType}
                 </Text>
-              </View>
+              </View> */}
               <Text style={styles.title}>{event.title}</Text>
             </View>
           </View>
@@ -166,50 +166,64 @@ export default function EventDetailScreen() {
         {/* Weight Categories */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Weight Categories</Text>
-          <ScrollView horizontal style={styles.categoryScroll}>
-            {event.weightCategories.map((cat, idx) => (
-              <View key={idx} style={styles.weightBadge}>
-                <Text style={styles.weightText}>{cat}</Text>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.categoryScroll}
+          >
+            {event.weightCategories.map((weight, index) => (
+              <View key={index} style={styles.weightBadge}>
+                <Text style={styles.weightText}>{weight}</Text>
               </View>
             ))}
           </ScrollView>
         </View>
 
-        {/* Prizes */}
+        {/* Prizes Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Prizes</Text>
-          {event.prizes.map((p, idx) => (
-            <View key={idx} style={styles.prizeItem}>
+          <Text style={styles.sectionTitle}>Prizes & Awards</Text>
+          {event.prizes.map((prizeItem, index) => (
+            <View key={index} style={styles.prizeItem}>
               <Medal size={18} color="#DC2626" />
-              <Text style={styles.prizePlace}>{p.title}:</Text>
-              <Text style={styles.prizeAmount}>{p.prize}</Text>
+              <Text style={styles.prizePlace}>{prizeItem.title}:</Text>
+              <Text style={styles.prizeAmount}>{prizeItem.prize}</Text>
             </View>
           ))}
         </View>
 
-        {/* Contacts */}
+        {/* Contact Information */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Contacts</Text>
+          <Text style={styles.sectionTitle}>Contact Information</Text>
 
-          {event.coordinator && (
+          {/* Coordinator */}
+          {event?.coordinator?.name && (
             <View style={styles.contactCard}>
-              {/* <Text style={styles.contactName}>{event.coordinator.name}</Text> */}
+              <Text style={styles.contactName}>{event?.coordinator?.name}</Text>
+              <Text style={styles.contactTitle}>Coordinator</Text>
               <View style={styles.contactActions}>
-                {event.coordinator.phone && (
+                {!!event.coordinator.phone && (
                   <TouchableOpacity
                     style={styles.contactButton}
-                    onPress={() =>
-                      handleCall(event.coordinator.phone.toString())
-                    }
+                  
+                    onPress={() => {
+                      if (event?.coordinator?.phone) {
+                        handleCall(event.coordinator.phone.toString());
+                      }
+                    }}
                   >
                     <Phone size={18} color="#DC2626" />
                     <Text style={styles.contactButtonText}>Call</Text>
                   </TouchableOpacity>
                 )}
-                {event.coordinator.email && (
+                {!!event.coordinator.email && (
                   <TouchableOpacity
                     style={styles.contactButton}
-                    onPress={() => handleEmail(event.coordinator.email)}
+                    // onPress={() => handleEmail(event.coordinator.email)}
+                    onPress={() => {
+                      if (event?.coordinator?.email) {
+                        handleEmail(event.coordinator.email);
+                      }
+                    }}
                   >
                     <Mail size={18} color="#DC2626" />
                     <Text style={styles.contactButtonText}>Email</Text>
@@ -219,25 +233,35 @@ export default function EventDetailScreen() {
             </View>
           )}
 
-          {event.otherOfficial && (
+          {/* Other Official */}
+          {event.otherOfficial?.name && (
             <View style={styles.contactCard}>
-              {/* <Text style={styles.contactName}>{event.otherOfficial.name}</Text> */}
+              <Text style={styles.contactName}>
+                {event?.otherOfficial?.name}
+              </Text>
+              <Text style={styles.contactTitle}>Other Official</Text>
               <View style={styles.contactActions}>
-                {event.otherOfficial.phone && (
+                {!!event.otherOfficial.phone && (
                   <TouchableOpacity
                     style={styles.contactButton}
-                    onPress={() =>
-                      handleCall(event.otherOfficial.phone.toString())
-                    }
+                    onPress={() => {
+                      if (event?.otherOfficial?.phone) {
+                        handleCall(event.otherOfficial.phone.toString());
+                      }
+                    }}
                   >
                     <Phone size={18} color="#DC2626" />
                     <Text style={styles.contactButtonText}>Call</Text>
                   </TouchableOpacity>
                 )}
-                {event.otherOfficial.email && (
+                {!!event.otherOfficial.email && (
                   <TouchableOpacity
                     style={styles.contactButton}
-                    onPress={() => handleEmail(event.otherOfficial.email)}
+                    onPress={() => {
+                      if (event?.otherOfficial?.email) {
+                        handleEmail(event.otherOfficial.email);
+                      }
+                    }}
                   >
                     <Mail size={18} color="#DC2626" />
                     <Text style={styles.contactButtonText}>Email</Text>
@@ -247,7 +271,8 @@ export default function EventDetailScreen() {
             </View>
           )}
 
-          {event.organizerPhoneNumber && (
+          {/* Organizer Phone Number */}
+          {!!event.organizerPhoneNumber && (
             <View style={styles.organizerContact}>
               <Text style={styles.organizerText}>General Inquiries</Text>
               <TouchableOpacity

@@ -67,7 +67,7 @@ export const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontFamily: "Inter-Bold",
-    color: colors.background,
+    color: "#ffffff",
     lineHeight: 34,
     marginBottom: 8,
   },
