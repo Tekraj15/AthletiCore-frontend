@@ -21,57 +21,9 @@ import {
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { styles } from '@/styles/eventPageStyle'; 
-// Sample events data
-const sampleEvents = [
-  {
-    id: '1',
-    title: 'National Powerlifting Championship 2024',
-    venue: 'Iron Temple Gym, Los Angeles, CA',
-    date: '2024-03-15T09:00:00Z',
-    competitionType: 'Open Division',
-    eventImage: 'https://images.pexels.com/photos/1552252/pexels-photo-1552252.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&fit=crop',
-    description: 'Join us for the most prestigious powerlifting event of the year!',
-    weightCategories: ['59kg', '66kg', '74kg', '83kg', '93kg', '105kg', '120kg', '120kg+'],
-    prizes: [
-      { prizeTitle: 'Overall Champion - $5,000', weightCategory: 'Overall' },
-      { prizeTitle: 'Category Winner - $1,000', weightCategory: '83kg' },
-    ],
-    participants: 156,
-    status: 'upcoming',
-  },
-  {
-    id: '2',
-    title: 'Regional Powerlifting Meet',
-    venue: 'Strength Academy, Chicago, IL',
-    date: '2024-04-20T10:00:00Z',
-    competitionType: 'Male',
-    eventImage: 'https://images.pexels.com/photos/1229356/pexels-photo-1229356.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&fit=crop',
-    description: 'Regional competition for male powerlifters.',
-    weightCategories: ['66kg', '74kg', '83kg', '93kg', '105kg', '120kg'],
-    prizes: [
-      { prizeTitle: 'First Place - $2,000', weightCategory: 'Overall' },
-      { prizeTitle: 'Second Place - $1,000', weightCategory: 'Overall' },
-    ],
-    participants: 89,
-    status: 'upcoming',
-  },
-  {
-    id: '3',
-    title: 'Women\'s Powerlifting Championship',
-    venue: 'Elite Fitness Center, Miami, FL',
-    date: '2024-05-10T09:30:00Z',
-    competitionType: 'Female',
-    eventImage: 'https://images.pexels.com/photos/3289711/pexels-photo-3289711.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&fit=crop',
-    description: 'Celebrating strength and determination in women\'s powerlifting.',
-    weightCategories: ['47kg', '52kg', '57kg', '63kg', '69kg', '76kg', '84kg'],
-    prizes: [
-      { prizeTitle: 'Champion Trophy + $3,000', weightCategory: 'Overall' },
-      { prizeTitle: 'Runner-up Medal + $1,500', weightCategory: 'Overall' },
-    ],
-    participants: 67,
-    status: 'upcoming',
-  },
-];
+import { useGetAllEvents } from "@/hooks/useGetAllEvents";
+
+
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
@@ -82,25 +34,27 @@ const formatDate = (dateString: string) => {
   });
 };
 
-const getStatusColor = (status: string) => {
-  switch (status) {
-    case 'upcoming':
-      return '#10B981';
-    case 'ongoing':
-      return '#F59E0B';
-    case 'completed':
-      return '#6B7280';
-    default:
-      return '#6B7280';
-  }
-};
+// const getStatusColor = (status: string) => {
+//   switch (status) {
+//     case 'upcoming':
+//       return '#10B981';
+//     case 'ongoing':
+//       return '#F59E0B';
+//     case 'completed':
+//       return '#6B7280';
+//     default:
+//       return '#6B7280';
+//   }
+// };
 
 export default function EventsScreen() {
+    const { data: events = [] } = useGetAllEvents();
+  
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
 
   
-  const filteredEvents = sampleEvents.filter((event) => {
+  const filteredEvents = events.filter((event) => {
   const matchesSearch =
     event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     event.venue.toLowerCase().includes(searchQuery.toLowerCase());
@@ -122,7 +76,7 @@ export default function EventsScreen() {
       // matchesFilter = registeredEventIds.includes(event.id);
       break;
     default:
-      matchesFilter = event.competitionType.toLowerCase() === selectedFilter;
+      matchesFilter = event.competitionType?.toLowerCase() === selectedFilter;
   }
 
   return matchesSearch && matchesFilter;
@@ -132,11 +86,6 @@ export default function EventsScreen() {
   const handleEventPress = (eventId: string) => {
   router.push(`/events/${eventId}`);
 };
-
-
-  const handleCreateEvent = () => {
-    router.push(`/events/create`);
-  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -195,9 +144,9 @@ export default function EventsScreen() {
                 <View style={styles.eventBadge}>
                   <Text style={styles.eventBadgeText}>{event.competitionType}</Text>
                 </View>
-                <View style={[styles.statusBadge, { backgroundColor: getStatusColor(event.status) }]}>
+                {/* <View style={[styles.statusBadge, { backgroundColor: getStatusColor(event.status) }]}>
                   <Text style={styles.statusBadgeText}>{event.status}</Text>
-                </View>
+                </View> */}
               </View>
 
               <Text style={styles.eventTitle}>{event.title}</Text>
@@ -213,10 +162,10 @@ export default function EventsScreen() {
                   <Text style={styles.eventDetailText}>{formatDate(event.date)}</Text>
                 </View>
                 
-                <View style={styles.eventDetailItem}>
+                {/* <View style={styles.eventDetailItem}>
                   <Users size={16} color="#6B7280" />
                   <Text style={styles.eventDetailText}>{event.participants} participants</Text>
-                </View>
+                </View> */}
               </View>
 
               <Text style={styles.eventDescription} numberOfLines={2}>
