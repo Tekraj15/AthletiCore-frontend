@@ -12,13 +12,13 @@ export const baseFetcher = async <T>(
   options: AxiosRequestConfig = {}
 ): Promise<T> => {
   const token = await getAccessToken();
-  console.log("🛂 Sending token:", token);
+  const isFormData = options.data instanceof FormData;
 
   const res = await axios({
     url: `${BASE_URL}${endpoint}`,
     method: options.method || "GET",
     headers: {
-      "Content-Type": "application/json",
+      ...(isFormData ? {} : { "Content-Type": "application/json" }),
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...options.headers,
     },
