@@ -132,6 +132,19 @@ export default function CreateEventScreen() {
     });
 
     if (!result.canceled) {
+      console.log("Selected image URI:", result.assets[0].uri);
+      console.log("Image file size:", result.assets[0].fileSize);
+
+      // Optional: Add file size validation
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      if (result.assets[0].fileSize && result.assets[0].fileSize > maxSize) {
+        Alert.alert(
+          "Image too large",
+          "Please select an image smaller than 5MB"
+        );
+        return;
+      }
+
       setFormData((prev) => ({ ...prev, eventImage: result.assets[0].uri }));
     }
   };
@@ -188,18 +201,45 @@ export default function CreateEventScreen() {
     data.append("otherOfficial[phone]", otherOfficial.phone);
     data.append("otherOfficial[email]", otherOfficial.email);
 
-    // 🖼️ Add image if available
+    // 🖼️ Add image if available - FIXED VERSION
     if (formData.eventImage) {
       const fileName = formData.eventImage.split("/").pop() || "event.jpg";
-      const match = /\.(\w+)$/.exec(fileName);
-      const ext = match?.[1]?.toLowerCase() || "jpg";
-      console.log("Image file", fileName, ext);
+
+      // Improved MIME type detection
+      const mimeMap: Record<string, string> = {
+        jpg: "image/jpeg",
+        jpeg: "image/jpeg",
+        png: "image/png",
+        gif: "image/gif",
+        webp: "image/webp",
+      };
+
+      const ext = fileName.split(".").pop()?.toLowerCase() || "jpg";
+      const mimeType = mimeMap[ext] || "image/jpeg";
+
+      console.log("Image details:", {
+        fileName,
+        extension: ext,
+        mimeType,
+        uri: formData.eventImage,
+      });
 
       data.append("eventImage", {
         uri: formData.eventImage,
-        type: `image/${ext}`,
+        type: mimeType,
         name: fileName,
       } as any);
+    }
+
+    // Debug: Log FormData contents (optional)
+    console.log("FormData contents:");
+    for (const [key, value] of data.entries()) {
+      if (key === "eventImage" && typeof value === "object") {
+        // Handle image file object (React Native style)
+        console.log(key, "Image file object attached");
+      } else {
+        console.log(key, value);
+      }
     }
 
     createEvent(data, {
