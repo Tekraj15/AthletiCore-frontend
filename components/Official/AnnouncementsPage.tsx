@@ -137,28 +137,36 @@ export default function AnnouncementsPage() {
   return (
     <View style={styles.container}>
       {/* Header Actions */}
-      <View style={styles.headerActions}>
-        <TouchableOpacity
-          style={styles.createButton}
-          onPress={handleCreateAnnouncement}
-        >
-          <Plus size={20} color="#FFFFFF" />
-        </TouchableOpacity>
-      </View>
+      <View style={styles.header}>
+        <View style={styles.headerTop}>
+          <View>
+            <Text style={styles.headerTitle}>Announcements</Text>
+            <Text style={styles.headerSubtitle}>
+              Stay updated with the latest news
+            </Text>
+          </View>
+          <TouchableOpacity
+            style={styles.createButton}
+            onPress={handleCreateAnnouncement}
+          >
+            <Plus size={20} color="#FFFFFF" />
+          </TouchableOpacity>
+        </View>
 
-      {/* Search Bar */}
-      <View style={styles.searchContainer}>
-        <Search size={20} color="#6B7280" style={styles.searchIcon} />
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search announcements..."
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-          placeholderTextColor="#9CA3AF"
-        />
-        <TouchableOpacity style={styles.filterButton}>
-          <Filter size={20} color="#6B7280" />
-        </TouchableOpacity>
+        {/* Search Bar */}
+        <View style={styles.searchContainer}>
+          <Search size={20} color="#6B7280" style={styles.searchIcon} />
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search announcements..."
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            placeholderTextColor="#9CA3AF"
+          />
+          <TouchableOpacity style={styles.filterButton}>
+            <Filter size={20} color="#6B7280" />
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* Uncomment filter tabs if you want */}

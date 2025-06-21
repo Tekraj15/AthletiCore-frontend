@@ -229,4 +229,30 @@ export const styles = StyleSheet.create({
   bottomSpacing: {
     height: 20,
   },
+  header: {
+    backgroundColor: colors.surface,
+    paddingHorizontal: 20,
+    paddingTop: 16,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+    borderRadius: 12,
+  },
+  headerTop: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  headerTitle: {
+    fontSize: 28,
+    fontFamily: "Inter-Bold",
+    color: colors.onSurface,
+  },
+  headerSubtitle: {
+    fontSize: 16,
+    fontFamily: "Inter-Regular",
+    color: colors.onSurfaceVariant,
+    marginTop: 4,
+  },
 });
