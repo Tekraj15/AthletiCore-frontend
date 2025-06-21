@@ -88,6 +88,13 @@ export default function OfficialLayout() {
             headerShown: false,
           }}
         />
+        <Tabs.Screen
+          name="announcement/[id]"
+          options={{
+            href: null,
+            headerShown: false,
+          }}
+        />
       </Tabs>
     </View>
   );
