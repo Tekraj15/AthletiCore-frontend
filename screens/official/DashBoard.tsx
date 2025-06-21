@@ -66,7 +66,7 @@ export default function OfficialDashboard() {
             <EventsPage />
           </View>
           <View style={{ width }}>
-            <AnnouncementsPage colors={colors} />
+            <AnnouncementsPage  />
           </View>
         </Animated.View>
       </View>
