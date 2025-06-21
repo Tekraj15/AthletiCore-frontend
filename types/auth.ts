@@ -9,7 +9,8 @@ export interface ILoginResponse {
     email: string;
     role: "Player" | "Official";
   };
-  token: string;
+  accessToken: string;
+  refreshToken: string;
 }
 
 // ------------Register (SignUp) -------------

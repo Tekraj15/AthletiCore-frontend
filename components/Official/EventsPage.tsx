@@ -2,12 +2,10 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
-  StyleSheet,
   ScrollView,
   Image,
   TouchableOpacity,
   TextInput,
-  Platform,
 } from 'react-native';
 import {
   MapPin,
@@ -17,7 +15,6 @@ import {
   Plus,
   Trophy,
   Users,
-  Clock,
 } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -108,12 +105,12 @@ export default function EventsPage() {
   });
 
   const handleEventPress = (eventId: string) => {
-  router.push(`/events/${eventId}`);
+  router.push(`./event/${eventId}`);
 };
 
 
   const handleCreateEvent = () => {
-    router.push(`/events/create`);
+    router.push(`./event/createEvent`);
   };
 
   return (
