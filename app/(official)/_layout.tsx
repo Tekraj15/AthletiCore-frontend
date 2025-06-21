@@ -74,13 +74,20 @@ export default function OfficialLayout() {
             ),
           }}
         />
-         <Tabs.Screen
-                name="event/createEvent"
-                options={{
-                  href: null,
-                  headerShown: false,
-                }}
-              />
+        <Tabs.Screen
+          name="event/createEvent"
+          options={{
+            href: null,
+            headerShown: false,
+          }}
+        />
+        <Tabs.Screen
+          name="announcement/createAnnouncement"
+          options={{
+            href: null,
+            headerShown: false,
+          }}
+        />
       </Tabs>
     </View>
   );
