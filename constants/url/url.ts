@@ -3,3 +3,4 @@ export const REGISTER_URL = "/user/register";
 export const CREATE_EVENT_URL = "/event/create";
 export const GET_MY_EVENT_URL = "/event/my-events";
 export const GET_EVENT_URL = "/event/";
+// export const GET_EVENT_BY_ID_URL = "/event/{id}";

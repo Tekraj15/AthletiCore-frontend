@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -7,7 +7,7 @@ import {
   Image,
   TouchableOpacity,
   TextInput,
-} from 'react-native';
+} from "react-native";
 import {
   MapPin,
   Calendar,
@@ -17,20 +17,18 @@ import {
   Trophy,
   Users,
   Clock,
-} from 'lucide-react-native';
-import { router } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { styles } from '@/styles/eventPageStyle'; 
+} from "lucide-react-native";
+import { router } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { styles } from "@/styles/eventPageStyle";
 import { useGetAllEvents } from "@/hooks/useGetAllEvents";
-
-
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
   });
 };
 
@@ -48,45 +46,43 @@ const formatDate = (dateString: string) => {
 // };
 
 export default function EventsScreen() {
-    const { data: events = [] } = useGetAllEvents();
-  
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedFilter, setSelectedFilter] = useState('all');
+  const { data: events = [] } = useGetAllEvents();
 
-  
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedFilter, setSelectedFilter] = useState("all");
+
   const filteredEvents = events.filter((event) => {
-  const matchesSearch =
-    event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    event.venue.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch =
+      event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      event.venue.toLowerCase().includes(searchQuery.toLowerCase());
 
-  const today = new Date();
-  const eventDate = new Date(event.date); // make sure this is a parseable format
+    const today = new Date();
+    const eventDate = new Date(event.date); // make sure this is a parseable format
 
-  let matchesFilter = false;
+    let matchesFilter = false;
 
-  switch (selectedFilter) {
-    case 'all':
-      matchesFilter = true;
-      break;
-    case 'upcoming':
-      matchesFilter = eventDate > today;
-      break;
-    case 'registered':
-      // TODO: Implement logic for registered events
-      // matchesFilter = registeredEventIds.includes(event.id);
-      break;
-    default:
-      matchesFilter = event.competitionType?.toLowerCase() === selectedFilter;
-  }
+    switch (selectedFilter) {
+      case "all":
+        matchesFilter = true;
+        break;
+      case "upcoming":
+        matchesFilter = eventDate > today;
+        break;
+      case "registered":
+        // TODO: Implement logic for registered events
+        // matchesFilter = registeredEventIds.includes(event.id);
+        break;
+      default:
+        matchesFilter = event.competitionType?.toLowerCase() === selectedFilter;
+    }
 
-  return matchesSearch && matchesFilter;
-});
-
+    return matchesSearch && matchesFilter;
+  });
 
   const handleEventPress = (eventId: string) => {
-  router.push(`/events/${eventId}`);
-};
-
+    console.log("🔍 Event _id being passed:", eventId);
+    router.push(`/events/${eventId}`);
+  };
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
@@ -107,42 +103,58 @@ export default function EventsScreen() {
         </View>
 
         {/* Filter Tabs */}
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterTabs}>
-          {['all', 'open', 'male', 'female','upcoming','registered'].map((filter) => (
-            <TouchableOpacity
-              key={filter}
-              style={[
-                styles.filterTab,
-                selectedFilter === filter && styles.filterTabActive
-              ]}
-              onPress={() => setSelectedFilter(filter)}
-            >
-              <Text style={[
-                styles.filterTabText,
-                selectedFilter === filter && styles.filterTabTextActive
-              ]}>
-                {filter.charAt(0).toUpperCase() + filter.slice(1)}
-              </Text>
-            </TouchableOpacity>
-          ))}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.filterTabs}
+        >
+          {["all", "open", "male", "female", "upcoming", "registered"].map(
+            (filter) => (
+              <TouchableOpacity
+                key={filter}
+                style={[
+                  styles.filterTab,
+                  selectedFilter === filter && styles.filterTabActive,
+                ]}
+                onPress={() => setSelectedFilter(filter)}
+              >
+                <Text
+                  style={[
+                    styles.filterTabText,
+                    selectedFilter === filter && styles.filterTabTextActive,
+                  ]}
+                >
+                  {filter.charAt(0).toUpperCase() + filter.slice(1)}
+                </Text>
+              </TouchableOpacity>
+            )
+          )}
         </ScrollView>
       </View>
 
       {/* Events List */}
-      <ScrollView style={styles.eventsList} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.eventsList}
+        showsVerticalScrollIndicator={false}
+      >
         {filteredEvents.map((event) => (
           <TouchableOpacity
-            key={event.id}
+            key={event._id}
             style={styles.eventCard}
-            onPress={() => handleEventPress(event.id)}
+            onPress={() => handleEventPress(event._id)}
             activeOpacity={0.7}
           >
-            <Image source={{ uri: event.eventImage }} style={styles.eventImage} />
-            
+            <Image
+              source={{ uri: event.eventImage }}
+              style={styles.eventImage}
+            />
+
             <View style={styles.eventContent}>
               <View style={styles.eventHeader}>
                 <View style={styles.eventBadge}>
-                  <Text style={styles.eventBadgeText}>{event.competitionType}</Text>
+                  <Text style={styles.eventBadgeText}>
+                    {event.competitionType}
+                  </Text>
                 </View>
                 {/* <View style={[styles.statusBadge, { backgroundColor: getStatusColor(event.status) }]}>
                   <Text style={styles.statusBadgeText}>{event.status}</Text>
@@ -150,18 +162,20 @@ export default function EventsScreen() {
               </View>
 
               <Text style={styles.eventTitle}>{event.title}</Text>
-              
+
               <View style={styles.eventDetails}>
                 <View style={styles.eventDetailItem}>
                   <MapPin size={16} color="#6B7280" />
                   <Text style={styles.eventDetailText}>{event.venue}</Text>
                 </View>
-                
+
                 <View style={styles.eventDetailItem}>
                   <Calendar size={16} color="#6B7280" />
-                  <Text style={styles.eventDetailText}>{formatDate(event.date)}</Text>
+                  <Text style={styles.eventDetailText}>
+                    {formatDate(event.date)}
+                  </Text>
                 </View>
-                
+
                 {/* <View style={styles.eventDetailItem}>
                   <Users size={16} color="#6B7280" />
                   <Text style={styles.eventDetailText}>{event.participants} participants</Text>
@@ -176,10 +190,11 @@ export default function EventsScreen() {
                 <View style={styles.prizeInfo}>
                   <Trophy size={16} color="#F59E0B" />
                   <Text style={styles.prizeText}>
-                    {event.prizes.length} prize{event.prizes.length !== 1 ? 's' : ''} available
+                    {event.prizes.length} prize
+                    {event.prizes.length !== 1 ? "s" : ""} available
                   </Text>
                 </View>
-                
+
                 <View style={styles.categoriesPreview}>
                   <Text style={styles.categoriesText}>
                     {event.weightCategories.length} categories
@@ -205,4 +220,3 @@ export default function EventsScreen() {
     </SafeAreaView>
   );
 }
-

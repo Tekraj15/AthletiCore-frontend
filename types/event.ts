@@ -57,7 +57,8 @@ export interface ICreateEventResponse {
 }
 
 export interface IEvent {
-  id: string;
+  _id: string;
+  id?: string;
   title: string;
   description: string;
   venue: string;

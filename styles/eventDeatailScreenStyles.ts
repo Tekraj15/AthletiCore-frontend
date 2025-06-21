@@ -7,6 +7,12 @@ export const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.surface,
   },
+  loadingcontainer: {
+    flex: 1,
+    backgroundColor: colors.surface,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   scrollView: {
     flex: 1,
   },
