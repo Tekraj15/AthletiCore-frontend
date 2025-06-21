@@ -7,6 +7,12 @@ export const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.surface,
   },
+  loadingcontainer: {
+    flex: 1,
+    backgroundColor: colors.surface,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   scrollView: {
     flex: 1,
   },
@@ -61,7 +67,7 @@ export const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontFamily: "Inter-Bold",
-    color: colors.background,
+    color: "#ffffff",
     lineHeight: 34,
     marginBottom: 8,
   },

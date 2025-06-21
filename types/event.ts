@@ -55,3 +55,36 @@ export interface ICreateEventResponse {
     updatedAt?: string;
   };
 }
+
+export interface IEvent {
+  _id: string;
+  id?: string;
+  title: string;
+  description: string;
+  venue: string;
+  date: string;
+  weightCategories: string[];
+  competitionType: "Open" | "Male" | "Female";
+  prizes: {
+    title: string;
+    prize: string;
+  }[];
+  coordinator?: {
+    name?: string;
+    phone?: string;
+    email?: string;
+  };
+  otherOfficial?: {
+    name?: string;
+    phone?: string;
+    email?: string;
+  };
+  organizerPhoneNumber?: string;
+  eventImage?: string;
+  createdby: {
+    _id: string;
+    fullName: string;
+  };
+  createdAt?: string;
+  updatedAt?: string;
+}
