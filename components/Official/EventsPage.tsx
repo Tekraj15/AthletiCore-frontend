@@ -136,9 +136,9 @@ export default function EventsPage() {
       >
         {filteredEvents.map((event) => (
           <TouchableOpacity
-            key={event.id}
+            key={event._id}
             style={styles.eventCard}
-            onPress={() => handleEventPress(event.id)}
+            onPress={() => handleEventPress(event._id)}
             activeOpacity={0.7}
           >
             <Image
