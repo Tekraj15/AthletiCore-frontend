@@ -1,8 +1,9 @@
+import { IEvent } from "@/types/event";
 export interface IAnnouncement {
   _id: string;
   title: string;
   message: string;
-  event?: string; // mongoose.Types.ObjectId serialized as string
+  event?: IEvent | null; // mongoose.Types.ObjectId serialized as string
   expiryDate?: string; // Dates are serialized as strings in JSON
   attachments?: string[];
   isUrgent: boolean;

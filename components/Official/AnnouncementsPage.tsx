@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import {
   View,
   Text,
-  StyleSheet,
   ScrollView,
   TouchableOpacity,
   TextInput,
@@ -24,122 +23,54 @@ import { router } from "expo-router";
 import { styles } from "@/styles/announcementPageStyles";
 import { usegetAllAnnouncementAPI } from "@/hooks/usegetAllAnnouncementAPI";
 
-// Sample announcements data
-// const sampleAnnouncements = [
-//   {
-//     _id: "1",
-//     title: "Competition Rules Update",
-//     message:
-//       "Important changes to the competition rules for the upcoming National Championship. All participants must review the updated guidelines before the event. Please ensure you understand the new weight class requirements and equipment regulations.",
-//     event: {
-//       _id: "1",
-//       title: "National Powerlifting Championship 2024",
-//       venue: "Iron Temple Gym, Los Angeles, CA",
-//     },
-//     expiryDate: "2024-04-15T23:59:59Z",
-//     attachments: [
-//       "https://images.pexels.com/photos/416978/pexels-photo-416978.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop",
-//     ],
-//     createdAt: "2024-01-15T10:30:00Z",
-//     updatedAt: "2024-01-15T10:30:00Z",
-//     isUrgent: true,
-//   },
-//   {
-//     _id: "2",
-//     title: "Venue Change Notice",
-//     message:
-//       "Due to unforeseen circumstances, the Regional Meet venue has been changed. Please check the new location details and plan accordingly. The new venue offers better facilities and parking.",
-//     event: {
-//       _id: "2",
-//       title: "Regional Powerlifting Meet",
-//       venue: "Strength Academy, Chicago, IL",
-//     },
-//     expiryDate: "2024-04-20T23:59:59Z",
-//     attachments: [],
-//     createdAt: "2024-01-10T14:20:00Z",
-//     updatedAt: "2024-01-10T14:20:00Z",
-//     isUrgent: false,
-//   },
-//   {
-//     _id: "3",
-//     title: "Registration Deadline Extended",
-//     message:
-//       "Good news! We have extended the registration deadline for the Women's Championship by one week. Don't miss this opportunity to compete at the highest level!",
-//     event: {
-//       _id: "3",
-//       title: "Women's Powerlifting Championship",
-//       venue: "Elite Fitness Center, Miami, FL",
-//     },
-//     expiryDate: "2024-05-01T23:59:59Z",
-//     attachments: [],
-//     createdAt: "2024-01-08T09:15:00Z",
-//     updatedAt: "2024-01-08T09:15:00Z",
-//     isUrgent: false,
-//   },
-//   {
-//     _id: "4",
-//     title: "General Safety Guidelines",
-//     message:
-//       "Please review the updated safety guidelines for all upcoming competitions. Your safety is our top priority. These guidelines include new protocols for equipment inspection and emergency procedures.",
-//     event: null,
-//     expiryDate: null,
-//     attachments: [
-//       "https://images.pexels.com/photos/1552252/pexels-photo-1552252.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop",
-//     ],
-//     createdAt: "2024-01-05T16:45:00Z",
-//     updatedAt: "2024-01-05T16:45:00Z",
-//     isUrgent: false,
-//   },
-// ];
-
-const formatDate = (dateString: string) => {
+// Update utility functions to accept string | null | undefined
+const formatDate = (dateString?: string | null) => {
+  if (!dateString) return "";
   const date = new Date(dateString);
   const now = new Date();
   const diffTime = Math.abs(now.getTime() - date.getTime());
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-  if (diffDays === 1) {
-    return "Yesterday";
-  } else if (diffDays < 7) {
-    return `${diffDays} days ago`;
-  } else {
+  if (diffDays === 1) return "Yesterday";
+  else if (diffDays < 7) return `${diffDays} days ago`;
+  else
     return date.toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
       year: "numeric",
     });
-  }
 };
 
-const formatExpiryDate = (dateString: string) => {
+const formatExpiryDate = (dateString?: string | null) => {
+  if (!dateString) return "";
   const date = new Date(dateString);
   const now = new Date();
   const diffTime = date.getTime() - now.getTime();
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-  if (diffDays < 0) {
-    return "Expired";
-  } else if (diffDays === 0) {
-    return "Expires today";
-  } else if (diffDays === 1) {
-    return "Expires tomorrow";
-  } else if (diffDays < 7) {
-    return `Expires in ${diffDays} days`;
-  } else {
+  if (diffDays < 0) return "Expired";
+  else if (diffDays === 0) return "Expires today";
+  else if (diffDays === 1) return "Expires tomorrow";
+  else if (diffDays < 7) return `Expires in ${diffDays} days`;
+  else
     return `Expires ${date.toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
     })}`;
-  }
 };
 
-const isExpired = (dateString: string | null) => {
+const isExpired = (dateString?: string | null) => {
   if (!dateString) return false;
   return new Date(dateString) < new Date();
 };
 
 export default function AnnouncementsPage() {
-  const { data: announcements = [], isLoading, isError, refetch } = usegetAllAnnouncementAPI();
+  const {
+    data: announcements = [],
+    isLoading,
+    isError,
+    refetch,
+  } = usegetAllAnnouncementAPI();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("all");
@@ -153,16 +84,19 @@ export default function AnnouncementsPage() {
     let matchesFilter = true;
     switch (selectedFilter) {
       case "urgent":
-        matchesFilter = announcement.isUrgent;
+        matchesFilter = Boolean(announcement.isUrgent);
         break;
       case "event":
-        matchesFilter = announcement.event !== null;
+        matchesFilter =
+          announcement.event !== null && typeof announcement.event === "object";
         break;
       case "general":
-        matchesFilter = announcement.event === null;
+        matchesFilter = !announcement.event;
         break;
       case "expiring":
-        // matchesFilter = announcement.expiryDate && !isExpired(announcement.expiryDate);
+        matchesFilter =
+          !!announcement.expiryDate && !isExpired(announcement.expiryDate);
+
         break;
       default:
         matchesFilter = true;
@@ -171,20 +105,34 @@ export default function AnnouncementsPage() {
     return matchesSearch && matchesFilter;
   });
 
-  const handleRefresh = () => {
+  const handleRefresh = async () => {
     setRefreshing(true);
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 1000);
+    await refetch();
+    setRefreshing(false);
   };
-
-  // const handleAnnouncementPress = (id: string) => {
-  //   router.push(`/announcement/${id}`);
-  // };
 
   const handleCreateAnnouncement = () => {
     router.push("/announcement/createAnnouncement");
   };
+
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <Text>Loading announcements...</Text>
+      </View>
+    );
+  }
+
+  if (isError) {
+    return (
+      <View style={styles.container}>
+        <Text>Error loading announcements.</Text>
+        <TouchableOpacity onPress={() => refetch()}>
+          <Text style={{ color: "#DC2626", marginTop: 10 }}>Try Again</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -195,7 +143,6 @@ export default function AnnouncementsPage() {
           onPress={handleCreateAnnouncement}
         >
           <Plus size={20} color="#FFFFFF" />
-          {/* <Text style={styles.createButtonText}>Create Announcement</Text> */}
         </TouchableOpacity>
       </View>
 
@@ -214,34 +161,11 @@ export default function AnnouncementsPage() {
         </TouchableOpacity>
       </View>
 
-      {/* Filter Tabs
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterTabs}>
-        {[
-          { key: 'all', label: 'All' },
-          { key: 'urgent', label: 'Urgent' },
-          { key: 'event', label: 'Event' },
-          { key: 'general', label: 'General' },
-          { key: 'expiring', label: 'Expiring' },
-        ].map((filter) => (
-          <TouchableOpacity
-            key={filter.key}
-            style={[
-              styles.filterTab,
-              selectedFilter === filter.key && styles.filterTabActive
-            ]}
-            onPress={() => setSelectedFilter(filter.key)}
-          >
-            <Text style={[
-              styles.filterTabText,
-              selectedFilter === filter.key && styles.filterTabTextActive
-            ]}>
-              {filter.label}
-            </Text>
-          </TouchableOpacity>
-        ))}
+      {/* Uncomment filter tabs if you want */}
+      {/* <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterTabs}>
+        {[{ key: 'all', label: 'All' }, ...].map(...)}
       </ScrollView> */}
 
-      {/* Announcements List */}
       <ScrollView
         style={styles.announcementsList}
         showsVerticalScrollIndicator={false}
@@ -254,11 +178,13 @@ export default function AnnouncementsPage() {
             key={announcement._id}
             style={[
               styles.announcementCard,
-              announcement.isUrgent && styles.urgentCard,
-              isExpired(announcement.expiryDate) && styles.expiredCard,
+              announcement.isUrgent ? styles.urgentCard : undefined,
+              isExpired(announcement.expiryDate)
+                ? styles.expiredCard
+                : undefined,
             ]}
-            // onPress={() => handleAnnouncementPress(announcement._id)}
             activeOpacity={0.7}
+            // onPress={() => handleAnnouncementPress(announcement._id)}
           >
             <View style={styles.cardHeader}>
               <View style={styles.cardHeaderLeft}>
@@ -301,10 +227,10 @@ export default function AnnouncementsPage() {
               {announcement.message}
             </Text>
 
-            {announcement.event && (
+            {announcement.event && typeof announcement.event === "object" && (
               <View style={styles.eventInfo}>
                 <Calendar size={16} color="#6B7280" />
-                <Text style={styles.eventTitle} numberOfLines={1}>
+                <Text style={styles.eventTitle}>
                   {announcement.event.title}
                 </Text>
               </View>
