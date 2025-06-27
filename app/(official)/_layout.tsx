@@ -82,6 +82,20 @@ export default function OfficialLayout() {
           }}
         />
         <Tabs.Screen
+          name="event/[eventId]"
+          options={{
+            href: null,
+            headerShown: false,
+          }}
+        />
+        <Tabs.Screen
+          name="event/[id]/create-form"
+          options={{
+            href: null,
+            headerShown: false,
+          }}
+        />
+        <Tabs.Screen
           name="announcement/createAnnouncement"
           options={{
             href: null,
