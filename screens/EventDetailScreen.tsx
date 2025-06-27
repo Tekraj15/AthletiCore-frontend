@@ -125,11 +125,11 @@ export default function EventDetailScreen() {
             <Text style={styles.actionButtonText}>Save</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={styles.primaryButton}
+            style={styles.actionButton}
             onPress={handleRegister}
           >
             <UserCheck size={20} color="#FFFFFF" />
-            <Text style={styles.primaryButtonText}>Register</Text>
+            <Text style={styles.actionButtonText}>Register</Text>
           </TouchableOpacity>
         </View>
 
