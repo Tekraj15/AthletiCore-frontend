@@ -132,7 +132,7 @@ export default function EventDetailScreen() {
             onPress={() => handleCreateEventForm(event._id)}
           >
             <UserCheck size={20} color="#FFFFFF" />
-            <Text style={styles.actionButtonText}>Create Event</Text>
+            <Text style={styles.actionButtonText}>Create Event Form </Text>
           </TouchableOpacity>
         </View>
 

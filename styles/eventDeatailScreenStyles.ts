@@ -94,6 +94,7 @@ export const styles = StyleSheet.create({
     gap: 12,
   },
   actionButton: {
+    paddingHorizontal: 8,
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
@@ -110,21 +111,6 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: "Inter-SemiBold",
   },
-  // primaryButton: {
-  //   flex: 1,
-  //   flexDirection: "row",
-  //   alignItems: "center",
-  //   justifyContent: "center",
-  //   backgroundColor: colors.error,
-  //   paddingVertical: 12,
-  //   borderRadius: 8,
-  //   gap: 8,
-  // },
-  // primaryButtonText: {
-  //   color: colors.background,
-  //   fontSize: 14,
-  //   fontFamily: "Inter-SemiBold",
-  // },
   section: {
     backgroundColor: colors.background,
     marginHorizontal: 20,

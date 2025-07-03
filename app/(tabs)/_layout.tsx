@@ -87,7 +87,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="events/create"
+        name="events/[id]/registration-form"
         options={{
           href: null,
           headerShown: false,

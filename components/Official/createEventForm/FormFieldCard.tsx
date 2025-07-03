@@ -12,6 +12,7 @@ import { useColorScheme } from "react-native";
 interface Props {
   field: IFormField;
   index: number;
+  isStatic?: boolean
   
   onUpdateField: (id: string, updates: Partial<IFormField>) => void;
   onRemoveField: (id: string) => void;

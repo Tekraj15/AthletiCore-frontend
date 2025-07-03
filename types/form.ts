@@ -4,10 +4,12 @@ export interface IFormField {
   fieldType: "text" | "number" | "date" | "select";
   required: boolean;
   options?: string[];
+  isStatic?: boolean;
+  key?: string;
 }
 
 export interface IEventForm {
-  _id: string;
+  id: string;
   eventId: string;
   fields: IFormField[];
   createdBy: string;

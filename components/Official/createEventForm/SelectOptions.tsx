@@ -1,8 +1,8 @@
-import React from 'react';
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
-import { Plus, X } from 'lucide-react-native';
-import { IFormField } from '@/types/form';
-import { styles } from '@/styles/create-event-formStyles';
+import React from "react";
+import { View, Text, TextInput, TouchableOpacity } from "react-native";
+import { Plus, X } from "lucide-react-native";
+import { IFormField } from "@/types/form";
+import { styles } from "@/styles/create-event-formStyles";
 
 interface Props {
   field: IFormField;
@@ -13,19 +13,24 @@ interface Props {
 }
 
 const SelectOptions = ({ field, colors, onAddOption, onUpdateOption, onRemoveOption }: Props) => {
-  if (field.fieldType !== 'select') return null;
+  if (field.fieldType !== "select") return null;
+
+  const options = field.options ?? [];
 
   return (
     <View style={styles.optionsContainer}>
       <View style={styles.optionsHeader}>
         <Text style={[styles.optionsLabel, { color: colors.onSurfaceVariant }]}>Options</Text>
-        <TouchableOpacity style={[styles.addOptionButton, { backgroundColor: colors.primary }]} onPress={onAddOption}>
+        <TouchableOpacity
+          style={[styles.addOptionButton, { backgroundColor: colors.primary }]}
+          onPress={onAddOption}
+        >
           <Plus size={16} color="#fff" />
           <Text style={styles.addOptionText}>Add Option</Text>
         </TouchableOpacity>
       </View>
 
-      {field.options?.map((option, index) => (
+      {options.map((option, index) => (
         <View key={index} style={styles.optionRow}>
           <TextInput
             style={[
@@ -41,7 +46,7 @@ const SelectOptions = ({ field, colors, onAddOption, onUpdateOption, onRemoveOpt
             placeholder={`Option ${index + 1}`}
             placeholderTextColor={colors.onSurfaceVariant}
           />
-          {field.options.length > 1 && (
+          {options.length > 1 && (
             <TouchableOpacity
               style={[styles.removeOptionButton, { backgroundColor: colors.error }]}
               onPress={() => onRemoveOption(index)}

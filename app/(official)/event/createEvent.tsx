@@ -247,7 +247,7 @@ export default function CreateEventScreen() {
         Alert.alert("Success", "Event created successfully!", [
           {
             text: "OK",
-            onPress: () => router.replace("/(official)/dashboard"),
+            onPress: () => router.back(),
           },
         ]);
       },
