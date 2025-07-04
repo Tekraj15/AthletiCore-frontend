@@ -3,9 +3,11 @@ import { baseFetcher } from "./baseFetcher";
 import {
   ICreateEventFormRequest,
   ICreateEventFormResponse,
+  ISubmitEventFormRequest,
+  ISubmitEventFormResponse,
 } from "@/types/eventForm";
 import { CREATE_EVENT_FORM_URL } from "@/constants/url/url";
-
+import { SUBMIT_EVENT_FORM_URL } from "@/constants/url/url";
 export const createEventFormAPI = ({
   eventId,
   fields,
@@ -21,5 +23,16 @@ export const getEventFormAPI = (eventId: string) => {
   const url = CREATE_EVENT_FORM_URL.replace(":eventId", eventId);
   return baseFetcher<ICreateEventFormResponse>(url, {
     method: "GET",
+  });
+};
+
+export const submitEventFormAPI = ({
+  eventId,
+  formFields,
+}: ISubmitEventFormRequest) => {
+  const url = SUBMIT_EVENT_FORM_URL.replace(":eventId", eventId);
+  return baseFetcher<ISubmitEventFormResponse>(url, {
+    method: "POST",
+    data: { formFields },
   });
 };

@@ -116,6 +116,7 @@ export default function EventRegistrationFormScreen() {
       Alert.alert("Error", "Failed to submit registration. Please try again.");
     } finally {
       setIsSubmitting(false);
+  
     }
   };
 

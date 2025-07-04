@@ -10,17 +10,6 @@ export interface ICreateEventFormRequest {
   }[];
 }
 
-// export interface ICreateEventFormResponse {
-//   message: string;
-//   form: {
-//     _id: string;
-//     eventId: string;
-//     fields: IFormField[];
-//     createdBy: string;
-//     createdAt?: string;
-//   };
-// }
-
 export interface ICreateEventFormResponse {
   _id: string;
   eventId: string;
@@ -28,4 +17,25 @@ export interface ICreateEventFormResponse {
   createdBy: string;
   createdAt?: string;
   updatedAt?: string;
+}
+
+export interface ISubmitEventFormRequest {
+  eventId: string;
+  formFields: {
+    key: string;
+    value: string;
+  }[];
+}
+
+export interface ISubmitEventFormResponse {
+  message: string;
+  submission: {
+    _id: string;
+    event: string;
+    user: string;
+    formFields: { key: string; value: string }[];
+    status: "pending" | "approved" | "rejected";
+    createdAt: string;
+    updatedAt: string;
+  };
 }
