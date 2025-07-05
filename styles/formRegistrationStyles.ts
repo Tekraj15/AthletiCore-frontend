@@ -37,6 +37,7 @@ export const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   loadingContainer: {
+    paddingHorizontal: 4,
     flex: 1,
     justifyContent: "center",
     alignItems: "center",

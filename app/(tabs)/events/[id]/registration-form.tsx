@@ -22,12 +22,15 @@ import { theme } from "@/constants/theme";
 import { styles } from "@/styles/formRegistrationStyles";
 import { useGetEventForm } from "@/hooks/useGetEventsForm";
 import { IFormField } from "@/types/form";
+import { useSubmitEventForm } from "@/hooks/useSubmitEventForm";
 
 export default function EventRegistrationFormScreen() {
   const { id: eventId } = useLocalSearchParams();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const colors = isDark ? theme.dark : theme.light;
+
+  const { mutate: submitForm } = useSubmitEventForm();
 
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -40,9 +43,13 @@ export default function EventRegistrationFormScreen() {
 
   if (isLoading) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: colors.background }]}
+      >
         <View style={styles.loadingContainer}>
-          <Text style={[styles.loadingText, { color: colors.onSurface }]}>Loading form...</Text>
+          <Text style={[styles.loadingText, { color: colors.onSurface }]}>
+            Loading form...
+          </Text>
         </View>
       </SafeAreaView>
     );
@@ -50,9 +57,13 @@ export default function EventRegistrationFormScreen() {
 
   if (!form || !Array.isArray(form.fields)) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: colors.background }]}
+      >
         <View style={styles.loadingContainer}>
-          <Text style={[styles.loadingText, { color: colors.onSurface }]}>No form found.</Text>
+            <Text style={[styles.loadingText, { color: colors.onSurface }]}>
+            Registration is currently closed. The form will appear here once registration opens.
+            </Text>
         </View>
       </SafeAreaView>
     );
@@ -91,7 +102,9 @@ export default function EventRegistrationFormScreen() {
       if (field.fieldType === "number" && formData[field.id]) {
         const numValue = Number(formData[field.id]);
         if (isNaN(numValue) || numValue <= 0) {
-          newErrors[field.id] = `${field.fieldName} must be a valid positive number`;
+          newErrors[
+            field.id
+          ] = `${field.fieldName} must be a valid positive number`;
         }
       }
     });
@@ -106,18 +119,37 @@ export default function EventRegistrationFormScreen() {
     }
 
     setIsSubmitting(true);
-    try {
-      console.log("Submitting form data:", { eventId, formData });
-      Alert.alert("Success", "Registration submitted successfully!", [
-        { text: "OK", onPress: () => router.back() },
-      ]);
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      Alert.alert("Error", "Failed to submit registration. Please try again.");
-    } finally {
-      setIsSubmitting(false);
-  
-    }
+    submitForm(
+      {
+        eventId: eventId as string,
+        formFields: Object.entries(formData).map(([key, value]) => ({
+          key,
+          value,
+        })),
+      },
+      {
+        onSuccess: (data) => {
+          Alert.alert("Success", "Registration submitted successfully!", [
+            {
+              text: "OK",
+              onPress: () => {
+                setTimeout(() => router.back(), 300); 
+              },
+            },
+          ]);
+        },
+        onError: (error: any) => {
+          console.error("Submission error:", error);
+          Alert.alert(
+            "Error",
+            error.response?.data?.message || "Failed to submit registration."
+          );
+        },
+        onSettled: () => {
+          setIsSubmitting(false);
+        },
+      }
+    );
   };
 
   const renderField = (field: IFormField) => {
@@ -131,7 +163,9 @@ export default function EventRegistrationFormScreen() {
           <View key={field.id} style={styles.fieldContainer}>
             <Text style={[styles.fieldLabel, { color: colors.onSurface }]}>
               {field.fieldName}
-              {field.required && <Text style={{ color: colors.error }}> *</Text>}
+              {field.required && (
+                <Text style={{ color: colors.error }}> *</Text>
+              )}
             </Text>
             <TextInput
               style={[
@@ -146,7 +180,9 @@ export default function EventRegistrationFormScreen() {
               onChangeText={(text) => updateFormData(field.id, text)}
               placeholder={`Enter ${field.fieldName.toLowerCase()}`}
               placeholderTextColor={colors.onSurfaceVariant}
-              keyboardType={field.fieldType === "number" ? "numeric" : "default"}
+              keyboardType={
+                field.fieldType === "number" ? "numeric" : "default"
+              }
             />
             {hasError && (
               <View style={styles.errorContainer}>
@@ -164,7 +200,9 @@ export default function EventRegistrationFormScreen() {
           <View key={field.id} style={styles.fieldContainer}>
             <Text style={[styles.fieldLabel, { color: colors.onSurface }]}>
               {field.fieldName}
-              {field.required && <Text style={{ color: colors.error }}> *</Text>}
+              {field.required && (
+                <Text style={{ color: colors.error }}> *</Text>
+              )}
             </Text>
             <TouchableOpacity
               style={[
@@ -174,7 +212,9 @@ export default function EventRegistrationFormScreen() {
                   borderColor: hasError ? colors.error : colors.border,
                 },
               ]}
-              onPress={() => Alert.alert("Date Picker", "Date picker would open here")}
+              onPress={() =>
+                Alert.alert("Date Picker", "Date picker would open here")
+              }
             >
               <Calendar size={20} color={colors.onSurfaceVariant} />
               <Text
@@ -204,7 +244,9 @@ export default function EventRegistrationFormScreen() {
           <View key={field.id} style={styles.fieldContainer}>
             <Text style={[styles.fieldLabel, { color: colors.onSurface }]}>
               {field.fieldName}
-              {field.required && <Text style={{ color: colors.error }}> *</Text>}
+              {field.required && (
+                <Text style={{ color: colors.error }}> *</Text>
+              )}
             </Text>
             <TouchableOpacity
               style={[
@@ -214,7 +256,9 @@ export default function EventRegistrationFormScreen() {
                   borderColor: hasError ? colors.error : colors.border,
                 },
               ]}
-              onPress={() => setShowDropdown(showDropdown === field.id ? null : field.id)}
+              onPress={() =>
+                setShowDropdown(showDropdown === field.id ? null : field.id)
+              }
             >
               <Text
                 style={[
@@ -230,7 +274,9 @@ export default function EventRegistrationFormScreen() {
                 size={20}
                 color={colors.onSurfaceVariant}
                 style={{
-                  transform: [{ rotate: showDropdown === field.id ? "180deg" : "0deg" }],
+                  transform: [
+                    { rotate: showDropdown === field.id ? "180deg" : "0deg" },
+                  ],
                 }}
               />
             </TouchableOpacity>
@@ -252,10 +298,17 @@ export default function EventRegistrationFormScreen() {
                       setShowDropdown(null);
                     }}
                   >
-                    <Text style={[styles.dropdownOptionText, { color: colors.onSurface }]}>
+                    <Text
+                      style={[
+                        styles.dropdownOptionText,
+                        { color: colors.onSurface },
+                      ]}
+                    >
                       {option}
                     </Text>
-                    {value === option && <CheckCircle size={16} color={colors.primary} />}
+                    {value === option && (
+                      <CheckCircle size={16} color={colors.primary} />
+                    )}
                   </TouchableOpacity>
                 );
               })}
@@ -276,7 +329,9 @@ export default function EventRegistrationFormScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
       <View
         style={[
           styles.header,
@@ -287,7 +342,10 @@ export default function EventRegistrationFormScreen() {
         ]}
       >
         <TouchableOpacity
-          style={[styles.backButton, { backgroundColor: colors.surfaceVariant }]}
+          style={[
+            styles.backButton,
+            { backgroundColor: colors.surfaceVariant },
+          ]}
           onPress={() => router.back()}
         >
           <ArrowLeft size={24} color={colors.onSurface} />
@@ -300,9 +358,12 @@ export default function EventRegistrationFormScreen() {
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <View style={[styles.infoSection, { backgroundColor: colors.surface }]}>
-          <Text style={[styles.infoTitle, { color: colors.onSurface }]}>Registration Form</Text>
+          <Text style={[styles.infoTitle, { color: colors.onSurface }]}>
+            Registration Form
+          </Text>
           <Text style={[styles.infoText, { color: colors.onSurfaceVariant }]}>
-            Please fill out all required fields to complete your registration for this event.
+            Please fill out all required fields to complete your registration
+            for this event.
           </Text>
         </View>
 
@@ -314,7 +375,9 @@ export default function EventRegistrationFormScreen() {
           style={[
             styles.submitButton,
             {
-              backgroundColor: isSubmitting ? colors.surfaceVariant : colors.primary,
+              backgroundColor: isSubmitting
+                ? colors.surfaceVariant
+                : colors.primary,
               opacity: isSubmitting ? 0.6 : 1,
             },
           ]}

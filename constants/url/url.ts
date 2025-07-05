@@ -9,4 +9,4 @@ export const GET_ANNOUNCEMENT_URL = "/announcement/";
 // custom form,
 export const CREATE_EVENT_FORM_URL = "/form-events/:eventId/forms";
 //register for event
-export const SUBMIT_EVENT_FORM_URL = "/form-events/:eventId/forms";
+export const SUBMIT_EVENT_FORM_URL = "/form-events/:eventId/submissions";

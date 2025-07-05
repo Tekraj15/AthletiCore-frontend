@@ -48,7 +48,7 @@ export default function OfficialLayout() {
           }}
         />
         <Tabs.Screen
-          name="registrations"
+          name="get-all-registrations"
           options={{
             title: "Registrations",
             tabBarIcon: () => (
@@ -57,7 +57,7 @@ export default function OfficialLayout() {
           }}
         />
         <Tabs.Screen
-          name="liveGame"
+          name="game/liveGame"
           options={{
             title: "Results",
             tabBarIcon: ({ size, color }) => (
@@ -104,6 +104,13 @@ export default function OfficialLayout() {
         />
         <Tabs.Screen
           name="announcement/[id]"
+          options={{
+            href: null,
+            headerShown: false,
+          }}
+        />
+        <Tabs.Screen
+          name="game/[gameId]"
           options={{
             href: null,
             headerShown: false,
