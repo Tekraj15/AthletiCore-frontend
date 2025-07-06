@@ -10,3 +10,8 @@ export const GET_ANNOUNCEMENT_URL = "/announcement/";
 export const CREATE_EVENT_FORM_URL = "/form-events/:eventId/forms";
 //register for event
 export const SUBMIT_EVENT_FORM_URL = "/form-events/:eventId/submissions";
+//get registration data
+export const GET_ALL_EVENT_REGISTRATION_FORM_URL =
+  "/form-events/:eventId/submissions";
+export const GET_EVENT_REGISTRATION_BY_ID_FORM_URL =
+  "/form-events/:eventId/submissions/:submissionId";

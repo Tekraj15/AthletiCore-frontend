@@ -99,7 +99,7 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.background,
+    backgroundColor: colors.surfaceVariant,
     paddingVertical: 12,
     borderRadius: 8,
     borderWidth: 1,
@@ -107,7 +107,7 @@ export const styles = StyleSheet.create({
     gap: 8,
   },
   actionButtonText: {
-    color: colors.error,
+    color: "white",
     fontSize: 14,
     fontFamily: "Inter-SemiBold",
   },

@@ -132,8 +132,6 @@ export default function CreateEventScreen() {
     });
 
     if (!result.canceled) {
-      console.log("Selected image URI:", result.assets[0].uri);
-      console.log("Image file size:", result.assets[0].fileSize);
 
       // Optional: Add file size validation
       const maxSize = 5 * 1024 * 1024; // 5MB
@@ -182,14 +180,16 @@ export default function CreateEventScreen() {
 
     // 🏋️ Add weight categories
     weightCategories
-      .filter((cat) => cat.trim())
+      .filter((cat) => cat.trim()) // ✅ keep this to avoid empty entries
       .forEach((cat) => data.append("weightCategories[]", cat));
 
     // 🏆 Add prizes
     prizes
-      .filter((prize) => prize.title.trim() || prize.prize.trim())
-      .forEach((prize) => {
-        data.append("prizes[]", JSON.stringify(prize));
+      .filter((prize) => prize.title.trim() || prize.prize.trim()) // ✅ keep this
+      .forEach((prize, index) => {
+        data.append(`prizes[${index}][id]`, prize.id);
+        data.append(`prizes[${index}][title]`, prize.title);
+        data.append(`prizes[${index}][prize]`, prize.prize);
       });
 
     // 👥 Add coordinator and other official
@@ -217,12 +217,12 @@ export default function CreateEventScreen() {
       const ext = fileName.split(".").pop()?.toLowerCase() || "jpg";
       const mimeType = mimeMap[ext] || "image/jpeg";
 
-      console.log("Image details:", {
-        fileName,
-        extension: ext,
-        mimeType,
-        uri: formData.eventImage,
-      });
+      // console.log("Image details:", {
+      //   fileName,
+      //   extension: ext,
+      //   mimeType,
+      //   uri: formData.eventImage,
+      // });
 
       data.append("eventImage", {
         uri: formData.eventImage,
@@ -231,14 +231,12 @@ export default function CreateEventScreen() {
       } as any);
     }
 
-    // Debug: Log FormData contents (optional)
-    console.log("FormData contents:");
     for (const [key, value] of data.entries()) {
       if (key === "eventImage" && typeof value === "object") {
         // Handle image file object (React Native style)
-        console.log(key, "Image file object attached");
+        // console.log(key, "Image file object attached");
       } else {
-        console.log(key, value);
+        // console.log(key, value);
       }
     }
 
@@ -247,7 +245,10 @@ export default function CreateEventScreen() {
         Alert.alert("Success", "Event created successfully!", [
           {
             text: "OK",
-            onPress: () => router.back(),
+            onPress: () => {
+              console.log("Navigating back...");
+              router.back();
+            },
           },
         ]);
       },
@@ -264,7 +265,7 @@ export default function CreateEventScreen() {
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
-          onPress={() => router.push("/(official)/dashboard")}
+          onPress={() => router.back()}
         >
           <ArrowLeft size={24} color="#ffff" />
         </TouchableOpacity>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -30,7 +30,6 @@ import { styles } from "@/styles/registrationDetailStyles";
 interface Props {
   registration: Registration;
   visible: boolean;
-  currentUser: any; // 👈 Add this line
 
   onClose: () => void;
   onStatusUpdate: (
@@ -44,7 +43,7 @@ interface Props {
 const RegistrationDetailModal: React.FC<Props> = ({
   registration,
   visible,
-  currentUser,
+
   onClose,
   onStatusUpdate,
   onDataUpdate,
@@ -69,6 +68,23 @@ const RegistrationDetailModal: React.FC<Props> = ({
     emergencyContact: registration.emergencyContact,
     emergencyPhone: registration.emergencyPhone,
   });
+
+  // ✅ ADD THIS 👇
+  useEffect(() => {
+    setEditData({
+      playerName: registration.playerName,
+      age: registration.age,
+      phone: registration.phone,
+      height: registration.height,
+      weight: registration.weight,
+      rackHeight: registration.rackHeight,
+      preferredPosition: registration.preferredPosition,
+      experience: registration.experience,
+      medicalConditions: registration.medicalConditions,
+      emergencyContact: registration.emergencyContact,
+      emergencyPhone: registration.emergencyPhone,
+    });
+  }, [registration]);
 
   const handleSave = () => {
     onDataUpdate(registration.id, editData);

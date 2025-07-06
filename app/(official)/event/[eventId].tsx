@@ -12,7 +12,7 @@ import {
   Calendar,
   Phone,
   Mail,
-  Share2,
+  Users,
   CalendarPlus,
   UserCheck,
   Medal,
@@ -53,12 +53,16 @@ export default function EventDetailScreen() {
 
   const handleCall = (phone: string) => Linking.openURL(`tel:${phone}`);
   const handleEmail = (email: string) => Linking.openURL(`mailto:${email}`);
-  const handleShare = () => console.log("Share event");
   const handleSaveToCalendar = () => console.log("Save to calendar");
 
-  const handleCreateEventForm = (id: string) => {
-    router.push(`/(official)/event/${id}/create-form`);
+  const handleCreateEventForm = (eventId: string) => {
+    router.push(`/(official)/event/${eventId}/create-form`);
   };
+
+  const handleViewRegistation = (id: string) => {
+  console.log("Event ID passed to handler:", id); // Debug line
+  router.push(`/(official)/event/${id}/submissions`);
+};
 
   if (isLoading) {
     return (
@@ -116,15 +120,19 @@ export default function EventDetailScreen() {
 
         {/* Action Buttons */}
         <View style={styles.actionButtons}>
-          <TouchableOpacity style={styles.actionButton} onPress={handleShare}>
-            <Share2 size={20} color="#DC2626" />
-            <Text style={styles.actionButtonText}>Share</Text>
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={() => handleViewRegistation(event._id)}
+          >
+            <Users size={20} color="#ffff" />
+            <Text style={styles.actionButtonText}>View Registrations</Text>
           </TouchableOpacity>
+
           <TouchableOpacity
             style={styles.actionButton}
             onPress={handleSaveToCalendar}
           >
-            <CalendarPlus size={20} color="#DC2626" />
+            <CalendarPlus size={20} color="#ffff" />
             <Text style={styles.actionButtonText}>Save</Text>
           </TouchableOpacity>
           <TouchableOpacity
