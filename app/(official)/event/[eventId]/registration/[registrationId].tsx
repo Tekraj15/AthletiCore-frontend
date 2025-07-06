@@ -25,7 +25,7 @@ import { useUpdateFinalStats } from "@/hooks/useUpdateFinalStats";
 import { useGetPlayerSubmissionDetail } from "@/hooks/useGetPlayerSubmissionById";
 
 export default function RegistrationDetailScreen() {
-  const { eventId, registrationId } = useLocalSearchParams();
+  const { eventId, registrationId, mode, review } = useLocalSearchParams();
   const router = useRouter();
   const queryClient = useQueryClient();
 
@@ -56,6 +56,16 @@ export default function RegistrationDetailScreen() {
     }
   }, [registration]);
 
+  useEffect(() => {
+    // Automatically enable edit or review based on URL params
+    if (mode === "edit") {
+      setIsEditing(true);
+    }
+    if (review === "true") {
+      setShowStatusModal(true);
+    }
+  }, [mode, review]);
+
   const handleSave = () => {
     if (!registration) return;
 
@@ -71,7 +81,9 @@ export default function RegistrationDetailScreen() {
       },
       {
         onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ["submission-detail", eventId, registrationId] });
+          queryClient.invalidateQueries({
+            queryKey: ["submission-detail", eventId, registrationId],
+          });
           setIsEditing(false);
         },
         onError: (err) => console.error(err),
@@ -92,7 +104,9 @@ export default function RegistrationDetailScreen() {
       },
       {
         onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ["submission-detail", eventId, registrationId] });
+          queryClient.invalidateQueries({
+            queryKey: ["submission-detail", eventId, registrationId],
+          });
           setShowStatusModal(false);
         },
         onError: (err) => console.error(err),
@@ -144,7 +158,7 @@ export default function RegistrationDetailScreen() {
         <ScrollView contentContainerStyle={styles.content}>
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Form Responses</Text>
-            {registration.formFields.map((field: { key: string; value: string }, index: number) => (
+            {registration.formFields.map((field, index) => (
               <View key={field.key + index} style={styles.inputGroup}>
                 {isEditing ? (
                   <TextInput
@@ -174,10 +188,7 @@ export default function RegistrationDetailScreen() {
                 >
                   <Text style={styles.cancelText}>Cancel</Text>
                 </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.saveButton}
-                  onPress={handleSave}
-                >
+                <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
                   <Save size={16} color="white" />
                   <Text style={styles.saveText}>
                     {updateFormFieldsMutation.isPending ? "Saving..." : "Save"}
@@ -212,18 +223,27 @@ export default function RegistrationDetailScreen() {
               <Text style={styles.statusTitle}>Update Status</Text>
               <View style={styles.statusButtons}>
                 <TouchableOpacity
-                  style={statusAction === "approved" ? styles.activeAccept : styles.inactive}
+                  style={
+                    statusAction === "approved"
+                      ? styles.activeAccept
+                      : styles.inactive
+                  }
                   onPress={() => setStatusAction("approved")}
                 >
                   <Text style={styles.statusText}>Approve</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={statusAction === "rejected" ? styles.activeReject : styles.inactive}
+                  style={
+                    statusAction === "rejected"
+                      ? styles.activeReject
+                      : styles.inactive
+                  }
                   onPress={() => setStatusAction("rejected")}
                 >
                   <Text style={styles.statusText}>Reject</Text>
                 </TouchableOpacity>
               </View>
+
               <TextInput
                 style={styles.commentBox}
                 value={reviewComments}
@@ -231,6 +251,7 @@ export default function RegistrationDetailScreen() {
                 placeholder="Write comments..."
                 multiline
               />
+
               <View style={styles.modalActions}>
                 <TouchableOpacity
                   style={styles.cancelButton}

@@ -129,3 +129,24 @@ export interface IPlayerSubmissionDetailResponse {
     updatedAt: string;
   };
 }
+
+export interface IMySubmission {
+  _id: string;
+  event: {
+    _id: string;
+    title: string;
+    createdby: string;
+  };
+  user: string; // or just the ID
+  formFields: { key: string; value: string }[];
+  finalHeight?: string;
+  finalWeight?: string;
+  finalRackHeight?: string;
+  status: "pending" | "approved" | "rejected";
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface IGetMySubmissionsResponse {
+  submissions: IMySubmission[];
+}

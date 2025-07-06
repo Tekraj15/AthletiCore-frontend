@@ -15,3 +15,5 @@ export const GET_ALL_EVENT_REGISTRATION_FORM_URL =
   "/form-events/:eventId/submissions";
 export const GET_EVENT_REGISTRATION_BY_ID_FORM_URL =
   "/form-events/:eventId/submissions/:submissionId";
+export const GET_MY_EVENT_REGISTRATION_FORM_URL =
+  "/form-events/:eventId/submissions/me";

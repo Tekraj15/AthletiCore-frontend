@@ -1,4 +1,3 @@
-// GetAllPlayerRegistration.tsx
 import React, { useMemo, useState } from "react";
 import {
   View,
@@ -9,12 +8,18 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from "react-native";
-import { CheckCircle, XCircle, Clock, Search } from "lucide-react-native";
-import { styles } from "@/styles/OfficialDashboardStyles";
+import {
+  CheckCircle,
+  XCircle,
+  Clock,
+  Search,
+  MoreVertical,
+} from "lucide-react-native";
+import { styles } from "@/styles/getAllRegiatrationStyles";
 import { useGetAllEventsRegistration } from "@/hooks/UseGetAllRegistration";
 import { useGetEventForm } from "@/hooks/useGetEventsForm";
 import { IPlayerSubmission } from "@/types/eventForm";
-import { parseFormFields } from "@/utils/parseFormFields";
+import { parseFormFieldsWithMeta } from "@/utils/parseFormFields";
 import { useLocalSearchParams, useRouter } from "expo-router";
 
 export default function GetAllPlayerRegistration() {
@@ -22,85 +27,94 @@ export default function GetAllPlayerRegistration() {
   const router = useRouter();
 
   const [search, setSearch] = useState("");
-  const [status, setStatus] = useState<
-    "all" | "pending" | "accepted" | "rejected"
-  >("all");
+  const [status, setStatus] = useState<"all" | "pending" | "accepted" | "rejected">("all");
+  const [menuOpenId, setMenuOpenId] = useState<string | null>(null);
 
-  const { data, isLoading } = useGetAllEventsRegistration(eventId as string);
-
-  // The response is already an array of submissions, no need to access .submissions
-  const submissions: IPlayerSubmission[] = Array.isArray(data) ? data : [];
-  console.log("Submissions data:", submissions);
-
+  const { data: submissionsData, isLoading } = useGetAllEventsRegistration(eventId as string);
   const { data: formMeta } = useGetEventForm(eventId as string);
+
+  const submissions: IPlayerSubmission[] = Array.isArray(submissionsData) ? submissionsData : [];
 
   const fieldMap = useMemo(() => {
     const map: Record<string, string> = {};
     formMeta?.fields?.forEach((f, i) => {
-      const key = `field_${i}`;
-      map[key] = f.fieldName;
+      map[`field_${i}`] = f.fieldName;
     });
-    console.log("Field map:", map);
     return map;
   }, [formMeta]);
 
-  const filtered = submissions.filter((sub: IPlayerSubmission) => {
-    const fields = parseFormFields(sub.formFields, fieldMap);
-    console.log("Parsed fields for submission:", fields);
-
+  const filtered = submissions.filter((sub) => {
+    const fields = parseFormFieldsWithMeta(sub.formFields, fieldMap);
     const combinedValues = Object.values(fields).join(" ").toLowerCase();
     const matchesSearch = combinedValues.includes(search.toLowerCase());
-
     const matchesStatus = status === "all" || sub.status === status;
-
     return matchesSearch && matchesStatus;
   });
-
-  const handleNavigateToDetail = (registrationId: string) => {
-    router.push(`/(official)/event/${eventId}/registration/${registrationId}`);
-  };
-
-  const renderItem = ({ item }: { item: IPlayerSubmission }) => {
-    const fields = parseFormFields(item.formFields, fieldMap);
-
-    return (
-      <TouchableOpacity
-        style={styles.card}
-        onPress={() => handleNavigateToDetail(item._id)}
-      >
-        <View style={styles.cardHeader}>
-          <Text style={styles.playerName}>
-            {fields["Full Name"] || fields["field_0"] || "Unknown Name"}
-          </Text>
-          {getStatusIcon(item.status)}
-        </View>
-        <Text style={styles.cardEmail}>
-          {fields["Email"] || fields["field_2"] || "No Email"}
-        </Text>
-        <Text style={styles.cardDetail}>
-          Age: {fields["Age"] || fields["field_1"] || "N/A"}
-        </Text>
-        <Text style={styles.cardDetail}>
-          Height: {fields["height"] || fields["field_4"] || "N/A"}cm | Weight:{" "}
-          {fields["weight"] || fields["field_5"] || "N/A"}kg
-        </Text>
-        <Text style={styles.cardDetail}>
-          Gender: {fields["Gender"] || fields["field_3"] || "N/A"}
-        </Text>
-      </TouchableOpacity>
-    );
-  };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "accepted":
-      case "approved": // Added to match both possible status values
+      case "approved":
         return <CheckCircle size={16} color="green" />;
       case "rejected":
         return <XCircle size={16} color="red" />;
       default:
         return <Clock size={16} color="orange" />;
     }
+  };
+
+  const renderItem = ({ item }: { item: IPlayerSubmission }) => {
+    const values = parseFormFieldsWithMeta(item.formFields, fieldMap);
+    const name = values["Full Name"] || values["field_0"] || "Unknown Name";
+    const email = values["Email"] || values["field_1"] || "No Email";
+    const isMenuOpen = menuOpenId === item._id;
+
+    return (
+      <View style={styles.card}>
+        <View style={styles.cardHeader}>
+          <Text style={styles.playerName}>{name}</Text>
+          {getStatusIcon(item.status)}
+
+          <TouchableOpacity onPress={() => setMenuOpenId(isMenuOpen ? null : item._id)}>
+            <MoreVertical size={20} color="#555" />
+          </TouchableOpacity>
+        </View>
+
+        {isMenuOpen && (
+          <View style={styles.cardMenu}>
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() => {
+                setMenuOpenId(null);
+                router.push(`/(official)/event/${eventId}/registration/${item._id}?mode=edit`);
+              }}
+            >
+              <Text style={{ color: "#fff" }}>Edit</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() => {
+                setMenuOpenId(null);
+                router.push(`/(official)/event/${eventId}/registration/${item._id}?review=true`);
+              }}
+            >
+              <Text style={{ color: "#fff" }}>Review</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
+        <Text style={styles.cardEmail}>{email}</Text>
+
+        {Object.entries(values).map(([label, value]) => {
+          if (label === "Full Name" || label === "Email") return null;
+          return (
+            <Text key={label} style={styles.cardDetail}>
+              {label}: {value}
+            </Text>
+          );
+        })}
+      </View>
+    );
   };
 
   if (!eventId || typeof eventId !== "string") {
@@ -148,11 +162,7 @@ export default function GetAllPlayerRegistration() {
       </View>
 
       {isLoading ? (
-        <ActivityIndicator
-          size="large"
-          color="#2563EB"
-          style={{ marginTop: 40 }}
-        />
+        <ActivityIndicator size="large" color="#2563EB" style={{ marginTop: 40 }} />
       ) : (
         <FlatList
           data={filtered}

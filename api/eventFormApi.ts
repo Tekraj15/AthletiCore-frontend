@@ -11,11 +11,13 @@ import {
   IUpdateFinalStatsResponse,
   IUpdateFormFieldsRequest,
   IUpdateFormFieldsResponse,
+  IMySubmission,
 } from "@/types/eventForm";
 import {
   CREATE_EVENT_FORM_URL,
   GET_ALL_EVENT_REGISTRATION_FORM_URL,
   SUBMIT_EVENT_FORM_URL,
+  GET_MY_EVENT_REGISTRATION_FORM_URL,
 } from "@/constants/url/url";
 
 export const createEventFormAPI = ({
@@ -82,6 +84,13 @@ export const getPlayerSubmissionDetailAPI = (
 ) => {
   const url = `/form-events/${eventId}/submissions/${submissionId}`; // adjust path if your base URL differs
   return baseFetcher<IPlayerSubmissionDetailResponse>(url, {
+    method: "GET",
+  });
+};
+
+export const getMySubmissionsAPI = (eventId: string) => {
+  const url = GET_MY_EVENT_REGISTRATION_FORM_URL.replace(":eventId", eventId);
+  return baseFetcher<IMySubmission[]>(url, {
     method: "GET",
   });
 };

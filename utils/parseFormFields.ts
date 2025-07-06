@@ -1,11 +1,11 @@
-// utils/formUtils.ts
-export const parseFormFields = (
+// utils/parseFormFields.ts
+export const parseFormFieldsWithMeta = (
   fields: { key: string; value: string }[],
   labelMap?: Record<string, string>
 ): Record<string, string> => {
   return fields.reduce((acc, field) => {
-    const key = labelMap?.[field.key] ?? field.key;
-    acc[key] = field.value;
+    const label = labelMap?.[field.key] ?? field.key;
+    acc[label] = field.value;
     return acc;
   }, {} as Record<string, string>);
 };
