@@ -47,17 +47,17 @@ export default function OfficialLayout() {
             ),
           }}
         />
-        <Tabs.Screen
-          name="registrations"
+        {/* <Tabs.Screen
+          name="get-all-registrations"
           options={{
             title: "Registrations",
             tabBarIcon: () => (
               <TabBarIcon name="address-book" color="#ffffff" />
             ),
           }}
-        />
+        /> */}
         <Tabs.Screen
-          name="liveGame"
+          name="game/liveGame"
           options={{
             title: "Results",
             tabBarIcon: ({ size, color }) => (
@@ -82,6 +82,20 @@ export default function OfficialLayout() {
           }}
         />
         <Tabs.Screen
+          name="event/[eventId]"
+          options={{
+            href: null,
+            headerShown: false,
+          }}
+        />
+        <Tabs.Screen
+          name="event/[id]/create-form"
+          options={{
+            href: null,
+            headerShown: false,
+          }}
+        />
+        <Tabs.Screen
           name="announcement/createAnnouncement"
           options={{
             href: null,
@@ -90,6 +104,27 @@ export default function OfficialLayout() {
         />
         <Tabs.Screen
           name="announcement/[id]"
+          options={{
+            href: null,
+            headerShown: false,
+          }}
+        />
+        <Tabs.Screen
+          name="game/[gameId]"
+          options={{
+            href: null,
+            headerShown: false,
+          }}
+        />
+        <Tabs.Screen
+          name="event/[eventId]/registration/[registrationId]"
+          options={{
+            href: null,
+            headerShown: false,
+          }}
+        />
+        <Tabs.Screen
+          name="event/[eventId]/submissions"
           options={{
             href: null,
             headerShown: false,

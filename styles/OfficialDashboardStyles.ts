@@ -1,13 +1,17 @@
 import { StyleSheet } from "react-native";
+import { theme } from "@/constants/theme";
+
+const colors = theme.dark;
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#0c0c0c",
+    backgroundColor: colors.background,
     paddingTop: 20,
     paddingHorizontal: 10,
   },
   header: {
+    paddingHorizontal: 10,
     color: "white",
     fontSize: 22,
     fontWeight: "700",
@@ -104,5 +108,85 @@ export const styles = StyleSheet.create({
     fontSize: 13,
     marginLeft: 10,
     color: "#444",
+  },
+  cardHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  playerName: {
+    fontSize: 16,
+    fontFamily: "Inter-Bold",
+    color: colors.onSurface,
+  },
+  cardEmail: {
+    fontSize: 14,
+    fontFamily: "Inter-Regular",
+    color: colors.onSurfaceVariant,
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontFamily: "Inter-Bold",
+    color: colors.background,
+  },
+  headerActions: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+  filters: {
+    flexDirection: "column",
+    paddingHorizontal: 6,
+    gap: 12,
+    marginBottom: 16,
+  },
+  searchBox: {
+    position: "relative",
+    flexDirection: "row",
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: 8,
+    paddingLeft: 10,
+    paddingRight: 16,
+    paddingVertical: 12,
+    fontSize: 16,
+    fontFamily: "Inter-Regular",
+    color: colors.onSurface,
+    backgroundColor: colors.surfaceVariant,
+  },
+  searchInput: {
+    paddingLeft: 10,
+  },
+  statusButtons: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  statusButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+    backgroundColor: colors.surfaceVariant,
+  },
+  activeStatusButton: {
+    backgroundColor: colors.primary,
+  },
+  statusButtonText: {
+    fontSize: 14,
+    fontFamily: "Inter-Medium",
+    color: colors.onSurfaceVariant,
+  },
+  activeStatusText: {
+    color: colors.background,
+  },
+  listContainer: {
+    marginTop: 16,
+  },
+  emptyText: {
+    fontSize: 16,
+    fontFamily: "Inter-Regular",
+    color: colors.onSurfaceVariant,
+    textAlign: "center",
+    marginTop: 20,
   },
 });

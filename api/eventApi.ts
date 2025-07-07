@@ -27,6 +27,7 @@ export const getAllEventsAPI = () => {
     method: "GET",
   });
 };
+
 export const getEventByIdAPI = async (id: string) => {
   return baseFetcher<IEvent>(`/event/${id}`, {
     method: "GET",

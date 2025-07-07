@@ -216,4 +216,20 @@ export const styles = StyleSheet.create({
   bottomSpacing: {
     height: 20,
   },
+  primaryButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#DC2626", // or any primary color
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    marginTop: 10,
+  },
+  primaryButtonText: {
+    color: "#FFFFFF",
+    fontWeight: "600",
+    marginLeft: 6,
+    fontSize: 16,
+  },
 });

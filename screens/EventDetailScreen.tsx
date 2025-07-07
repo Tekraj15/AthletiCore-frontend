@@ -55,7 +55,15 @@ export default function EventDetailScreen() {
   const handleEmail = (email: string) => Linking.openURL(`mailto:${email}`);
   const handleShare = () => console.log("Share event");
   const handleSaveToCalendar = () => console.log("Save to calendar");
-  const handleRegister = () => console.log("Register for event");
+  // const handleRegister = () => router.push(`/events/${event._id}/registration-form`);
+  const handleRegister = () => {
+    if (!event?._id) {
+      console.warn("Event ID is not available");
+      return;
+    }
+
+    router.push(`/events/${event._id}/registration-form`);
+  };
 
   if (isLoading) {
     return (
@@ -125,11 +133,11 @@ export default function EventDetailScreen() {
             <Text style={styles.actionButtonText}>Save</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={styles.primaryButton}
+            style={styles.actionButton}
             onPress={handleRegister}
           >
             <UserCheck size={20} color="#FFFFFF" />
-            <Text style={styles.primaryButtonText}>Register</Text>
+            <Text style={styles.actionButtonText}>Register</Text>
           </TouchableOpacity>
         </View>
 
@@ -204,7 +212,6 @@ export default function EventDetailScreen() {
                 {!!event.coordinator.phone && (
                   <TouchableOpacity
                     style={styles.contactButton}
-                  
                     onPress={() => {
                       if (event?.coordinator?.phone) {
                         handleCall(event.coordinator.phone.toString());
