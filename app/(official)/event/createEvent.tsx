@@ -29,13 +29,13 @@ import { useCreateEvent } from "@/hooks/useCreateEvent";
 
 interface Prize {
   id: string;
-  title: string;
+  prizeTitle: string; 
   prize: string;
 }
 
 interface Contact {
   name: string;
-  phone: string;
+  phoneNumber: string;
   email: string;
 }
 
@@ -58,16 +58,17 @@ export default function CreateEventScreen() {
 
   const [weightCategories, setWeightCategories] = useState<string[]>([""]);
   const [prizes, setPrizes] = useState<Prize[]>([
-    { id: "1", title: "", prize: "" },
+    { id: "1", prizeTitle: "", prize: "" },
   ]);
+
   const [coordinator, setCoordinator] = useState<Contact>({
     name: "",
-    phone: "",
+    phoneNumber: "",
     email: "",
   });
   const [otherOfficial, setOtherOfficial] = useState<Contact>({
     name: "",
-    phone: "",
+    phoneNumber: "",
     email: "",
   });
 
@@ -102,7 +103,7 @@ export default function CreateEventScreen() {
 
   const addPrize = () => {
     const newId = (prizes.length + 1).toString();
-    setPrizes([...prizes, { id: newId, title: "", prize: "" }]);
+    setPrizes([...prizes, { id: newId, prizeTitle: "", prize: "" }]);
   };
 
   const removePrize = (id: string) => {
@@ -132,7 +133,6 @@ export default function CreateEventScreen() {
     });
 
     if (!result.canceled) {
-
       // Optional: Add file size validation
       const maxSize = 5 * 1024 * 1024; // 5MB
       if (result.assets[0].fileSize && result.assets[0].fileSize > maxSize) {
@@ -185,21 +185,21 @@ export default function CreateEventScreen() {
 
     // 🏆 Add prizes
     prizes
-      .filter((prize) => prize.title.trim() || prize.prize.trim()) // ✅ keep this
+      .filter((prize) => prize.prizeTitle.trim() || prize.prize.trim()) // ✅ keep this
       .forEach((prize, index) => {
         data.append(`prizes[${index}][id]`, prize.id);
-        data.append(`prizes[${index}][title]`, prize.title);
+        data.append(`prizes[${index}][prizeTitle]`, prize.prizeTitle);
         data.append(`prizes[${index}][prize]`, prize.prize);
       });
 
     // 👥 Add coordinator and other official
-    data.append("coordinator[name]", coordinator.name);
-    data.append("coordinator[phone]", coordinator.phone);
-    data.append("coordinator[email]", coordinator.email);
+    data.append(`coordinator[name]`, coordinator.name);
+    data.append(`coordinator[phoneNumber]`, coordinator.phoneNumber);
+    data.append(`coordinator[email]`, coordinator.email);
 
-    data.append("otherOfficial[name]", otherOfficial.name);
-    data.append("otherOfficial[phone]", otherOfficial.phone);
-    data.append("otherOfficial[email]", otherOfficial.email);
+    data.append(`otherOfficial[name]`, otherOfficial.name);
+    data.append(`otherOfficial[phoneNumber]`, otherOfficial.phoneNumber);
+    data.append(`otherOfficial[email]`, otherOfficial.email);
 
     // 🖼️ Add image if available - FIXED VERSION
     if (formData.eventImage) {
@@ -433,7 +433,7 @@ export default function CreateEventScreen() {
               <View style={styles.prizeInputs}>
                 <TextInput
                   style={[styles.textInput, { flex: 2, marginRight: 8 }]}
-                  value={prize.title}
+                  value={prize.prizeTitle}
                   onChangeText={(value) =>
                     handlePrizeChange(prize.id, "title", value)
                   }
@@ -492,9 +492,9 @@ export default function CreateEventScreen() {
                   <Phone size={20} color="#6B7280" />
                   <TextInput
                     style={styles.textInputWithIcon}
-                    value={coordinator.phone}
+                    value={coordinator.phoneNumber}
                     onChangeText={(value) =>
-                      handleContactChange("coordinator", "phone", value)
+                      handleContactChange("coordinator", "phoneNumber", value)
                     }
                     placeholder="Phone number"
                     placeholderTextColor="#9CA3AF"
@@ -549,9 +549,9 @@ export default function CreateEventScreen() {
                   <Phone size={20} color="#6B7280" />
                   <TextInput
                     style={styles.textInputWithIcon}
-                    value={otherOfficial.phone}
+                    value={otherOfficial.phoneNumber}
                     onChangeText={(value) =>
-                      handleContactChange("otherOfficial", "phone", value)
+                      handleContactChange("otherOfficial", "phoneNumber", value)
                     }
                     placeholder="Phone number"
                     placeholderTextColor="#9CA3AF"
