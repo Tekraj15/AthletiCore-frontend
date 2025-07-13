@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   TextInput,
   RefreshControl,
+  Modal,
 } from "react-native";
 import {
   Bell,
@@ -18,10 +19,18 @@ import {
   ChevronRight,
   CircleAlert as AlertCircle,
   Megaphone,
+  // Add MoreVertical for menu button
+  MoreVertical,
+  // Add Edit and Trash icons for menu options
+  Edit3,
+  Trash2,
 } from "lucide-react-native";
 import { router } from "expo-router";
 import { styles } from "@/styles/announcementPageStyles";
 import { usegetAllAnnouncementAPI } from "@/hooks/usegetAllAnnouncementAPI";
+// Add imports for delete functionality
+import DeleteModal from "@/components/ui/DeleteModal";
+import { useDeleteAnnouncement } from "@/hooks/useDeleteAnnouncement";
 
 // Update utility functions to accept string | null | undefined
 const formatDate = (dateString?: string | null) => {
@@ -71,10 +80,65 @@ export default function AnnouncementsPage() {
     isError,
     refetch,
   } = usegetAllAnnouncementAPI();
+  // Add delete mutation hook
+  const { mutate: deleteAnnouncement, isPending: isDeleting } =
+    useDeleteAnnouncement();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("all");
   const [refreshing, setRefreshing] = useState(false);
+
+  // Add state for menu management and delete modal
+  const [menuAnnouncementId, setMenuAnnouncementId] = useState<string | null>(
+    null
+  );
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [announcementToDelete, setAnnouncementToDelete] = useState<string | null>(
+    null
+  );
+
+  // Add menu handlers for edit and delete
+  const openMenu = (id: string) => {
+    setMenuAnnouncementId(id);
+  };
+
+  const closeMenu = () => {
+    setMenuAnnouncementId(null);
+  };
+
+  const onEdit = () => {
+    if (menuAnnouncementId) {
+      const idToEdit = menuAnnouncementId;
+      closeMenu();
+      router.push(`/announcement/editAnnouncement/${idToEdit}`);
+    } else {
+      closeMenu();
+    }
+  };
+
+  const onDelete = () => {
+    if (menuAnnouncementId) {
+      setAnnouncementToDelete(menuAnnouncementId);
+      setShowDeleteModal(true);
+    }
+    closeMenu();
+  };
+
+  const confirmDelete = () => {
+    if (announcementToDelete) {
+      deleteAnnouncement(announcementToDelete, {
+        onSettled: () => {
+          setShowDeleteModal(false);
+          setAnnouncementToDelete(null);
+        },
+      });
+    }
+  };
+
+  const handleCloseDeleteModal = () => {
+    setShowDeleteModal(false);
+    setAnnouncementToDelete(null);
+  };
 
   const filteredAnnouncements = announcements.filter((announcement) => {
     const matchesSearch =
@@ -180,6 +244,7 @@ export default function AnnouncementsPage() {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }
+        onScrollBeginDrag={closeMenu}
       >
         {filteredAnnouncements.map((announcement) => (
           <TouchableOpacity
@@ -216,7 +281,16 @@ export default function AnnouncementsPage() {
                   </Text>
                 </View>
               </View>
-              <ChevronRight size={20} color="#9CA3AF" />
+              {/* Add 3-dot menu button */}
+              <View style={{ position: 'relative', zIndex: 10 }}>
+                <TouchableOpacity
+                  style={styles.menuButton}
+                  onPress={() => openMenu(announcement._id)}
+                  activeOpacity={0.7}
+                >
+                  <MoreVertical size={20} color="#6B7280" />
+                </TouchableOpacity>
+              </View>
             </View>
 
             {announcement.isUrgent && (
@@ -299,6 +373,51 @@ export default function AnnouncementsPage() {
 
         <View style={styles.bottomSpacing} />
       </ScrollView>
+
+      {/* Menu Modal - Renders above everything without touch conflicts */}
+      <Modal
+        visible={!!menuAnnouncementId}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={closeMenu}
+      >
+        <TouchableOpacity
+          style={styles.modalBackdrop}
+          activeOpacity={1}
+          onPress={closeMenu}
+        >
+          <View style={styles.menuModal}>
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={onEdit}
+              activeOpacity={0.7}
+            >
+              <Edit3 size={16} color="#6B7280" />
+              <Text style={styles.menuText}>Edit</Text>
+            </TouchableOpacity>
+            <View style={styles.menuSeparator} />
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={onDelete}
+              activeOpacity={0.7}
+            >
+              <Trash2 size={16} color="#EF4444" />
+              <Text style={[styles.menuText, { color: '#EF4444' }]}>Delete</Text>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Modal>
+
+      {/* Add Delete Modal */}
+      {showDeleteModal && (
+        <DeleteModal
+          visible={showDeleteModal}
+          title="Announcement"
+          onClose={handleCloseDeleteModal}
+          onConfirm={confirmDelete}
+          isDeleting={isDeleting}
+        />
+      )}
     </View>
   );
 }
