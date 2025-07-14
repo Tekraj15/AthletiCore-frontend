@@ -22,7 +22,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "@/styles/eventPageStyle";
 import { useMyEvents } from "@/hooks/useGetMyEvents";
 import DeleteModal from "@/components/ui/DeleteModal";
-import { useDeleteEvent } from "@/hooks/useDeleteEvent";
+import { useDeleteEvent } from "@/hooks/useDeleteEvents";
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
@@ -149,8 +149,8 @@ export default function EventsPage() {
         showsVerticalScrollIndicator={false}
       >
         {filteredEvents.map((event) => (
-          <View key={event._id} style={styles.eventCardWrapper}>
             <TouchableOpacity
+              key={event._id}
               style={styles.eventCard}
               onPress={() => handleEventPress(event._id)}
               activeOpacity={0.7}
@@ -193,7 +193,6 @@ export default function EventsPage() {
                 </View>
               </View>
             </TouchableOpacity>
-          </View>
         ))}
 
         {/* No events state & spacing */}
