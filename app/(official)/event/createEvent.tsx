@@ -205,6 +205,7 @@ export default function CreateEventScreen() {
     data.append("otherOfficial", JSON.stringify(otherOfficial));
 
     if (formData.eventImage) {
+
       const fileName = formData.eventImage.split("/").pop() || "event.jpg";
       const mimeMap: Record<string, string> = {
         jpg: "image/jpeg",

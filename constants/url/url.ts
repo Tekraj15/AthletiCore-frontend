@@ -9,7 +9,10 @@ export const UPDATE_EVENT_URL = "/event/:eventId";
 
 // export const GET_EVENT_BY_ID_URL = "/event/{id}";
 export const CREATE_ANNOUNCEMENT_URL = "/announcement/";
-export const GET_ANNOUNCEMENT_URL = "/announcement/";
+export const GET_ANNOUNCEMENT_URL = "/announcement";
+// Add announcement update and delete URLs
+export const UPDATE_ANNOUNCEMENT_URL = "/announcement";
+export const DELETE_ANNOUNCEMENT_URL = "/announcement";
 // custom form,
 export const CREATE_EVENT_FORM_URL = "/form-events/:eventId/forms";
 //register for event

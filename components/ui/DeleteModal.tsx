@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Dimensions,
+  ActivityIndicator,
 } from "react-native";
 
 const { width } = Dimensions.get("window");
@@ -16,6 +17,7 @@ interface DeleteModalProps {
   title: string;
   onClose: () => void;
   onConfirm: () => void;
+  isDeleting?: boolean;
 }
 
 const DeleteModal: React.FC<DeleteModalProps> = ({
@@ -23,21 +25,40 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
   title,
   onClose,
   onConfirm,
+  isDeleting = false,
 }) => {
   return (
-    <Modal transparent animationType="fade" visible={visible} onRequestClose={onClose}>
+    <Modal
+      transparent
+      animationType="fade"
+      visible={visible}
+      onRequestClose={onClose}
+    >
       <View style={styles.overlay}>
         <View style={styles.modal}>
           <Text style={styles.title}>Delete {title}</Text>
           <Text style={styles.description}>
-            Are you sure you want to delete this {title}? This action cannot be undone.
+            Are you sure you want to delete this {title}? This action cannot be
+            undone.
           </Text>
           <View style={styles.footer}>
-            <TouchableOpacity onPress={onClose} style={styles.cancelButton}>
+            <TouchableOpacity
+              onPress={onClose}
+              style={styles.cancelButton}
+              disabled={isDeleting}
+            >
               <Text style={styles.cancelText}>Cancel</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={onConfirm} style={styles.deleteButton}>
-              <Text style={styles.deleteText}>Delete</Text>
+            <TouchableOpacity
+              onPress={onConfirm}
+              style={[styles.deleteButton, isDeleting && styles.disabledButton]}
+              disabled={isDeleting}
+            >
+              {isDeleting ? (
+                <ActivityIndicator size="small" color="#fff" />
+              ) : (
+                <Text style={styles.deleteText}>Delete</Text>
+              )}
             </TouchableOpacity>
           </View>
         </View>
@@ -87,6 +108,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     borderRadius: 8,
     backgroundColor: "#e11d48",
+    minWidth: 80,
+    alignItems: 'center',
+  },
+  disabledButton: {
+    backgroundColor: '#f87171',
   },
   cancelText: {
     color: "#000",

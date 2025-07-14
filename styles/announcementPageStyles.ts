@@ -96,6 +96,7 @@ export const styles = StyleSheet.create({
     elevation: 4,
     borderLeftWidth: 4,
     borderLeftColor: colors.border,
+    overflow: 'visible',
   },
   urgentCard: {
     borderLeftColor: colors.error,
@@ -254,5 +255,90 @@ export const styles = StyleSheet.create({
     fontFamily: "Inter-Regular",
     color: colors.onSurfaceVariant,
     marginTop: 4,
+  },
+  // Add menu button style
+  menuButton: {
+    padding: 8,
+    borderRadius: 8,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  // Modal backdrop
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  // Menu modal container
+  menuModal: {
+    backgroundColor: colors.background,
+    borderRadius: 12,
+    padding: 8,
+    minWidth: 150,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 10,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  // Menu item style
+  menuItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 8,
+    gap: 12,
+    minHeight: 44,
+  },
+  // Menu text style
+  menuText: {
+    fontSize: 16,
+    fontFamily: "Inter-Medium",
+    color: colors.onSurface,
+  },
+  // Menu separator
+  menuSeparator: {
+    height: 1,
+    backgroundColor: colors.border,
+    marginVertical: 4,
+  },
+  // Remove old dropdown styles and keep only these
+  dropdownContainer: {
+    position: "absolute",
+    top: 120,
+    right: 20,
+    zIndex: 10000,
+  },
+  dropdown: {
+    backgroundColor: colors.background,
+    borderRadius: 8,
+    padding: 8,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 10,
+    minWidth: 120,
+    zIndex: 9999,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  dropdownItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: 6,
+    gap: 8,
+    minHeight: 40,
+  },
+  dropdownText: {
+    fontSize: 14,
+    fontFamily: "Inter-Medium",
+    color: colors.onSurface,
   },
 });

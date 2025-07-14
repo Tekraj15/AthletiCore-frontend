@@ -234,4 +234,14 @@ export const styles = StyleSheet.create({
     marginLeft: 6,
     fontSize: 16,
   },
+  // Add menu button style
+  menuButton: {
+    position: "absolute",
+    top: 16,
+    right: 16,
+    padding: 8,
+    borderRadius: 8,
+    backgroundColor: "rgba(0,0,0,0.1)",
+    zIndex: 10,
+  },
 });
