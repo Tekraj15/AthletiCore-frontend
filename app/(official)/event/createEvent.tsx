@@ -203,40 +203,15 @@ export default function CreateEventScreen() {
 
     // 🖼️ Add image if available - FIXED VERSION
     if (formData.eventImage) {
-      const fileName = formData.eventImage.split("/").pop() || "event.jpg";
-
-      // Improved MIME type detection
-      const mimeMap: Record<string, string> = {
-        jpg: "image/jpeg",
-        jpeg: "image/jpeg",
-        png: "image/png",
-        gif: "image/gif",
-        webp: "image/webp",
-      };
-
-      const ext = fileName.split(".").pop()?.toLowerCase() || "jpg";
-      const mimeType = mimeMap[ext] || "image/jpeg";
-
-      // console.log("Image details:", {
-      //   fileName,
-      //   extension: ext,
-      //   mimeType,
-      //   uri: formData.eventImage,
-      // });
-
-      data.append("eventImage", {
-        uri: formData.eventImage,
-        type: mimeType,
-        name: fileName,
-      } as any);
-    }
-
-    for (const [key, value] of data.entries()) {
-      if (key === "eventImage" && typeof value === "object") {
-        // Handle image file object (React Native style)
-        // console.log(key, "Image file object attached");
-      } else {
-        // console.log(key, value);
+      try {
+        const response = await fetch(formData.eventImage);
+        const blob = await response.blob();
+        const fileName = formData.eventImage.split("/").pop() || "event.jpg";
+        data.append("eventImage", blob, fileName);
+      } catch (e) {
+        console.error("Failed to process image for upload:", e);
+        Alert.alert("Error", "There was a problem with the selected image.");
+        return;
       }
     }
 

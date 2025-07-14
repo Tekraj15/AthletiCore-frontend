@@ -5,6 +5,7 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useColorScheme } from "react-native";
 import { theme } from "@/constants/theme";
 import { View, StatusBar } from "react-native";
+import { Stack } from "expo-router";
 
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>["name"];
@@ -97,6 +98,13 @@ export default function OfficialLayout() {
         />
         <Tabs.Screen
           name="announcement/createAnnouncement"
+          options={{
+            href: null,
+            headerShown: false,
+          }}
+        />
+        <Tabs.Screen
+          name="announcement/editAnnouncement/[menuAnnouncementId]"
           options={{
             href: null,
             headerShown: false,
