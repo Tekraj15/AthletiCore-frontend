@@ -90,6 +90,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 20,
   },
+  eventCardWrapper: {},
   eventCard: {
     backgroundColor: colors.surface,
     borderRadius: 16,
@@ -115,6 +116,7 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 12,
   },
+  menuButton: {},
   eventBadge: {
     backgroundColor: colors.warning + "33", // translucent
     paddingHorizontal: 12,

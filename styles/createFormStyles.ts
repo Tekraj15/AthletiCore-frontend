@@ -230,4 +230,21 @@ export const styles = StyleSheet.create({
   bottomSpacing: {
     height: 40,
   },
+  imagePreviewContainer: {
+    position: "relative",
+    width: "100%",
+    height: 200,
+    borderRadius: 10,
+    overflow: "hidden",
+  },
+
+  removeImageButton: {
+    position: "absolute",
+    top: 8,
+    right: 8,
+    backgroundColor: "#EF4444",
+    borderRadius: 16,
+    padding: 4,
+    zIndex: 2,
+  },
 });
