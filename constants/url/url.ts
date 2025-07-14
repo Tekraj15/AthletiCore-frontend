@@ -3,6 +3,21 @@ export const REGISTER_URL = "/user/register";
 export const CREATE_EVENT_URL = "/event/create";
 export const GET_MY_EVENT_URL = "/event/my-events";
 export const GET_EVENT_URL = "/event/";
+export const GET_EVENT_BY_ID_URL = "/event/:eventId";
+export const DELETE_EVENT_URL = "/event/:eventId";
+export const UPDATE_EVENT_URL = "/event/:eventId";
+
 // export const GET_EVENT_BY_ID_URL = "/event/{id}";
 export const CREATE_ANNOUNCEMENT_URL = "/announcement/";
 export const GET_ANNOUNCEMENT_URL = "/announcement/";
+// custom form,
+export const CREATE_EVENT_FORM_URL = "/form-events/:eventId/forms";
+//register for event
+export const SUBMIT_EVENT_FORM_URL = "/form-events/:eventId/submissions";
+//get registration data
+export const GET_ALL_EVENT_REGISTRATION_FORM_URL =
+  "/form-events/:eventId/submissions";
+export const GET_EVENT_REGISTRATION_BY_ID_FORM_URL =
+  "/form-events/:eventId/submissions/:submissionId";
+export const GET_MY_EVENT_REGISTRATION_FORM_URL =
+  "/form-events/:eventId/submissions/me";

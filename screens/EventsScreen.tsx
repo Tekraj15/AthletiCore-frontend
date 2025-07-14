@@ -80,7 +80,6 @@ export default function EventsScreen() {
   });
 
   const handleEventPress = (eventId: string) => {
-    console.log("🔍 Event _id being passed:", eventId);
     router.push(`/events/${eventId}`);
   };
   return (

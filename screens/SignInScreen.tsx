@@ -76,8 +76,8 @@ export default function SignInScreen() {
           const { name, role, email: userEmail } = data.user;
 
           // Save token securely
-          if (data.token) {
-            await AsyncStorage.setItem("accessToken", data.token);
+          if (data.accessToken) {
+            await AsyncStorage.setItem("accessToken", data.accessToken);
           }
 
           if (rememberMe) {
@@ -107,7 +107,7 @@ export default function SignInScreen() {
   return (
     <View style={styles.container}>
       <Text style={styles.heading}>Welcome To Athleticore</Text>
-      <Text style={styles.heading}>Login Page</Text>
+      <Text style={styles.heading}>Sign in Page</Text>
 
       {/* Email */}
       <TextInput
@@ -153,8 +153,25 @@ export default function SignInScreen() {
       <View style={styles.rememberForgotContainer}>
         <TouchableOpacity
           onPress={() => setRememberMe(!rememberMe)}
-          style={styles.rememberButton}
+          style={[
+            styles.rememberButton,
+            { flexDirection: "row", alignItems: "center" },
+          ]}
         >
+          <View
+            style={{
+              width: 20,
+              height: 20,
+              borderWidth: 1,
+              borderColor: colors.onSurfaceVariant,
+              backgroundColor: rememberMe ? "white" : "transparent",
+              justifyContent: "center",
+              alignItems: "center",
+              marginRight: 8,
+            }}
+          >
+            {rememberMe && <Feather name="check" size={14} color="#000" />}
+          </View>
           <Text style={styles.rememberText}>Remember Me</Text>
         </TouchableOpacity>
 
@@ -172,7 +189,7 @@ export default function SignInScreen() {
         {isPending ? (
           <ActivityIndicator color={colors.onSurface} />
         ) : (
-          <Text style={styles.loginText}>Login</Text>
+          <Text style={styles.loginText}>Sign In</Text>
         )}
       </TouchableOpacity>
 

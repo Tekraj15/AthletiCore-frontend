@@ -90,6 +90,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 20,
   },
+  eventCardWrapper: {},
   eventCard: {
     backgroundColor: colors.surface,
     borderRadius: 16,
@@ -115,6 +116,7 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 12,
   },
+  menuButton: {},
   eventBadge: {
     backgroundColor: colors.warning + "33", // translucent
     paddingHorizontal: 12,
@@ -215,5 +217,21 @@ export const styles = StyleSheet.create({
   },
   bottomSpacing: {
     height: 20,
+  },
+  primaryButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#DC2626", // or any primary color
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    marginTop: 10,
+  },
+  primaryButtonText: {
+    color: "#FFFFFF",
+    fontWeight: "600",
+    marginLeft: 6,
+    fontSize: 16,
   },
 });

@@ -29,13 +29,13 @@ import { useCreateEvent } from "@/hooks/useCreateEvent";
 
 interface Prize {
   id: string;
-  title: string;
+  prizeTitle: string;
   prize: string;
 }
 
 interface Contact {
   name: string;
-  phone: string;
+  phoneNumber: string;
   email: string;
 }
 
@@ -44,7 +44,7 @@ export default function CreateEventScreen() {
     title: string;
     venue: string;
     date: string;
-    competitionType: "Open" | "Male" | "Female";
+    competitionType: string;
     description: string;
     eventImage?: string;
   }>({
@@ -58,16 +58,17 @@ export default function CreateEventScreen() {
 
   const [weightCategories, setWeightCategories] = useState<string[]>([""]);
   const [prizes, setPrizes] = useState<Prize[]>([
-    { id: "1", title: "", prize: "" },
+    { id: "1", prizeTitle: "", prize: "" },
   ]);
+
   const [coordinator, setCoordinator] = useState<Contact>({
     name: "",
-    phone: "",
+    phoneNumber: "",
     email: "",
   });
   const [otherOfficial, setOtherOfficial] = useState<Contact>({
     name: "",
-    phone: "",
+    phoneNumber: "",
     email: "",
   });
 
@@ -102,7 +103,7 @@ export default function CreateEventScreen() {
 
   const addPrize = () => {
     const newId = (prizes.length + 1).toString();
-    setPrizes([...prizes, { id: newId, title: "", prize: "" }]);
+    setPrizes([...prizes, { id: newId, prizeTitle: "", prize: "" }]);
   };
 
   const removePrize = (id: string) => {
@@ -131,22 +132,27 @@ export default function CreateEventScreen() {
       quality: 0.8,
     });
 
-    if (!result.canceled) {
-      console.log("Selected image URI:", result.assets[0].uri);
-      console.log("Image file size:", result.assets[0].fileSize);
-
-      // Optional: Add file size validation
-      const maxSize = 5 * 1024 * 1024; // 5MB
-      if (result.assets[0].fileSize && result.assets[0].fileSize > maxSize) {
-        Alert.alert(
-          "Image too large",
-          "Please select an image smaller than 5MB"
-        );
-        return;
-      }
-
-      setFormData((prev) => ({ ...prev, eventImage: result.assets[0].uri }));
+    // If user cancels picker
+    if (result.canceled) {
+      // ✅ Remove previously selected image
+      setFormData((prev) => ({ ...prev, eventImage: undefined }));
+      return;
     }
+
+    const selectedAsset = result.assets[0];
+
+    // ✅ Optional: Check file size (for Android only — iOS does not expose size)
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (selectedAsset.fileSize && selectedAsset.fileSize > maxSize) {
+      Alert.alert("Image too large", "Please select an image smaller than 5MB");
+      return;
+    }
+
+    // ✅ Set the selected image
+    setFormData((prev) => ({
+      ...prev,
+      eventImage: selectedAsset.uri,
+    }));
   };
 
   const validateForm = () => {
@@ -154,18 +160,22 @@ export default function CreateEventScreen() {
       Alert.alert("Error", "Event title is required");
       return false;
     }
+
     if (!formData.venue.trim()) {
       Alert.alert("Error", "Venue is required");
       return false;
     }
+
     if (!formData.date.trim()) {
       Alert.alert("Error", "Event date is required");
       return false;
     }
+
     if (!formData.description.trim()) {
-      Alert.alert("Error", "Event description is required");
+      Alert.alert("Error", "Description is required");
       return false;
     }
+
     return true;
   };
 
@@ -180,32 +190,22 @@ export default function CreateEventScreen() {
     data.append("competitionType", formData.competitionType);
     data.append("description", formData.description);
 
-    // 🏋️ Add weight categories
-    weightCategories
-      .filter((cat) => cat.trim())
-      .forEach((cat) => data.append("weightCategories[]", cat));
+    // ✅ Fixed: send arrays/objects as JSON strings
+    data.append(
+      "weightCategories",
+      JSON.stringify(weightCategories.filter((cat) => cat.trim()))
+    );
+    data.append(
+      "prizes",
+      JSON.stringify(
+        prizes.filter((p) => p.prizeTitle.trim() || p.prize.trim())
+      )
+    );
+    data.append("coordinator", JSON.stringify(coordinator));
+    data.append("otherOfficial", JSON.stringify(otherOfficial));
 
-    // 🏆 Add prizes
-    prizes
-      .filter((prize) => prize.title.trim() || prize.prize.trim())
-      .forEach((prize) => {
-        data.append("prizes[]", JSON.stringify(prize));
-      });
-
-    // 👥 Add coordinator and other official
-    data.append("coordinator[name]", coordinator.name);
-    data.append("coordinator[phone]", coordinator.phone);
-    data.append("coordinator[email]", coordinator.email);
-
-    data.append("otherOfficial[name]", otherOfficial.name);
-    data.append("otherOfficial[phone]", otherOfficial.phone);
-    data.append("otherOfficial[email]", otherOfficial.email);
-
-    // 🖼️ Add image if available - FIXED VERSION
     if (formData.eventImage) {
       const fileName = formData.eventImage.split("/").pop() || "event.jpg";
-
-      // Improved MIME type detection
       const mimeMap: Record<string, string> = {
         jpg: "image/jpeg",
         jpeg: "image/jpeg",
@@ -213,16 +213,8 @@ export default function CreateEventScreen() {
         gif: "image/gif",
         webp: "image/webp",
       };
-
       const ext = fileName.split(".").pop()?.toLowerCase() || "jpg";
       const mimeType = mimeMap[ext] || "image/jpeg";
-
-      console.log("Image details:", {
-        fileName,
-        extension: ext,
-        mimeType,
-        uri: formData.eventImage,
-      });
 
       data.append("eventImage", {
         uri: formData.eventImage,
@@ -231,23 +223,12 @@ export default function CreateEventScreen() {
       } as any);
     }
 
-    // Debug: Log FormData contents (optional)
-    console.log("FormData contents:");
-    for (const [key, value] of data.entries()) {
-      if (key === "eventImage" && typeof value === "object") {
-        // Handle image file object (React Native style)
-        console.log(key, "Image file object attached");
-      } else {
-        console.log(key, value);
-      }
-    }
-
     createEvent(data, {
       onSuccess: () => {
         Alert.alert("Success", "Event created successfully!", [
           {
             text: "OK",
-            onPress: () => router.replace("/(official)/dashboard"),
+            onPress: () => router.back(),
           },
         ]);
       },
@@ -264,7 +245,7 @@ export default function CreateEventScreen() {
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
-          onPress={() => router.push("/(official)/dashboard")}
+          onPress={() => router.back()}
         >
           <ArrowLeft size={24} color="#ffff" />
         </TouchableOpacity>
@@ -432,9 +413,9 @@ export default function CreateEventScreen() {
               <View style={styles.prizeInputs}>
                 <TextInput
                   style={[styles.textInput, { flex: 2, marginRight: 8 }]}
-                  value={prize.title}
+                  value={prize.prizeTitle}
                   onChangeText={(value) =>
-                    handlePrizeChange(prize.id, "title", value)
+                    handlePrizeChange(prize.id, "prizeTitle", value)
                   }
                   placeholder="Prize title"
                   placeholderTextColor="#9CA3AF"
@@ -491,9 +472,9 @@ export default function CreateEventScreen() {
                   <Phone size={20} color="#6B7280" />
                   <TextInput
                     style={styles.textInputWithIcon}
-                    value={coordinator.phone}
+                    value={coordinator.phoneNumber}
                     onChangeText={(value) =>
-                      handleContactChange("coordinator", "phone", value)
+                      handleContactChange("coordinator", "phoneNumber", value)
                     }
                     placeholder="Phone number"
                     placeholderTextColor="#9CA3AF"
@@ -548,9 +529,9 @@ export default function CreateEventScreen() {
                   <Phone size={20} color="#6B7280" />
                   <TextInput
                     style={styles.textInputWithIcon}
-                    value={otherOfficial.phone}
+                    value={otherOfficial.phoneNumber}
                     onChangeText={(value) =>
-                      handleContactChange("otherOfficial", "phone", value)
+                      handleContactChange("otherOfficial", "phoneNumber", value)
                     }
                     placeholder="Phone number"
                     placeholderTextColor="#9CA3AF"

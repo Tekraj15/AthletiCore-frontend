@@ -65,6 +65,13 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="registrations"
+        options={{
+          title: "Registrations",
+          tabBarIcon: () => <TabBarIcon name="address-book" color="#ffffff" />,
+        }}
+      />
+      <Tabs.Screen
         name="liveGame"
         options={{
           title: "Live Game",
@@ -87,7 +94,14 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="events/create"
+        name="events/[id]/registration-form"
+        options={{
+          href: null,
+          headerShown: false,
+        }}
+      />
+      <Tabs.Screen
+        name="events/[id]/get-own-registration"
         options={{
           href: null,
           headerShown: false,

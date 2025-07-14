@@ -94,11 +94,12 @@ export const styles = StyleSheet.create({
     gap: 12,
   },
   actionButton: {
+    paddingHorizontal: 8,
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.background,
+    backgroundColor: colors.surfaceVariant,
     paddingVertical: 12,
     borderRadius: 8,
     borderWidth: 1,
@@ -106,22 +107,7 @@ export const styles = StyleSheet.create({
     gap: 8,
   },
   actionButtonText: {
-    color: colors.error,
-    fontSize: 14,
-    fontFamily: "Inter-SemiBold",
-  },
-  primaryButton: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.error,
-    paddingVertical: 12,
-    borderRadius: 8,
-    gap: 8,
-  },
-  primaryButtonText: {
-    color: colors.background,
+    color: "white",
     fontSize: 14,
     fontFamily: "Inter-SemiBold",
   },
@@ -325,5 +311,33 @@ export const styles = StyleSheet.create({
   },
   bottomSpacing: {
     height: 20,
+  },
+  officialSection: {
+    marginHorizontal: 20,
+    marginBottom: 16,
+    borderRadius: 12,
+    padding: 16,
+  },
+  officialTitle: {
+    fontSize: 16,
+    fontFamily: "Inter-Bold",
+    marginBottom: 12,
+  },
+  officialActions: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  officialButton: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 12,
+    borderRadius: 8,
+    gap: 8,
+  },
+  officialButtonText: {
+    fontSize: 14,
+    fontFamily: "Inter-SemiBold",
   },
 });

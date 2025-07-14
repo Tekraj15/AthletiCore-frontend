@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig } from "axios";
 
-export const BASE_URL = "https://athleticore-backend-1.onrender.com/api";
-// export const BASE_URL = "http://localhost:5000/api";
+// export const BASE_URL = "https://athleticore-backend-1.onrender.com/api";
+export const BASE_URL = "http://localhost:5000/api";
 
 export const getAccessToken = () => {
   return localStorage.getItem("accessToken");

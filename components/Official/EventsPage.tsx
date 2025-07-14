@@ -30,18 +30,6 @@ const formatDate = (dateString: string) => {
   });
 };
 
-// const getStatusColor = (status: string) => {
-//   switch (status) {
-//     case "upcoming":
-//       return "#10B981";
-//     case "ongoing":
-//       return "#F59E0B";
-//     case "completed":
-//       return "#6B7280";
-//     default:
-//       return "#6B7280";
-//   }
-// };
 
 export default function EventsPage() {
   const { data: events = [] } = useMyEvents();
