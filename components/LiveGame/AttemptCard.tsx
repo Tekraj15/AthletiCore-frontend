@@ -1,4 +1,4 @@
-import { styles } from '../../styles/competitionStyles';
+import { styles } from '@/styles/competitionStyles';
 import React from "react";
 import {
   View,
@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
-import { Attempt, AttemptStatus, AttemptResult, LiftType } from "../../constants/Player/liveGameTypes";
+import { Attempt, AttemptStatus, AttemptResult, LiftType } from "@/constants/Player/liveGameTypes";
 
 interface AttemptCardProps {
   attempt: Attempt;

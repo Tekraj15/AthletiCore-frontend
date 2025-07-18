@@ -24,3 +24,8 @@ export const GET_EVENT_REGISTRATION_BY_ID_FORM_URL =
   "/form-events/:eventId/submissions/:submissionId";
 export const GET_MY_EVENT_REGISTRATION_FORM_URL =
   "/form-events/:eventId/submissions/me";
+
+//lift attempts
+export const INITIALIZE_ATTEMPTS = "/attempt/init-lifts";
+// constants/url/liftAttemptUrls.ts
+export const GET_LIFT_ATTEMPTS_URL = "/attempt";

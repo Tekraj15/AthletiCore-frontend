@@ -1,81 +1,40 @@
-// screens/PowerliftingCompetition.tsx
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
-  ScrollView,
-  StatusBar,
-  Modal,
   Alert,
+  Modal,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AttemptCard from "@/components/LiveGame/AttemptCard";
-import LeaderboardSection from "@/components/LiveGame/LeaderboardSection";
-import { theme } from "@/constants/theme";
-import {
-  mockLiftData,
-  mockLeaderboardData,
-} from "@/constants/Player/liftAttemptMockData";
+import { mockLiftData } from "@/constants/Player/liftAttemptMockData";
 import { styles } from "@/styles/competitionStyles";
 import {
-  getStatusColor,
-  getStatusIcon,
-  sortLeaderboard,
-  toggleSort,
-} from "@/helpers/leaderboardUtils";
-import {
-  Athlete,
-  Attempt,
-  AttemptStatus,
-  AttemptResult,
-  LeaderboardEntry,
   LiftType,
+  Attempt,
   PendingSubmission,
-  SortConfig,
 } from "@/constants/Player/liveGameTypes";
+import { getStatusColor, getStatusIcon } from "@/helpers/leaderboardUtils";
+import { theme } from "@/constants/theme";
 
-const LiveGameScreen = () => {
+export const AttemptsPage = () => {
   const [isDark, setIsDark] = useState(true);
   const colors = isDark ? theme.dark : theme.light;
-
-  const [currentAthlete] = useState<Athlete>({
-    name: "Sarah Johnson",
-    weightClass: "63kg",
-    bodyWeight: "62.4kg",
-  });
 
   const [attempts, setAttempts] = useState<Record<LiftType, Attempt[]>>({
     squat: [],
     bench: [],
     deadlift: [],
   });
-
   const [activeTab, setActiveTab] = useState<LiftType>("squat");
-  const [isConnected, setIsConnected] = useState(true);
-  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [pendingSubmission, setPendingSubmission] =
     useState<PendingSubmission | null>(null);
-  const [compactView, setCompactView] = useState(false);
-  const [sortConfig, setSortConfig] = useState<SortConfig>({
-    key: "rank",
-    direction: "asc",
-  });
-  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
-  // Load mock data
   useEffect(() => {
     setTimeout(() => setAttempts(mockLiftData), 500);
-    setTimeout(() => setLeaderboard(mockLeaderboardData), 500);
-  }, []);
-
-  // Simulated connection status
-  useEffect(() => {
-    const connectionTimer = setInterval(() => {
-      setIsConnected(Math.random() > 0.1);
-    }, 5000);
-    return () => clearInterval(connectionTimer);
   }, []);
 
   const handleWeightChange = (
@@ -115,56 +74,12 @@ const LiveGameScreen = () => {
     setPendingSubmission(null);
   };
 
-  const sortedLeaderboard = useMemo(
-    () => sortLeaderboard(leaderboard, sortConfig),
-    [leaderboard, sortConfig]
-  );
-
-  const handleSort = (key: string) => {
-    setSortConfig((prev) => toggleSort(prev, key));
-  };
-
   return (
     <SafeAreaView
       style={[styles.container, { backgroundColor: colors.background }]}
     >
-      <StatusBar
-        barStyle={isDark ? "light-content" : "dark-content"}
-        backgroundColor={colors.background}
-      />
-
-      {/* Header */}
-      <View style={[styles.header, { backgroundColor: colors.primary }]}>
-        <View style={styles.headerContent}>
-          <View>
-            <Text style={styles.athleteName}>{currentAthlete.name}</Text>
-            <Text style={styles.athleteDetails}>
-              {currentAthlete.weightClass} • {currentAthlete.bodyWeight}
-            </Text>
-          </View>
-          <View style={styles.headerRight}>
-            <TouchableOpacity
-              onPress={() => setIsDark(!isDark)}
-              style={styles.themeButton}
-            >
-              <Text style={styles.themeIcon}>{isDark ? "☀️" : "🌙"}</Text>
-            </TouchableOpacity>
-            <View style={styles.connectionStatus}>
-              <Text style={styles.connectionIcon}>📶</Text>
-              <Text style={styles.connectionText}>
-                {isConnected ? "Connected" : "Reconnecting..."}
-              </Text>
-            </View>
-          </View>
-        </View>
-      </View>
-
-      {/* Body */}
-      <ScrollView
-        style={styles.scrollView}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Tabs */}
+      <View>
+        {/* Tab Navigation */}
         <View
           style={[styles.tabContainer, { borderBottomColor: colors.border }]}
         >
@@ -217,17 +132,8 @@ const LiveGameScreen = () => {
             />
           ))}
         </View>
+      </View>
 
-        {/* Leaderboard */}
-        <LeaderboardSection
-          leaderboard={sortedLeaderboard}
-          compactView={compactView}
-          setCompactView={setCompactView}
-          colors={colors}
-        />
-      </ScrollView>
-
-      {/* Confirm Modal */}
       <Modal
         visible={showConfirmDialog}
         transparent
@@ -277,4 +183,4 @@ const LiveGameScreen = () => {
   );
 };
 
-export default LiveGameScreen;
+export default AttemptsPage;

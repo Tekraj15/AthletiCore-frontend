@@ -23,6 +23,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { router, useLocalSearchParams } from "expo-router";
 import { useGetEventById } from "@/hooks/useGetEventById";
 import { styles } from "@/styles/eventDeatailScreenStyles";
+import {AttemptsPage} from "@/screens/AttemptsPage"
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
@@ -54,8 +55,7 @@ export default function EventDetailScreen() {
   const handleCall = (phone: string) => Linking.openURL(`tel:${phone}`);
   const handleEmail = (email: string) => Linking.openURL(`mailto:${email}`);
   const handleShare = () => console.log("Share event");
-  const handleSaveToCalendar = () => console.log("Save to calendar");
-  // const handleRegister = () => router.push(`/events/${event._id}/registration-form`);
+  const handleToUpdateAttempt = () => router.push(`./(tabs)/liveGame)`);
   const handleRegister = () => {
     if (!event?._id) {
       console.warn("Event ID is not available");
@@ -127,10 +127,10 @@ export default function EventDetailScreen() {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.actionButton}
-            onPress={handleSaveToCalendar}
+            onPress={handleToUpdateAttempt}
           >
             <CalendarPlus size={20} color="#DC2626" />
-            <Text style={styles.actionButtonText}>Save</Text>
+            <Text style={styles.actionButtonText}>Update Attempt</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.actionButton}

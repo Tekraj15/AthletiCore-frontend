@@ -16,17 +16,21 @@ export const theme = {
     accent: "#8b5cf6",
   },
   dark: {
-    primary: "#3b82f6",
-    secondary: "#94a3b8",
-    background: "#0f172a",
-    surface: "#1e293b",
-    surfaceVariant: "#334155",
-    onSurface: "#f8fafc",
-    onSurfaceVariant: "#cbd5e1",
-    border: "#475569",
-    success: "#34d399",
-    warning: "#fbbf24",
-    error: "#f87171",
+    surface: "#0f0f0f",
+    background: "#1a1a1a",
+    border: "#333",
+    surfaceVariant: "#2a2a2a",
+    // Primary + Secondary
+    primary: "#dc2626", // Red (matches your button gradient)
+    primaryVariant: "#b91c1c",
+    secondary: "#f59e0b", // Amber
+    secondaryVariant: "#d97706",
+    onSurface: "#ffffff",
+    onSurfaceVariant: "#a1a1aa",
+    error: "#dc2626",
+    warning: "#f59e0b",
+    success: "#22c55e",
+    info: "#3b82f6",
     accent: "#a78bfa",
   },
 };

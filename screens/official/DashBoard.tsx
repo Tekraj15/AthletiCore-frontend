@@ -10,9 +10,9 @@ import {
   useColorScheme,
   Dimensions,
 } from "react-native";
-import { styles } from "@/styles/OfficialDashboardStyles"; // Import styles
-import { theme } from "@/constants/theme"; // Import theme
-import { tabs } from "@/constants/Official/dashboardData"; // Import data
+import { styles } from "@/styles/OfficialDashboardStyles";
+import { theme } from "@/constants/theme"; 
+import { tabs } from "@/constants/Official/dashboardData";
 import EventsPage from "@/components/Official/EventsPage";
 import AnnouncementsPage from "@/components/Official/AnnouncementsPage";
 

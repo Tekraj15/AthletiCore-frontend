@@ -16,19 +16,15 @@ import {
   Calendar,
   Paperclip,
   Clock,
-  ChevronRight,
   CircleAlert as AlertCircle,
   Megaphone,
-  // Add MoreVertical for menu button
   MoreVertical,
-  // Add Edit and Trash icons for menu options
   Edit3,
   Trash2,
 } from "lucide-react-native";
 import { router } from "expo-router";
 import { styles } from "@/styles/announcementPageStyles";
 import { usegetAllAnnouncementAPI } from "@/hooks/usegetAllAnnouncementAPI";
-// Add imports for delete functionality
 import DeleteModal from "@/components/ui/DeleteModal";
 import { useDeleteAnnouncement } from "@/hooks/useDeleteAnnouncement";
 

@@ -35,7 +35,8 @@ export const getEventByIdAPI = async (id: string) => {
   const url = GET_EVENT_BY_ID_URL.replace(":eventId", id);
   return baseFetcher<IEvent>(url, {
     method: "GET",
-
+  });
+};
 export const deleteEventAPI = (id: string) => {
   const url = DELETE_EVENT_URL.replace(":eventId", id);
   return baseFetcher<IEvent>(url, {

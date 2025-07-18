@@ -107,6 +107,13 @@ export default function TabLayout() {
           headerShown: false,
         }}
       />
+      <Tabs.Screen
+        name="competition/[competitionId]"
+        options={{
+          href: null,
+          headerShown: false,
+        }}
+      />
     </Tabs>
   );
 }

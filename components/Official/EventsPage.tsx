@@ -8,13 +8,9 @@ import {
   TextInput,
 } from "react-native";
 import {
-  MapPin,
-  Calendar,
   Search,
   Filter,
   Plus,
-  Trophy,
-  Users,
   MoreVertical,
 } from "lucide-react-native";
 import { router } from "expo-router";
@@ -24,14 +20,14 @@ import { useMyEvents } from "@/hooks/useGetMyEvents";
 import DeleteModal from "@/components/ui/DeleteModal";
 import { useDeleteEvent } from "@/hooks/useDeleteEvents";
 
-const formatDate = (dateString: string) => {
-  const date = new Date(dateString);
-  return date.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-};
+// const formatDate = (dateString: string) => {
+//   const date = new Date(dateString);
+//   return date.toLocaleDateString("en-US", {
+//     month: "short",
+//     day: "numeric",
+//     year: "numeric",
+//   });
+// };
 
 export default function EventsPage() {
   const { data: events = [] } = useMyEvents();
@@ -179,12 +175,12 @@ export default function EventsPage() {
 
                 <Text style={styles.eventTitle}>{event.title}</Text>
 
-                <View style={styles.eventDetails}>...
-                </View>
+                {/* <View style={styles.eventDetails}>...
+                </View> */}
 
                 <Text
                   style={styles.eventDescription}
-                  numberOfLines={2}
+                  // numberOfLines={2}
                 >
                   {event.description}
                 </Text>

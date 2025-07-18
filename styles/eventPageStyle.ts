@@ -116,7 +116,6 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 12,
   },
-  menuButton: {},
   eventBadge: {
     backgroundColor: colors.warning + "33", // translucent
     paddingHorizontal: 12,
@@ -145,11 +144,11 @@ export const styles = StyleSheet.create({
     fontSize: 20,
     fontFamily: "Inter-Bold",
     color: colors.onSurface,
-    marginBottom: 12,
-    lineHeight: 26,
+    marginBottom: 2,
+    // lineHeight: 26,
   },
   eventDetails: {
-    marginBottom: 12,
+    // marginBottom: 12,
   },
   eventDetailItem: {
     flexDirection: "row",
@@ -168,7 +167,7 @@ export const styles = StyleSheet.create({
     fontFamily: "Inter-Regular",
     color: colors.secondary,
     lineHeight: 20,
-    marginBottom: 16,
+    // marginBottom: 16,
   },
   eventFooter: {
     flexDirection: "row",

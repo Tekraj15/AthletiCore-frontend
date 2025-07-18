@@ -9,8 +9,10 @@ import {
   Dimensions,
   ActivityIndicator,
 } from "react-native";
+import { theme } from "@/constants/theme";  // adjust path as needed
 
 const { width } = Dimensions.get("window");
+const colors = theme.dark;
 
 interface DeleteModalProps {
   visible: boolean;
@@ -55,7 +57,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
               disabled={isDeleting}
             >
               {isDeleting ? (
-                <ActivityIndicator size="small" color="#fff" />
+                <ActivityIndicator size="small" color={colors.onSurface} />
               ) : (
                 <Text style={styles.deleteText}>Delete</Text>
               )}
@@ -69,16 +71,17 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
 
 export default DeleteModal;
 
+
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: "#00000099",
+    backgroundColor: "#00000099", // semi-transparent black overlay can stay
     justifyContent: "center",
     alignItems: "center",
   },
   modal: {
     width: width * 0.85,
-    backgroundColor: "#fff",
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 20,
   },
@@ -86,10 +89,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 10,
+    color: colors.onSurface,
   },
   description: {
     fontSize: 14,
-    color: "#555",
+    color: colors.onSurfaceVariant,
     marginBottom: 20,
   },
   footer: {
@@ -101,25 +105,25 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 16,
     borderRadius: 8,
-    backgroundColor: "#ccc",
+    backgroundColor: colors.surfaceVariant,
   },
   deleteButton: {
     paddingVertical: 10,
     paddingHorizontal: 16,
     borderRadius: 8,
-    backgroundColor: "#e11d48",
+    backgroundColor: colors.error,
     minWidth: 80,
-    alignItems: 'center',
+    alignItems: "center",
   },
   disabledButton: {
-    backgroundColor: '#f87171',
+    backgroundColor: "#f87171", // lighter red - you can define a lighter variant in colors if you want
   },
   cancelText: {
-    color: "#000",
+    color: colors.onSurfaceVariant,
     fontWeight: "600",
   },
   deleteText: {
-    color: "#fff",
+    color: colors.onSurface,
     fontWeight: "600",
   },
 });
