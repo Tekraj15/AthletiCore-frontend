@@ -43,6 +43,14 @@ export const styles = StyleSheet.create({
   headerRight: {
     alignItems: "flex-end",
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 24,
+    backgroundColor: "transparent", // let parent background handle theme
+  },
+
   themeButton: {
     padding: 8,
     marginBottom: 8,
