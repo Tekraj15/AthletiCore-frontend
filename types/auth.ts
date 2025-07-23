@@ -43,3 +43,7 @@ export interface IRegisterResponse {
     weight?: number;
   };
 }
+
+export interface ILogoutResponse {
+  message: string;
+}
