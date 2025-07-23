@@ -4,14 +4,33 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    paddingHorizontal: 20,
-    paddingVertical: 16,
+    flexDirection: "row", // Put icon and text in a row
+    alignItems: "center", // Vertically center them
+    paddingHorizontal: 16,
+    // paddingVertical: 12,
+    backgroundColor: "transparent", // Or your desired background
   },
-  headerContent: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+  backButtonHeader: {
+    // width: 40,
+    // height: 40,
+    // borderRadius: 20,
+    // backgroundColor: "rgba(0, 0, 0, 0.3)",
+    justifyContent: "center",
     alignItems: "center",
+    // alignSelf: "flex-start",
+    paddingRight: 12,
+    marginTop: 20,
   },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#FFFFFF",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingTop: 20,
+    paddingLeft: 12,
+  },
+
   athleteName: {
     fontSize: 20,
     fontWeight: "bold",

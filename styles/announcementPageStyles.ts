@@ -1,4 +1,4 @@
-import { theme } from "../constants/theme";
+import { theme } from "@/constants/theme";
 import { StyleSheet } from "react-native";
 
 const colors = theme.dark;
@@ -220,6 +220,7 @@ export const styles = StyleSheet.create({
     marginTop: 16,
     marginBottom: 8,
   },
+
   emptyStateText: {
     fontSize: 14,
     fontFamily: "Inter-Regular",
@@ -298,8 +299,25 @@ export const styles = StyleSheet.create({
   menuText: {
     fontSize: 16,
     fontFamily: "Inter-Medium",
-    color: colors.onSurface,
+    color: "white",
   },
+
+  contextMenu: {
+    position: "absolute",
+    top: 28, // Position it right below the 3-dot icon
+    right: 0,
+    backgroundColor: "#0000",
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    width: 120, // Give it a fixed or auto width
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 5, // For Android shadow
+  },
+
   // Menu separator
   menuSeparator: {
     height: 1,

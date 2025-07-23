@@ -3,6 +3,10 @@ export interface IInitializeRequest {
   eventId: string;
 }
 
+import { Attempt } from "@/constants/Player/liveGameTypes"; // or wherever your type is
+
 export interface IInitializeResponse {
-  message: string;
+  squat: Attempt[];
+  bench: Attempt[];
+  deadlift: Attempt[];
 }

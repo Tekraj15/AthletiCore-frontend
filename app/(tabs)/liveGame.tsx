@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import {
   View,
@@ -13,11 +12,12 @@ import { styles } from "@/styles/OfficialDashboardStyles";
 import { theme } from "@/constants/theme";
 import { ResultPage } from "@/screens/Result";
 import { AttemptsPage } from "@/screens/AttemptsPage";
-
-export const tabs = ["Results", "Attempts"];
-
+import { useLocalSearchParams } from "expo-router";
+import { useAuth } from "@/context/auth-context"; // ✅ import your AuthContext
 
 const { width } = Dimensions.get("window");
+
+export const tabs = ["Results", "Attempts"];
 
 export default function LiveGameScreen() {
   const [tabIndex, setTabIndex] = useState<number>(0);
@@ -26,6 +26,11 @@ export default function LiveGameScreen() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const colors = isDark ? theme.dark : theme.light;
+
+  const { user } = useAuth();              // ✅ get user from auth context
+  const userId = user?.id;                 // ✅ extract userId
+
+  const { eventId } = useLocalSearchParams(); // get eventId from route
 
   const handleTabPress = (index: number) => {
     setTabIndex(index);
@@ -67,7 +72,14 @@ export default function LiveGameScreen() {
             <ResultPage />
           </View>
           <View style={{ width }}>
-            <AttemptsPage />
+            {/* ✅ Only render when both eventId and userId are available */}
+            {/* {typeof eventId === "string" && userId && ( */}
+              <AttemptsPage
+                // eventId={eventId}
+                // userId={userId}
+                // isDark={isDark}
+              />
+            {/* )} */}
           </View>
         </Animated.View>
       </View>

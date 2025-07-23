@@ -5,6 +5,8 @@ export interface ILoginRequest {
 
 export interface ILoginResponse {
   user: {
+    _id: string; // Normalized to `id`
+    id: string; // Normalized to `id`
     name: string;
     email: string;
     role: "Player" | "Official";

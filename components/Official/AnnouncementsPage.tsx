@@ -7,6 +7,7 @@ import {
   TextInput,
   RefreshControl,
   Modal,
+  StyleSheet, 
 } from "react-native";
 import {
   Bell,
@@ -76,7 +77,6 @@ export default function AnnouncementsPage() {
     isError,
     refetch,
   } = usegetAllAnnouncementAPI();
-  // Add delete mutation hook
   const { mutate: deleteAnnouncement, isPending: isDeleting } =
     useDeleteAnnouncement();
 
@@ -84,7 +84,7 @@ export default function AnnouncementsPage() {
   const [selectedFilter, setSelectedFilter] = useState("all");
   const [refreshing, setRefreshing] = useState(false);
 
-  // Add state for menu management and delete modal
+  // State for menu management and delete modal
   const [menuAnnouncementId, setMenuAnnouncementId] = useState<string | null>(
     null
   );
@@ -93,9 +93,10 @@ export default function AnnouncementsPage() {
     null
   );
 
-  // Add menu handlers for edit and delete
+  // --- MODIFIED MENU HANDLERS ---
   const openMenu = (id: string) => {
-    setMenuAnnouncementId(id);
+    // If the same menu is clicked again, close it. Otherwise, open the new one.
+    setMenuAnnouncementId((prevId) => (prevId === id ? null : id));
   };
 
   const closeMenu = () => {
@@ -156,7 +157,6 @@ export default function AnnouncementsPage() {
       case "expiring":
         matchesFilter =
           !!announcement.expiryDate && !isExpired(announcement.expiryDate);
-
         break;
       default:
         matchesFilter = true;
@@ -229,11 +229,6 @@ export default function AnnouncementsPage() {
         </View>
       </View>
 
-      {/* Uncomment filter tabs if you want */}
-      {/* <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterTabs}>
-        {[{ key: 'all', label: 'All' }, ...].map(...)}
-      </ScrollView> */}
-
       <ScrollView
         style={styles.announcementsList}
         showsVerticalScrollIndicator={false}
@@ -241,6 +236,7 @@ export default function AnnouncementsPage() {
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }
         onScrollBeginDrag={closeMenu}
+        keyboardShouldPersistTaps="handled"
       >
         {filteredAnnouncements.map((announcement) => (
           <TouchableOpacity
@@ -253,7 +249,7 @@ export default function AnnouncementsPage() {
                 : undefined,
             ]}
             activeOpacity={0.7}
-            // onPress={() => handleAnnouncementPress(announcement._id)}
+            onPress={closeMenu} // Close menu if user taps the card body
           >
             <View style={styles.cardHeader}>
               <View style={styles.cardHeaderLeft}>
@@ -277,8 +273,9 @@ export default function AnnouncementsPage() {
                   </Text>
                 </View>
               </View>
-              {/* Add 3-dot menu button */}
-              <View style={{ position: 'relative', zIndex: 10 }}>
+
+              {/* --- MODIFIED MENU BUTTON AND CONTEXT MENU --- */}
+              <View style={{ zIndex: 10 }}>
                 <TouchableOpacity
                   style={styles.menuButton}
                   onPress={() => openMenu(announcement._id)}
@@ -286,6 +283,34 @@ export default function AnnouncementsPage() {
                 >
                   <MoreVertical size={20} color="#6B7280" />
                 </TouchableOpacity>
+
+                {/* Conditionally render the context menu */}
+                {menuAnnouncementId === announcement._id && (
+                  <View
+                    style={styles.contextMenu}
+                    onStartShouldSetResponder={() => true}
+                  >
+                    <TouchableOpacity
+                      style={styles.menuItem}
+                      onPress={onEdit}
+                      activeOpacity={0.7}
+                    >
+                      <Edit3 size={16} color="#ffff" />
+                      <Text style={styles.menuText}>Edit</Text>
+                    </TouchableOpacity>
+                    <View style={styles.menuSeparator} />
+                    <TouchableOpacity
+                      style={styles.menuItem}
+                      onPress={onDelete}
+                      activeOpacity={0.7}
+                    >
+                      <Trash2 size={16} color="#ffff" />
+                      <Text style={styles.menuText}>
+                        Delete
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
               </View>
             </View>
 
@@ -370,41 +395,9 @@ export default function AnnouncementsPage() {
         <View style={styles.bottomSpacing} />
       </ScrollView>
 
-      {/* Menu Modal - Renders above everything without touch conflicts */}
-      <Modal
-        visible={!!menuAnnouncementId}
-        transparent={true}
-        animationType="fade"
-        onRequestClose={closeMenu}
-      >
-        <TouchableOpacity
-          style={styles.modalBackdrop}
-          activeOpacity={1}
-          onPress={closeMenu}
-        >
-          <View style={styles.menuModal}>
-            <TouchableOpacity
-              style={styles.menuItem}
-              onPress={onEdit}
-              activeOpacity={0.7}
-            >
-              <Edit3 size={16} color="#6B7280" />
-              <Text style={styles.menuText}>Edit</Text>
-            </TouchableOpacity>
-            <View style={styles.menuSeparator} />
-            <TouchableOpacity
-              style={styles.menuItem}
-              onPress={onDelete}
-              activeOpacity={0.7}
-            >
-              <Trash2 size={16} color="#EF4444" />
-              <Text style={[styles.menuText, { color: '#EF4444' }]}>Delete</Text>
-            </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-      </Modal>
+      {/* --- The full-screen Modal for Edit/Delete has been removed --- */}
 
-      {/* Add Delete Modal */}
+      {/* The Delete Confirmation Modal remains the same */}
       {showDeleteModal && (
         <DeleteModal
           visible={showDeleteModal}

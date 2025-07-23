@@ -108,6 +108,14 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="events/[id]/attempt-page"
+        options={{
+          title:"Attempts",
+          href: null,
+          headerShown: false,
+        }}
+      />
+      <Tabs.Screen
         name="competition/[competitionId]"
         options={{
           href: null,

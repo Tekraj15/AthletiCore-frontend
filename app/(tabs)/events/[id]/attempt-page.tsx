@@ -7,6 +7,7 @@ import {
   Modal,
   ActivityIndicator,
   useColorScheme,
+  ScrollView,
 } from "react-native";
 import { ArrowLeft } from "lucide-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -29,6 +30,8 @@ const AttemptsPage = () => {
   const eventId = id as string;
 
   const { user } = useAuth();
+  const userId = user?.id; // ✅ Always defined after login or reload
+
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const colors = isDark ? theme.dark : theme.light;
@@ -55,16 +58,16 @@ const AttemptsPage = () => {
   const { mutate: initializeAttempts } = useInitializeLiftAttempt();
 
   useEffect(() => {
-    console.log("Attempts data received:", attemptsData);
-    console.log("User object:", user);
-    console.log("User ID:", user?.id);
-    console.log("EventId:", eventId);
+    // console.log("Attempts data received:", attemptsData);
+    // console.log("User object:", user);
+    // console.log("User ID:", user?.id);
+    // console.log("EventId:", eventId);
 
     if (!user || !eventId) {
       console.log("Missing user or eventId:", {
         user: !!user,
         eventId,
-        userId: user?.id,
+        userId,
       });
       return;
     }
@@ -88,11 +91,11 @@ const AttemptsPage = () => {
       console.log("Attempts data is empty:", isEmpty);
 
       if (isEmpty) {
-        console.log("Initializing empty attempts...");
+        // console.log("Initializing empty attempts...");
         // Use type-safe access to user ID
         const userId = user.id;
-        console.log("Payload being sent:", { userId, eventId });
-        console.log("Available user fields:", Object.keys(user));
+        // console.log("Payload being sent:", { userId, eventId });
+        // console.log("Available user fields:", Object.keys(user));
 
         if (!userId) {
           console.error("No valid user ID found in user object:", user);
@@ -237,81 +240,86 @@ const AttemptsPage = () => {
         ))}
       </View>
 
-      {/* Attempts Content */}
-      <View style={styles.attemptsContainer}>
-        {localAttempts[activeTab].length === 0 ? (
-          <View style={{ alignItems: "center", marginTop: 40 }}>
-            <Text
-              style={{
-                color: colors.onSurfaceVariant,
-                textAlign: "center",
-                fontSize: 16,
-                marginBottom: 16,
-              }}
-            >
-              No attempts available for {activeTab}.
-            </Text>
-            <TouchableOpacity
-              style={{
-                backgroundColor: colors.primary,
-                paddingHorizontal: 20,
-                paddingVertical: 10,
-                borderRadius: 8,
-              }}
-              onPress={() => {
-                if (user) {
-                  const userId =
-                    (user as any).id ||
-                    (user as any)._id ||
-                    (user as any).userId ||
-                    (user as any).uid;
-                  console.log("Manual initialization with userId:", userId);
-
-                  if (!userId) {
-                    Alert.alert("Error", "User ID not found");
-                    return;
-                  }
-
-                  setIsInitializing(true);
-                  initializeAttempts(
-                    { userId, eventId },
-                    {
-                      onSuccess: (res: Record<LiftType, Attempt[]>) => {
-                        setLocalAttempts(res);
-                        setIsInitializing(false);
-                      },
-                      onError: (error) => {
-                        console.error("Manual initialization failed:", error);
-                        setIsInitializing(false);
-                        Alert.alert("Error", "Failed to initialize attempts");
-                      },
-                    }
-                  );
-                }
-              }}
-            >
-              <Text style={{ color: "white", fontWeight: "bold" }}>
-                Initialize Attempts
+      <ScrollView
+        contentContainerStyle={{ paddingBottom: 32 }}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Attempts Content */}
+        <View style={styles.attemptsContainer}>
+          {localAttempts[activeTab].length === 0 ? (
+            <View style={{ alignItems: "center", marginTop: 40 }}>
+              <Text
+                style={{
+                  color: colors.onSurfaceVariant,
+                  textAlign: "center",
+                  fontSize: 16,
+                  marginBottom: 16,
+                }}
+              >
+                No attempts available for {activeTab}.
               </Text>
-            </TouchableOpacity>
-          </View>
-        ) : (
-          localAttempts[activeTab].map((attempt) => (
-            <AttemptCard
-              key={attempt.round}
-              attempt={attempt}
-              activeTab={activeTab}
-              colors={colors}
-              handleWeightChange={handleWeightChange}
-              handleSubmit={handleSubmit}
-              getStatusColor={(status, result) =>
-                getStatusColor(status, result, colors)
-              }
-              getStatusIcon={getStatusIcon}
-            />
-          ))
-        )}
-      </View>
+              <TouchableOpacity
+                style={{
+                  backgroundColor: colors.primary,
+                  paddingHorizontal: 20,
+                  paddingVertical: 10,
+                  borderRadius: 8,
+                }}
+                onPress={() => {
+                  if (user) {
+                    const userId =
+                      (user as any).id ||
+                      (user as any)._id ||
+                      (user as any).userId ||
+                      (user as any).uid;
+                    // console.log("Manual initialization with userId:", userId);
+
+                    if (!userId) {
+                      Alert.alert("Error", "User ID not found");
+                      return;
+                    }
+
+                    setIsInitializing(true);
+                    initializeAttempts(
+                      { userId, eventId },
+                      {
+                        onSuccess: (res: Record<LiftType, Attempt[]>) => {
+                          setLocalAttempts(res);
+                          setIsInitializing(false);
+                        },
+                        onError: (error) => {
+                          console.error("Manual initialization failed:", error);
+                          setIsInitializing(false);
+                          Alert.alert("Error", "Failed to initialize attempts");
+                        },
+                      }
+                    );
+                  }
+                }}
+              >
+                <Text style={{ color: "white", fontWeight: "bold" }}>
+                  Initialize Attempts
+                </Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            localAttempts[activeTab].map((attempt) => (
+              <AttemptCard
+                key={attempt.round}
+                attempt={attempt}
+                activeTab={activeTab}
+                colors={colors}
+                handleWeightChange={handleWeightChange}
+                handleSubmit={handleSubmit}
+                getStatusColor={(status, result) =>
+                  getStatusColor(status, result, colors)
+                }
+                getStatusIcon={getStatusIcon}
+              />
+            ))
+          )}
+        </View>
+      </ScrollView>
 
       {/* Confirmation Modal */}
       <Modal

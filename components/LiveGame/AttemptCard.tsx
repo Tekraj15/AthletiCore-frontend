@@ -5,7 +5,6 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
 } from "react-native";
 import { Attempt, AttemptStatus, AttemptResult, LiftType } from "@/constants/Player/liveGameTypes";
 

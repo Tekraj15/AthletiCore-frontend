@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-// Step 1: Define User type with role
 export type User = {
   id: string;
   name: string;
@@ -8,26 +8,55 @@ export type User = {
   role: "Player" | "Official";
 };
 
-// Step 2: Update context type to use full User object
 type AuthContextType = {
   user: User | null;
   login: (userData: User) => void;
   logout: () => void;
 };
 
-// Step 3: Create context with updated type
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Step 4: AuthProvider that manages user state
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
 
-  const login = (userData: User) => {
-    setUser(userData); // now includes name, email, role
+  // 🔑 Load user from AsyncStorage on mount
+  useEffect(() => {
+    const loadUserFromStorage = async () => {
+      try {
+        const storedUser = await AsyncStorage.getItem("user");
+        if (storedUser) {
+          const parsedUser: User = JSON.parse(storedUser);
+          console.log("👤 Loaded user from AsyncStorage:", parsedUser);
+          setUser(parsedUser);
+        } else {
+          console.log("No user found in storage.");
+        }
+      } catch (err) {
+        console.error("❌ Failed to load user from AsyncStorage", err);
+      }
+    };
+
+    loadUserFromStorage();
+  }, []);
+
+  const login = async (userData: User) => {
+    try {
+      await AsyncStorage.setItem("user", JSON.stringify(userData));
+      setUser(userData);
+    } catch (error) {
+      console.error("❌ Failed to persist user in login()", error);
+    }
   };
 
-  const logout = () => {
-    setUser(null);
+  const logout = async () => {
+    try {
+      await AsyncStorage.removeItem("user");
+      await AsyncStorage.removeItem("accessToken");
+      await AsyncStorage.removeItem("refreshToken");
+      setUser(null);
+    } catch (error) {
+      console.error("❌ Failed to log out", error);
+    }
   };
 
   return (
@@ -37,7 +66,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-// Step 5: Custom hook for accessing context
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
