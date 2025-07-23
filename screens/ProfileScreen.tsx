@@ -20,7 +20,12 @@ const { width } = Dimensions.get('window');
 
 const tabs = ['Overview', 'Edit Profile', 'Security', 'Preferences'];
 
-export default function ProfileScreen() {
+interface ProfileScreenProps {
+  onLogout?: () => void;
+  logoutLoading?: boolean;
+}
+
+export default function ProfileScreen({ onLogout, logoutLoading = false }: ProfileScreenProps) {
   const [tabIndex, setTabIndex] = useState<number>(0);
   const scrollX = useState<Animated.Value>(new Animated.Value(0))[0];
   
@@ -39,7 +44,13 @@ export default function ProfileScreen() {
   const renderTabContent = () => {
     switch (tabIndex) {
       case 0:
-        return <ProfileOverview colors={colors} />;
+        return (
+          <ProfileOverview
+            colors={colors}
+            onLogout={onLogout}
+            logoutLoading={logoutLoading}
+          />
+        );
       case 1:
         return <EditProfile colors={colors} />;
       case 2:
@@ -47,7 +58,13 @@ export default function ProfileScreen() {
       case 3:
         return <Preferences colors={colors} />;
       default:
-        return <ProfileOverview colors={colors} />;
+        return (
+          <ProfileOverview
+            colors={colors}
+            onLogout={onLogout}
+            logoutLoading={logoutLoading}
+          />
+        );
     }
   };
 
