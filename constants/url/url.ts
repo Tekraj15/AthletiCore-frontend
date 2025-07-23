@@ -1,5 +1,6 @@
 export const LOGIN_URL = "/user/login";
 export const REGISTER_URL = "/user/register";
+export const LOGOUT_URL = "/user/logout";
 export const CREATE_EVENT_URL = "/event/create";
 export const GET_MY_EVENT_URL = "/event/my-events";
 export const GET_EVENT_URL = "/event/";
