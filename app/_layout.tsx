@@ -14,9 +14,12 @@ import "./../global.css";
 import { useColorScheme } from "@/components/existingComponent/useColorScheme";
 import { AuthProvider, useAuth } from "@/context/auth-context";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import AppInitializer from "@/helpers/appInitializer";
 
 export { ErrorBoundary } from "expo-router";
+
+export const unstable_settings = {
+  initialRouteName: "(tabs)",
+};
 
 SplashScreen.preventAutoHideAsync();
 
@@ -26,6 +29,7 @@ export default function RootLayout() {
     ...FontAwesome.font,
   });
 
+  // React Query client instance stored in state to avoid recreation on rerenders
   const [queryClient] = useState(() => new QueryClient());
 
   useEffect(() => {
@@ -43,9 +47,7 @@ export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <AppInitializer>
-          <RootLayoutNav />
-        </AppInitializer>
+        <RootLayoutNav />
       </AuthProvider>
     </QueryClientProvider>
   );
@@ -55,23 +57,28 @@ function RootLayoutNav() {
   const colorScheme = useColorScheme();
   const segments = useSegments();
   const router = useRouter();
-  const { user, isAuthLoading } = useAuth();
+  const { user } = useAuth();
 
   useEffect(() => {
-    if (isAuthLoading) return;
-
+    // Check if user is inside auth group routes
     const inAuthGroup = segments[0] === "(auth)";
 
-    if (!user && !inAuthGroup) {
-      router.replace("/(auth)");
-    } else if (user && inAuthGroup) {
-      router.replace(
-        user.role === "Official" ? "/(official)/dashboard" : "/(tabs)/events"
-      );
-    }
-  }, [user, isAuthLoading, segments]);
+    // Redirect logic based on authentication and current segment
+    // Timeout 0 to ensure navigation after render cycle
+    const timeout = setTimeout(() => {
+      if (!user && !inAuthGroup) {
+        router.replace("/(auth)");
+      } else if (user && inAuthGroup) {
+        if (user.role === "Official") {
+          router.replace("/(official)/dashboard");
+        } else {
+          router.replace("/(tabs)/events");
+        }
+      }
+    }, 0);
 
-  if (isAuthLoading) return null;
+    return () => clearTimeout(timeout);
+  }, [segments, user, router]);
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>

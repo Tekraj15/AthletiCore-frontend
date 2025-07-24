@@ -73,14 +73,7 @@ export default function SignInScreen() {
       { email, password },
       {
         onSuccess: async (data) => {
-          const { name, role, email: userEmail, _id, id } = data.user;
-
-          const normalizedUser = {
-            id: _id || id,
-            name,
-            email: userEmail,
-            role,
-          };
+          const { name, role, email: userEmail } = data.user;
 
           // Save token securely
           if (data.accessToken) {
@@ -93,7 +86,8 @@ export default function SignInScreen() {
             await AsyncStorage.removeItem("rememberedEmail");
           }
 
-          login(normalizedUser);
+          login({ name, email: userEmail, role });
+
           if (role === "Official") {
             router.replace("/(official)/dashboard");
           } else {
