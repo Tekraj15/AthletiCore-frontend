@@ -10,16 +10,13 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
 import "react-native-reanimated";
 import "./../global.css";
+
 import { useColorScheme } from "@/components/existingComponent/useColorScheme";
 import { AuthProvider, useAuth } from "@/context/auth-context";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { AppInitializer } from "@/helpers/AppInitializer ";
+import AppInitializer from "@/helpers/appInitializer";
 
 export { ErrorBoundary } from "expo-router";
-
-export const unstable_settings = {
-  initialRouteName: "(tabs)",
-};
 
 SplashScreen.preventAutoHideAsync();
 
@@ -29,7 +26,6 @@ export default function RootLayout() {
     ...FontAwesome.font,
   });
 
-  // React Query client instance stored in state to avoid recreation on rerenders
   const [queryClient] = useState(() => new QueryClient());
 
   useEffect(() => {
@@ -66,20 +62,14 @@ function RootLayoutNav() {
 
     const inAuthGroup = segments[0] === "(auth)";
 
-    const timeout = setTimeout(() => {
-      if (!user && !inAuthGroup) {
-        router.replace("/(auth)");
-      } else if (user && inAuthGroup) {
-        if (user.role === "Official") {
-          router.replace("/(official)/dashboard");
-        } else {
-          router.replace("/(tabs)/events");
-        }
-      }
-    }, 0);
-
-    return () => clearTimeout(timeout);
-  }, [segments, user, isAuthLoading]);
+    if (!user && !inAuthGroup) {
+      router.replace("/(auth)");
+    } else if (user && inAuthGroup) {
+      router.replace(
+        user.role === "Official" ? "/(official)/dashboard" : "/(tabs)/events"
+      );
+    }
+  }, [user, isAuthLoading, segments]);
 
   if (isAuthLoading) return null;
 
