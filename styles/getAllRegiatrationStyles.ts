@@ -114,4 +114,81 @@ export const styles = StyleSheet.create({
     paddingVertical: 6,
     paddingHorizontal: 12,
   },
+
+  // Table styles
+  tableContainer: {
+    minWidth: 700,
+  },
+  tableHeader: {
+    flexDirection: "row",
+    borderBottomWidth: 2,
+    borderColor: colors.border,
+    backgroundColor: colors.surfaceVariant,
+  },
+  tableRow: {
+    flexDirection: "row",
+    borderBottomWidth: 1,
+    borderColor: colors.border,
+  },
+  headerCell: {
+    flex: 1,
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    justifyContent: "center",
+  },
+  cell: {
+    flex: 1,
+    paddingVertical: 10,
+    paddingHorizontal: 8,
+    justifyContent: "center",
+  },
+  nameColumn: {
+    flex: 1.5,
+  },
+  emailColumn: {
+    flex: 1.5,
+  },
+  statusColumn: {
+    width: 80,
+    alignItems: "center",
+  },
+  approvalColumn: {
+    minWidth: 160,
+    alignItems: "center",
+  },
+  inputField: {
+    width: 70,
+    textAlign: "center",
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: 6,
+    paddingVertical: 2,
+    paddingHorizontal: 4,
+    color: colors.onSurface,
+    marginVertical: 2,
+  },
+  actionButtons: {
+    flexDirection: "row",
+    gap: 6,
+  },
+  approveButton: {
+    backgroundColor: colors.success,
+    paddingHorizontal: 8,
+    paddingVertical: 6,
+    borderRadius: 6,
+  },
+  rejectButton: {
+    backgroundColor: colors.error,
+    paddingHorizontal: 8,
+    paddingVertical: 6,
+    borderRadius: 6,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 12,
+    fontFamily: "Inter-SemiBold",
+  },
+  disabledInput: {
+    backgroundColor: colors.surfaceVariant,
+  },
 });
