@@ -33,8 +33,6 @@ const AttemptsPage = () => {
   const { user } = useAuth();
   const userId = user?.id;
 
-  console.log("User ID:", userId);
-  console.log("Event ID:", eventId);
   const colorScheme = useColorScheme();
   const colors = colorScheme === "dark" ? theme.dark : theme.light;
 
