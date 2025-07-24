@@ -191,4 +191,10 @@ export const styles = StyleSheet.create({
   disabledInput: {
     backgroundColor: colors.surfaceVariant,
   },
+  statusLabel: {
+    fontWeight: "bold",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+  },
 });

@@ -19,6 +19,7 @@ import { IPlayerSubmission } from "@/types/eventForm";
 import { parseFormFieldsWithMeta } from "@/utils/parseFormFields";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useQueryClient } from "@tanstack/react-query";
+import { useReviewPlayerSubmission } from "@/hooks/useReviewPlayerSubmission";
 
 export default function GetAllPlayerRegistration() {
   const { eventId } = useLocalSearchParams();
@@ -26,11 +27,14 @@ export default function GetAllPlayerRegistration() {
   const queryClient = useQueryClient();
 
   const [search, setSearch] = useState("");
-  const [status, setStatus] = useState<"all" | "pending" | "approved" | "rejected">(
-    "all"
-  );
+  const [status, setStatus] = useState<
+    "all" | "pending" | "approved" | "rejected"
+  >("all");
   const [editValues, setEditValues] = useState<
-    Record<string, { rackHeight: string; finalWeight: string }>
+    Record<
+      string,
+      { rackHeight: string; finalWeight: string; finalHeight: string }
+    >
   >({});
 
   const { data: submissionsData, isLoading } = useGetAllEventsRegistration(
@@ -38,6 +42,7 @@ export default function GetAllPlayerRegistration() {
   );
   const { data: formMeta } = useGetEventForm(eventId as string);
   const updateStatsMutation = useUpdateFinalStats();
+  const reviewSubmissionMutation = useReviewPlayerSubmission();
 
   const submissions: IPlayerSubmission[] = Array.isArray(submissionsData)
     ? submissionsData
@@ -72,33 +77,30 @@ export default function GetAllPlayerRegistration() {
   };
 
   const confirmStatusChange = (id: string, action: "approved" | "rejected") => {
-    Alert.alert(
-      `${action === "approved" ? "Approve" : "Reject"} Registration`,
-      `Are you sure you want to ${action} this registration?`,
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: action === "approved" ? "Approve" : "Reject",
-          style: "destructive",
-          onPress: () =>
-            updateStatsMutation.mutate(
-              { submissionId: id, data: { status: action } },
-              {
-                onSuccess: () =>
-                  queryClient.invalidateQueries({
-                    queryKey: ["all-submissions", eventId],
-                  }),
-              }
-            ),
-        },
-      ]
-    );
-  };
+  console.log("Confirm Status Change Triggered with submissionId:", id);
+
+  // The API call is now made directly, without an alert.
+  reviewSubmissionMutation.mutate(
+    { submissionId: id, data: { status: action } },
+    {
+      onSuccess: () => {
+        console.log("Mutation Success");
+        queryClient.invalidateQueries({
+          queryKey: ["all-submissions", eventId],
+        });
+      },
+      onError: (error) => {
+        console.error("Mutation Error: ", error);
+      },
+    }
+  );
+};
 
   const handleUpdateStats = (
     id: string,
     rack: string,
-    weight: string
+    weight: string,
+    height: string
   ) => {
     if (rack && isNaN(Number(rack))) {
       Alert.alert("Invalid Rack Height", "Rack height must be a number.");
@@ -108,15 +110,25 @@ export default function GetAllPlayerRegistration() {
       Alert.alert("Invalid Weight", "Final weight must be a number.");
       return;
     }
+    if (height && isNaN(Number(height))) {
+      Alert.alert("Invalid Height", "Final height must be a number.");
+      return;
+    }
 
     updateStatsMutation.mutate(
       {
         submissionId: id,
-        data: { finalRackHeight: rack, finalWeight: weight },
+        data: {
+          finalRackHeight: rack,
+          finalWeight: weight,
+          finalHeight: height,
+        },
       },
       {
         onSuccess: () =>
-          queryClient.invalidateQueries({ queryKey: ["all-submissions", eventId] }),
+          queryClient.invalidateQueries({
+            queryKey: ["all-submissions", eventId],
+          }),
       }
     );
   };
@@ -124,28 +136,43 @@ export default function GetAllPlayerRegistration() {
   const renderRow = ({ item }: { item: IPlayerSubmission }) => {
     const values = parseFormFieldsWithMeta(item.formFields, fieldMap);
     const name =
-      values["Full Name"] || values["field_0"] || (item as any).user?.fullName ||
+      values["Full Name"] ||
+      values["field_0"] ||
+      (item as any).user?.fullName ||
       "Unknown";
     const email =
-      values["Email"] || values["field_1"] || (item as any).user?.email ||
+      values["Email"] ||
+      values["field_1"] ||
+      (item as any).user?.email ||
       "No Email";
-    const editState =
-      editValues[item._id] || {
-        rackHeight: (item as any).finalRackHeight || "",
-        finalWeight: (item as any).finalWeight || "",
-      };
+    const editState = editValues[item._id] || {
+      rackHeight: (item as any).finalRackHeight || "",
+      finalWeight: (item as any).finalWeight || "",
+      finalHeight: (item as any).finalHeight || "",
+    };
 
     const setRack = (val: string) =>
-      setEditValues((p) => ({ ...p, [item._id]: { ...editState, rackHeight: val } }));
+      setEditValues((p) => ({
+        ...p,
+        [item._id]: { ...editState, rackHeight: val },
+      }));
     const setWeight = (val: string) =>
-      setEditValues((p) => ({ ...p, [item._id]: { ...editState, finalWeight: val } }));
+      setEditValues((p) => ({
+        ...p,
+        [item._id]: { ...editState, finalWeight: val },
+      }));
+    const setHeight = (val: string) =>
+      setEditValues((p) => ({
+        ...p,
+        [item._id]: { ...editState, finalHeight: val },
+      }));
 
     return (
       <TouchableOpacity
         style={styles.tableRow}
-        onPress={() =>
-          router.push(`/(official)/event/${eventId}/registration/${item._id}`)
-        }
+        // onPress={() =>
+        //   router.push(`/(official)/event/${eventId}/registration/${item._id}`)
+        // }
       >
         <View style={[styles.cell, styles.nameColumn]}>
           <Text style={styles.cardDetail}>{name}</Text>
@@ -167,6 +194,7 @@ export default function GetAllPlayerRegistration() {
               <TouchableOpacity
                 style={styles.approveButton}
                 onPress={(e) => {
+                  console.log('Approve button clicked for item._id:', item._id);
                   e.stopPropagation();
                   confirmStatusChange(item._id, "approved");
                 }}
@@ -195,7 +223,8 @@ export default function GetAllPlayerRegistration() {
                   handleUpdateStats(
                     item._id,
                     editState.rackHeight,
-                    editState.finalWeight
+                    editState.finalWeight,
+                    editState.finalHeight
                   )
                 }
                 style={[
@@ -213,7 +242,27 @@ export default function GetAllPlayerRegistration() {
                   handleUpdateStats(
                     item._id,
                     editState.rackHeight,
-                    editState.finalWeight
+                    editState.finalWeight,
+                    editState.finalHeight
+                  )
+                }
+                style={[
+                  styles.inputField,
+                  item.status !== "approved" && styles.disabledInput,
+                ]}
+              />
+              <TextInput
+                placeholder="Height"
+                value={editState.finalHeight}
+                keyboardType="numeric"
+                editable={item.status === "approved"}
+                onChangeText={setHeight}
+                onBlur={() =>
+                  handleUpdateStats(
+                    item._id,
+                    editState.rackHeight,
+                    editState.finalWeight,
+                    editState.finalHeight
                   )
                 }
                 style={[
@@ -253,11 +302,17 @@ export default function GetAllPlayerRegistration() {
           {["all", "pending", "approved", "rejected"].map((s) => (
             <TouchableOpacity
               key={s}
-              style={[styles.statusButton, status === s && styles.activeStatusButton]}
+              style={[
+                styles.statusButton,
+                status === s && styles.activeStatusButton,
+              ]}
               onPress={() => setStatus(s as any)}
             >
               <Text
-                style={[styles.statusButtonText, status === s && styles.activeStatusText]}
+                style={[
+                  styles.statusButtonText,
+                  status === s && styles.activeStatusText,
+                ]}
               >
                 {s.charAt(0).toUpperCase() + s.slice(1)}
               </Text>
@@ -267,7 +322,11 @@ export default function GetAllPlayerRegistration() {
       </View>
 
       {isLoading ? (
-        <ActivityIndicator size="large" color="#2563EB" style={{ marginTop: 40 }} />
+        <ActivityIndicator
+          size="large"
+          color="#2563EB"
+          style={{ marginTop: 40 }}
+        />
       ) : (
         <ScrollView horizontal>
           <View style={styles.tableContainer}>
@@ -287,7 +346,7 @@ export default function GetAllPlayerRegistration() {
                 <Text style={styles.cardDetail}>Status</Text>
               </View>
               <View style={[styles.headerCell, styles.approvalColumn]}>
-                <Text style={styles.cardDetail}>Approval</Text>
+                <Text style={styles.cardDetail}>Update Stats</Text>
               </View>
             </View>
 
