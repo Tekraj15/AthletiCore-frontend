@@ -19,6 +19,8 @@ import {
   Settings,
   LogOut,
 } from 'lucide-react-native';
+import { useAuth } from '@/context/auth-context';
+import { router, useRouter } from 'expo-router';
 
 interface ProfileOverviewProps {
   colors: any;
@@ -32,9 +34,9 @@ export default function ProfileOverview({ colors }: ProfileOverviewProps) {
     { icon: Activity, label: 'Active Days', value: '156', color: colors.accent },
   ];
 
-  const handleLogout = () => {
-    // Implement logout logic
-    console.log('Logout pressed');
+const handleLogout = async () => {
+    // await LogOut();
+    router.replace('/(auth)');
   };
 
   const handleSettings = () => {
