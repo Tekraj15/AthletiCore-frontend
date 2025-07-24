@@ -1,43 +1,65 @@
 import React, { createContext, useContext, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// Step 1: Define User type with role
+// User type definition
 export type User = {
-  id: string; 
+  id: string;
   name: string;
   email: string;
-  role: 'Player' | 'Official'; 
+  role: 'Player' | 'Official';
 };
 
-// Step 2: Update context type to use full User object
+// Auth context type
 type AuthContextType = {
   user: User | null;
-  login: (userData: User) => void;
-  logout: () => void;
+  login: (userData: User) => Promise<void>;
+  logout: () => Promise<void>;
+  isAuthLoading: boolean;
+  setIsAuthLoading: (loading: boolean) => void;
 };
 
-// Step 3: Create context with updated type
+// Create the context
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Step 4: AuthProvider that manages user state
+// Provider component
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [isAuthLoading, setIsAuthLoading] = useState(true); // Initially true
 
-  const login = (userData: User) => {
-    setUser(userData); 
+  const login = async (userData: User) => {
+    try {
+      await AsyncStorage.setItem('user', JSON.stringify(userData));
+      setUser(userData);
+    } catch (err) {
+      console.error('❌ Error during login (saving to AsyncStorage)', err);
+    }
   };
 
-  const logout = () => {
-    setUser(null);
+  const logout = async () => {
+    try {
+      await AsyncStorage.multiRemove(['user', 'accessToken', 'refreshToken']);
+      setUser(null);
+    } catch (err) {
+      console.error('❌ Error during logout (clearing AsyncStorage)', err);
+    }
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        login,
+        logout,
+        isAuthLoading,
+        setIsAuthLoading,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
 
-// Step 5: Custom hook for accessing context
+// Hook to access the context
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
