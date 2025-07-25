@@ -180,65 +180,64 @@ export default function CreateEventScreen() {
   };
 
   const handleSubmit = async () => {
-    if (!validateForm()) return;
+  if (!validateForm()) return;
 
-    const data = new FormData();
+  const data = new FormData();
 
-    data.append("title", formData.title);
-    data.append("venue", formData.venue);
-    data.append("date", formData.date);
-    data.append("competitionType", formData.competitionType);
-    data.append("description", formData.description);
+  data.append("title", formData.title);
+  data.append("venue", formData.venue);
+  data.append("date", formData.date);
+  data.append("competitionType", formData.competitionType);
+  data.append("description", formData.description);
 
-    // ✅ Fixed: send arrays/objects as JSON strings
-    data.append(
-      "weightCategories",
-      JSON.stringify(weightCategories.filter((cat) => cat.trim()))
-    );
-    data.append(
-      "prizes",
-      JSON.stringify(
-        prizes.filter((p) => p.prizeTitle.trim() || p.prize.trim())
-      )
-    );
-    data.append("coordinator", JSON.stringify(coordinator));
-    data.append("otherOfficial", JSON.stringify(otherOfficial));
+  // ✅ Send arrays/objects as JSON strings
+  data.append(
+    "weightCategories",
+    JSON.stringify(weightCategories.filter((cat) => cat.trim()))
+  );
+  data.append(
+    "prizes",
+    JSON.stringify(
+      prizes.filter((p) => p.prizeTitle.trim() || p.prize.trim())
+    )
+  );
+  data.append("coordinator", JSON.stringify(coordinator));
+  data.append("otherOfficial", JSON.stringify(otherOfficial));
 
-    if (formData.eventImage) {
+  // ✅ Properly format image for FormData
+  if (formData.eventImage) {
+    const fileUri = formData.eventImage;
+    const fileName = fileUri.split("/").pop() || "event.jpg";
+    const ext = fileName.split(".").pop()?.toLowerCase() || "jpg";
 
-      const fileName = formData.eventImage.split("/").pop() || "event.jpg";
-      const mimeMap: Record<string, string> = {
-        jpg: "image/jpeg",
-        jpeg: "image/jpeg",
-        png: "image/png",
-        gif: "image/gif",
-        webp: "image/webp",
-      };
-      const ext = fileName.split(".").pop()?.toLowerCase() || "jpg";
-      const mimeType = mimeMap[ext] || "image/jpeg";
+    const mimeMap: Record<string, string> = {
+      jpg: "image/jpeg",
+      jpeg: "image/jpeg",
+      png: "image/png",
+      gif: "image/gif",
+      webp: "image/webp",
+    };
+    const mimeType = mimeMap[ext] || "image/jpeg";
 
-      data.append("eventImage", {
-        uri: formData.eventImage,
-        type: mimeType,
-        name: fileName,
-      } as any);
-    }
+    data.append("eventImage", {
+      uri: fileUri,
+      name: fileName,
+      type: mimeType,
+    } as any); // RN FormData requires this cast
+  }
 
-    createEvent(data, {
-      onSuccess: () => {
-        Alert.alert("Success", "Event created successfully!", [
-          {
-            text: "OK",
-            onPress: () => router.back(),
-          },
-        ]);
-      },
-      onError: (error: any) => {
-        console.error("Create event error:", error);
-        Alert.alert("Error", "Something went wrong while creating the event.");
-      },
-    });
-  };
+  // 🔥 Trigger API call
+  createEvent(data, {
+    onSuccess: () => {
+      router.push("/(official)/dashboard");
+    },
+    onError: (error: any) => {
+      console.error("Create event error:", error);
+      Alert.alert("Error", "Something went wrong while creating the event.");
+    },
+  });
+};
+
 
   return (
     <SafeAreaView style={styles.container}>

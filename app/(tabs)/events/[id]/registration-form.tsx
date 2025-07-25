@@ -89,7 +89,11 @@ export default function EventRegistrationFormScreen() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleDateChange = (fieldId: string, event: any, selectedDate?: Date) => {
+  const handleDateChange = (
+    fieldId: string,
+    event: any,
+    selectedDate?: Date
+  ) => {
     if (event.type === "set" && selectedDate) {
       const formattedDate = selectedDate.toISOString().split("T")[0];
       updateFormData(fieldId, formattedDate);
@@ -104,7 +108,10 @@ export default function EventRegistrationFormScreen() {
     }
 
     setIsSubmitting(true);
-    const formFields = Object.entries(formData).map(([key, value]) => ({ key, value }));
+    const formFields = Object.entries(formData).map(([key, value]) => ({
+      key,
+      value,
+    }));
 
     if (isEditMode) {
       updateForm(
@@ -114,12 +121,13 @@ export default function EventRegistrationFormScreen() {
         },
         {
           onSuccess: () => {
-            Alert.alert("Success", "Registration updated!", [
-              { text: "OK", onPress: () => setTimeout(() => router.back(), 300) },
-            ]);
+            router.back();
           },
           onError: (error: any) => {
-            Alert.alert("Error", error.response?.data?.message || "Something went wrong.");
+            Alert.alert(
+              "Error",
+              error.response?.data?.message || "Something went wrong."
+            );
           },
           onSettled: () => setIsSubmitting(false),
         }
@@ -133,11 +141,17 @@ export default function EventRegistrationFormScreen() {
         {
           onSuccess: () => {
             Alert.alert("Success", "Registration submitted!", [
-              { text: "OK", onPress: () => setTimeout(() => router.back(), 300) },
+              {
+                text: "OK",
+                onPress: () => setTimeout(() => router.back(), 300),
+              },
             ]);
           },
           onError: (error: any) => {
-            Alert.alert("Error", error.response?.data?.message || "Something went wrong.");
+            Alert.alert(
+              "Error",
+              error.response?.data?.message || "Something went wrong."
+            );
           },
           onSettled: () => setIsSubmitting(false),
         }
@@ -147,9 +161,13 @@ export default function EventRegistrationFormScreen() {
 
   if (isLoading || (isEditMode && loadingSubmission)) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: colors.background }]}
+      >
         <View style={styles.loadingContainer}>
-          <Text style={[styles.loadingText, { color: colors.onSurface }]}>Loading form...</Text>
+          <Text style={[styles.loadingText, { color: colors.onSurface }]}>
+            Loading form...
+          </Text>
         </View>
       </SafeAreaView>
     );
@@ -157,7 +175,9 @@ export default function EventRegistrationFormScreen() {
 
   if (!form || !Array.isArray(form.fields)) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: colors.background }]}
+      >
         <View style={styles.loadingContainer}>
           <Text style={[styles.loadingText, { color: colors.onSurface }]}>
             Registration is currently closed.
@@ -186,7 +206,9 @@ export default function EventRegistrationFormScreen() {
           <View key={field.id} style={styles.fieldContainer}>
             <Text style={[styles.fieldLabel, { color: colors.onSurface }]}>
               {field.fieldName}
-              {field.required && <Text style={{ color: colors.error }}> *</Text>}
+              {field.required && (
+                <Text style={{ color: colors.error }}> *</Text>
+              )}
             </Text>
             <TextInput
               style={[
@@ -201,12 +223,16 @@ export default function EventRegistrationFormScreen() {
               onChangeText={(text) => updateFormData(field.id, text)}
               placeholder={`Enter ${field.fieldName.toLowerCase()}`}
               placeholderTextColor={colors.onSurfaceVariant}
-              keyboardType={field.fieldType === "number" ? "numeric" : "default"}
+              keyboardType={
+                field.fieldType === "number" ? "numeric" : "default"
+              }
             />
             {hasError && (
               <View style={styles.errorContainer}>
                 <AlertCircle size={14} color={colors.error} />
-                <Text style={[styles.errorText, { color: colors.error }]}>{errors[field.id]}</Text>
+                <Text style={[styles.errorText, { color: colors.error }]}>
+                  {errors[field.id]}
+                </Text>
               </View>
             )}
           </View>
@@ -217,7 +243,9 @@ export default function EventRegistrationFormScreen() {
           <View key={field.id} style={styles.fieldContainer}>
             <Text style={[styles.fieldLabel, { color: colors.onSurface }]}>
               {field.fieldName}
-              {field.required && <Text style={{ color: colors.error }}> *</Text>}
+              {field.required && (
+                <Text style={{ color: colors.error }}> *</Text>
+              )}
             </Text>
             <TouchableOpacity
               style={[
@@ -252,7 +280,9 @@ export default function EventRegistrationFormScreen() {
             {hasError && (
               <View style={styles.errorContainer}>
                 <AlertCircle size={14} color={colors.error} />
-                <Text style={[styles.errorText, { color: colors.error }]}>{errors[field.id]}</Text>
+                <Text style={[styles.errorText, { color: colors.error }]}>
+                  {errors[field.id]}
+                </Text>
               </View>
             )}
           </View>
@@ -263,7 +293,9 @@ export default function EventRegistrationFormScreen() {
           <View key={field.id} style={styles.fieldContainer}>
             <Text style={[styles.fieldLabel, { color: colors.onSurface }]}>
               {field.fieldName}
-              {field.required && <Text style={{ color: colors.error }}> *</Text>}
+              {field.required && (
+                <Text style={{ color: colors.error }}> *</Text>
+              )}
             </Text>
             <TouchableOpacity
               style={[
@@ -273,7 +305,9 @@ export default function EventRegistrationFormScreen() {
                   borderColor: hasError ? colors.error : colors.border,
                 },
               ]}
-              onPress={() => setShowDropdown(showDropdown === field.id ? null : field.id)}
+              onPress={() =>
+                setShowDropdown(showDropdown === field.id ? null : field.id)
+              }
             >
               <Text
                 style={[
@@ -289,7 +323,9 @@ export default function EventRegistrationFormScreen() {
                 size={20}
                 color={colors.onSurfaceVariant}
                 style={{
-                  transform: [{ rotate: showDropdown === field.id ? "180deg" : "0deg" }],
+                  transform: [
+                    { rotate: showDropdown === field.id ? "180deg" : "0deg" },
+                  ],
                 }}
               />
             </TouchableOpacity>
@@ -301,7 +337,8 @@ export default function EventRegistrationFormScreen() {
                     styles.dropdownOption,
                     {
                       borderBottomColor: colors.border,
-                      borderBottomWidth: index === field.options!.length - 1 ? 0 : 1,
+                      borderBottomWidth:
+                        index === field.options!.length - 1 ? 0 : 1,
                     },
                   ]}
                   onPress={() => {
@@ -309,16 +346,25 @@ export default function EventRegistrationFormScreen() {
                     setShowDropdown(null);
                   }}
                 >
-                  <Text style={[styles.dropdownOptionText, { color: colors.onSurface }]}>
+                  <Text
+                    style={[
+                      styles.dropdownOptionText,
+                      { color: colors.onSurface },
+                    ]}
+                  >
                     {option}
                   </Text>
-                  {value === option && <CheckCircle size={16} color={colors.primary} />}
+                  {value === option && (
+                    <CheckCircle size={16} color={colors.primary} />
+                  )}
                 </TouchableOpacity>
               ))}
             {hasError && (
               <View style={styles.errorContainer}>
                 <AlertCircle size={14} color={colors.error} />
-                <Text style={[styles.errorText, { color: colors.error }]}>{errors[field.id]}</Text>
+                <Text style={[styles.errorText, { color: colors.error }]}>
+                  {errors[field.id]}
+                </Text>
               </View>
             )}
           </View>
@@ -330,7 +376,9 @@ export default function EventRegistrationFormScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
       <View
         style={[
           styles.header,
@@ -341,7 +389,10 @@ export default function EventRegistrationFormScreen() {
         ]}
       >
         <TouchableOpacity
-          style={[styles.backButton, { backgroundColor: colors.surfaceVariant }]}
+          style={[
+            styles.backButton,
+            { backgroundColor: colors.surfaceVariant },
+          ]}
           onPress={() => router.back()}
         >
           <ArrowLeft size={24} color={colors.onSurface} />
@@ -354,9 +405,12 @@ export default function EventRegistrationFormScreen() {
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <View style={[styles.infoSection, { backgroundColor: colors.surface }]}>
-          <Text style={[styles.infoTitle, { color: colors.onSurface }]}>Registration Form</Text>
+          <Text style={[styles.infoTitle, { color: colors.onSurface }]}>
+            Registration Form
+          </Text>
           <Text style={[styles.infoText, { color: colors.onSurfaceVariant }]}>
-            Please fill out all required fields to complete your registration for this event.
+            Please fill out all required fields to complete your registration
+            for this event.
           </Text>
         </View>
 
@@ -368,7 +422,9 @@ export default function EventRegistrationFormScreen() {
           style={[
             styles.submitButton,
             {
-              backgroundColor: isSubmitting ? colors.surfaceVariant : colors.primary,
+              backgroundColor: isSubmitting
+                ? colors.surfaceVariant
+                : colors.primary,
               opacity: isSubmitting ? 0.6 : 1,
             },
           ]}

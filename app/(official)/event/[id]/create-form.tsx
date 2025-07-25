@@ -44,12 +44,28 @@ const staticFields: IFormField[] = [
     key: "bodyWeight",
   },
   {
-    id: "static-initial-weight",
-    fieldName: "Initial Weight ",
+    id: "static-initial-weight-for-squat",
+    fieldName: "Initial Weight For Squat",
     fieldType: "number",
     required: true,
     options: [],
-    key: "initialWeight", // important for declaredWeight later
+    key: "initialWeightForSquat", 
+  },
+  {
+    id: "static-initial-weight-for-bench-press",
+    fieldName: "Initial Weight For Bench Press",
+    fieldType: "number",
+    required: true,
+    options: [],
+    key: "initialWeightforSquatBenchPress", 
+  },
+  {
+    id: "static-initial-weight-for-deadlift",
+    fieldName: "Initial Weight For Bench Press",
+    fieldType: "number",
+    required: true,
+    options: [],
+    key: "initialWeightforSquatBenchPress", 
   },
 ];
 
@@ -161,11 +177,7 @@ export default function CreateEventFormScreen() {
     createForm(payload, {
       onSuccess: () => {
         setIsSubmitting(false);
-        Alert.alert(
-          "Success",
-          "Event registration form created successfully!",
-          [{ text: "OK", onPress: () => router.back() }]
-        );
+        router.navigate(`/event/${eventId}`);
       },
       onError: (error) => {
         setIsSubmitting(false);
