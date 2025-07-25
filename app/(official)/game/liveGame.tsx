@@ -2,7 +2,6 @@ import React from 'react';
 import {
   View,
   Text,
-  StyleSheet,
   ScrollView,
   TouchableOpacity,
   useColorScheme,
@@ -39,12 +38,12 @@ const mapEventToCompetition = (event: IEvent): Competition => ({
   name: event.title,
   date: event.date,
   location: event.venue,
-  // Assuming all powerlifting events include squat, bench press and deadlift
-  events: ['S', 'BP', 'D'],
+  events: event.discipline || [],
   groups: event.weightCategories || [],
-  participants: 0,
+  participants: event.participantCount || 0,
   status: getStatus(event.date),
 });
+
 
 const getEventName = (event: string) => {
   switch (event) {
@@ -84,8 +83,8 @@ export default function CompetitionsScreen() {
     records: competitions.reduce((acc, c) => acc + c.groups.length, 0),
   };
 
-  const handleCompetitionPress = (gameId: string) => {
-    router.push(`./${gameId}`);
+  const handleCompetitionPress = (competitionId: string) => {
+    router.push(`/game/${competitionId}`);
   };
 
   if (isLoading) {

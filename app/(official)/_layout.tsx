@@ -118,7 +118,7 @@ export default function OfficialLayout() {
           }}
         />
         <Tabs.Screen
-          name="game/[gameId]"
+          name="game/[competitionId]"
           options={{
             href: null,
             headerShown: false,

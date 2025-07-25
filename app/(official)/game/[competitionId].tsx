@@ -1,12 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
-  StyleSheet,
   ScrollView,
   TouchableOpacity,
   useColorScheme,
-  Dimensions,
+  ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
@@ -14,60 +13,79 @@ import {
   Users,
   Trophy,
   ChartBar as BarChart3,
-  Settings,
-  Plus,
 } from "lucide-react-native";
 import { router, useLocalSearchParams } from "expo-router";
+
 import { theme } from "@/constants/theme";
 import GameResultsTable from "@/components/Competition/GameResultTable";
 import PlayerMeasurementsTable from "@/components/Competition/PlayerMeasurementsTable";
 import IndividualPlayerView from "@/components/Competition/IndividualPlayerView";
-
-const { width } = Dimensions.get("window");
+import { useGetLiveScoreboard } from "@/hooks/useGetLiveScoreboard";
+import { styles } from "@/styles/gameIdStyles";
 
 const tabs = ["Results", "Players", "Individual"];
 
-// Sample competition data
-const getCompetitionData = (id: string) => {
-  return {
-    id: "1",
-    name: "National Powerlifting Championship 2024",
-    date: "2024-03-15",
-    location: "Iron Temple Gym, Los Angeles",
-    events: ["S", "BP", "D"],
-    groups: ["A", "B"],
-    participants: 45,
-    status: "active",
-  };
-};
-
 export default function CompetitionDetailScreen() {
-  const { id } = useLocalSearchParams();
   const [tabIndex, setTabIndex] = useState(0);
-  const [selectedEvent, setSelectedEvent] = useState("S");
-  const [selectedGroup, setSelectedGroup] = useState("A");
+  const [selectedEvent, setSelectedEvent] = useState<string | null>(null);
+  const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
 
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const colors = isDark ? theme.dark : theme.light;
 
-  const competition = getCompetitionData(id as string);
+  const { competitionId } = useLocalSearchParams();
+  // console.log("Competition ID:", competitionId);
+  const id = Array.isArray(competitionId) ? competitionId[0] : competitionId;
+  console.log("Competition ID:", id); // Log the competitionId
+
+  const { data: competitionData, isLoading } = useGetLiveScoreboard(id); // Use `id` instead of `competitionId`
+
+  const competition = competitionData?.[0];
+  const name = competition?.competitionName;
+  const location = competition?.location;
+
+  useEffect(() => {
+    if (competition) {
+      if (!selectedEvent && competition.events.length > 0) {
+        setSelectedEvent(competition.events[0]);
+      }
+      if (!selectedGroup && competition.groups.length > 0) {
+        setSelectedGroup(competition.groups[0]);
+      }
+    }
+  }, [competition]);
+
+  if (isLoading) {
+    return (
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: colors.background }]}
+      >
+        <ActivityIndicator size="large" color={colors.primary} />
+      </SafeAreaView>
+    );
+  }
 
   if (!competition) {
     return (
       <SafeAreaView
         style={[styles.container, { backgroundColor: colors.background }]}
       >
-        <View style={styles.errorContainer}>
-          <Text style={[styles.errorText, { color: colors.error }]}>
-            Competition not found
-          </Text>
-        </View>
+        <Text style={[styles.errorText, { color: colors.error }]}>
+          No competition found. Failed to load competition
+        </Text>
       </SafeAreaView>
     );
   }
 
-  const getEventName = (event: string) => {
+
+  const events: string[] = competition.events ?? [];
+  const groups: string[] = competition.groups ?? [];
+
+  const currentEvent = selectedEvent ?? events[0];
+  const currentGroup = selectedGroup ?? groups[0];
+
+  const getEventName = (event: string): string => {
     switch (event) {
       case "S":
         return "Squat";
@@ -86,14 +104,13 @@ export default function CompetitionDetailScreen() {
         return (
           <GameResultsTable
             colors={colors}
-            event={selectedEvent}
-            group={selectedGroup}
+            event={currentEvent}
+            group={currentGroup}
           />
         );
       case 1:
-        return (
-          <PlayerMeasurementsTable colors={colors} group={selectedGroup} />
-        );
+        return <PlayerMeasurementsTable colors={colors} group={currentGroup} />;
+
       case 2:
         return <IndividualPlayerView colors={colors} />;
       default:
@@ -130,7 +147,7 @@ export default function CompetitionDetailScreen() {
           </TouchableOpacity>
           <View style={styles.headerInfo}>
             <Text style={[styles.headerTitle, { color: colors.onSurface }]}>
-              {competition.name}
+              {competition?.competitionName || name}
             </Text>
             <Text
               style={[
@@ -138,25 +155,19 @@ export default function CompetitionDetailScreen() {
                 { color: colors.onSurfaceVariant },
               ]}
             >
-              {competition.location}
+              {competition?.location || location}
             </Text>
           </View>
-          {/* <TouchableOpacity 
-          style={[styles.settingsButton, { backgroundColor: colors.surfaceVariant }]}
-          onPress={() => router.push(`/competition/${id}/settings`)}
-        >
-          <Settings size={20} color={colors.onSurface} />
-        </TouchableOpacity> */}
         </View>
 
-        {/* Competition Stats */}
+        {/* Stats */}
         <View
           style={[styles.statsContainer, { backgroundColor: colors.surface }]}
         >
           <View style={styles.statItem}>
             <Users size={20} color={colors.primary} />
             <Text style={[styles.statValue, { color: colors.onSurface }]}>
-              {competition.participants}
+              {competition.count}
             </Text>
             <Text
               style={[styles.statLabel, { color: colors.onSurfaceVariant }]}
@@ -167,7 +178,7 @@ export default function CompetitionDetailScreen() {
           <View style={styles.statItem}>
             <Trophy size={20} color={colors.warning} />
             <Text style={[styles.statValue, { color: colors.onSurface }]}>
-              {competition.events.length}
+              {events.length}
             </Text>
             <Text
               style={[styles.statLabel, { color: colors.onSurfaceVariant }]}
@@ -178,7 +189,7 @@ export default function CompetitionDetailScreen() {
           <View style={styles.statItem}>
             <BarChart3 size={20} color={colors.success} />
             <Text style={[styles.statValue, { color: colors.onSurface }]}>
-              {competition.groups.length}
+              {groups.length}
             </Text>
             <Text
               style={[styles.statLabel, { color: colors.onSurfaceVariant }]}
@@ -197,7 +208,7 @@ export default function CompetitionDetailScreen() {
             showsHorizontalScrollIndicator={false}
             style={styles.tabScroll}
           >
-            {tabs.map((tab, idx) => (
+            {tabs.map((tab: string, idx: number) => (
               <TouchableOpacity
                 key={idx}
                 style={[
@@ -240,7 +251,7 @@ export default function CompetitionDetailScreen() {
                   Event:
                 </Text>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                  {competition.events.map((event) => (
+                  {events.map((event: string) => (
                     <TouchableOpacity
                       key={event}
                       style={[
@@ -249,7 +260,7 @@ export default function CompetitionDetailScreen() {
                           backgroundColor: colors.surfaceVariant,
                           borderColor: colors.border,
                         },
-                        selectedEvent === event && {
+                        currentEvent === event && {
                           backgroundColor: colors.primary,
                           borderColor: colors.primary,
                         },
@@ -260,7 +271,7 @@ export default function CompetitionDetailScreen() {
                         style={[
                           styles.filterButtonText,
                           { color: colors.onSurfaceVariant },
-                          selectedEvent === event && { color: "#FFFFFF" },
+                          currentEvent === event && { color: "#FFFFFF" },
                         ]}
                       >
                         {getEventName(event)}
@@ -278,7 +289,7 @@ export default function CompetitionDetailScreen() {
                 Group:
               </Text>
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                {competition.groups.map((group) => (
+                {groups.map((group: string) => (
                   <TouchableOpacity
                     key={group}
                     style={[
@@ -287,7 +298,7 @@ export default function CompetitionDetailScreen() {
                         backgroundColor: colors.surfaceVariant,
                         borderColor: colors.border,
                       },
-                      selectedGroup === group && {
+                      currentGroup === group && {
                         backgroundColor: colors.primary,
                         borderColor: colors.primary,
                       },
@@ -298,7 +309,7 @@ export default function CompetitionDetailScreen() {
                       style={[
                         styles.filterButtonText,
                         { color: colors.onSurfaceVariant },
-                        selectedGroup === group && { color: "#FFFFFF" },
+                        currentGroup === group && { color: "#FFFFFF" },
                       ]}
                     >
                       Group {group}
@@ -312,147 +323,7 @@ export default function CompetitionDetailScreen() {
 
         {/* Content */}
         <View style={styles.contentContainer}>{renderTabContent()}</View>
-
-        {/* Add Player FAB */}
-        {/* <TouchableOpacity 
-        style={[styles.fab, { backgroundColor: colors.primary }]}
-        onPress={() => router.push(`/competition/${id}/add-player`)}
-      >
-        <Plus size={24} color="#FFFFFF" />
-      </TouchableOpacity> */}
       </SafeAreaView>
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    gap: 16,
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  headerInfo: {
-    flex: 1,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontFamily: "Inter-Bold",
-  },
-  headerSubtitle: {
-    fontSize: 14,
-    fontFamily: "Inter-Regular",
-    marginTop: 2,
-  },
-  settingsButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  statsContainer: {
-    flexDirection: "row",
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    justifyContent: "space-around",
-  },
-  statItem: {
-    alignItems: "center",
-    gap: 4,
-  },
-  statValue: {
-    fontSize: 20,
-    fontFamily: "Inter-Bold",
-  },
-  statLabel: {
-    fontSize: 12,
-    fontFamily: "Inter-Medium",
-  },
-  tabContainer: {
-    paddingVertical: 16,
-  },
-  tabScroll: {
-    paddingHorizontal: 20,
-  },
-  tabButton: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 20,
-    marginRight: 12,
-    minWidth: 80,
-    alignItems: "center",
-  },
-  tabText: {
-    fontSize: 14,
-    fontFamily: "Inter-SemiBold",
-  },
-  filtersContainer: {
-    paddingHorizontal: 20,
-    paddingBottom: 16,
-    gap: 12,
-  },
-  filterGroup: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-  filterLabel: {
-    fontSize: 14,
-    fontFamily: "Inter-SemiBold",
-    minWidth: 50,
-  },
-  filterButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 16,
-    borderWidth: 1,
-    marginRight: 8,
-  },
-  filterButtonText: {
-    fontSize: 12,
-    fontFamily: "Inter-Medium",
-  },
-  contentContainer: {
-    flex: 1,
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  errorText: {
-    fontSize: 18,
-    fontFamily: "Inter-SemiBold",
-  },
-  fab: {
-    position: "absolute",
-    bottom: 20,
-    right: 20,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
-  },
-});

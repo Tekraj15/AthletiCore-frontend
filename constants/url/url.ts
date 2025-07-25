@@ -31,4 +31,4 @@ export const INITIALIZE_ATTEMPTS = "/attempt/init-lifts";
 export const GET_LIFT_ATTEMPTS_URL = "/attempt";
 
 //
-export const GET_LIVE_SCOREBOARD_URL = "/live-scoreboard/:eventId";
+export const GET_LIVE_SCOREBOARD_URL = "/live-scoreboard/live/:eventId";
