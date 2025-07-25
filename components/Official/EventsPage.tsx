@@ -12,6 +12,8 @@ import {
   Filter,
   Plus,
   MoreVertical,
+  Edit3,
+  Trash2,
 } from "lucide-react-native";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -40,6 +42,9 @@ export default function EventsPage() {
   const [menuEventId, setMenuEventId] = useState<string | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
+  // Close menu if user taps outside or on another menu
+  const closeMenu = () => setMenuEventId(null);
+
   const filteredEvents = events.filter((event) => {
     const matchesSearch =
       event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -62,12 +67,13 @@ export default function EventsPage() {
     setMenuEventId(id);
   };
 
-  const onEdit = () => {
-    if (menuEventId) router.push(`./event/${menuEventId}/edit`);
+  const onEdit = (eventId: string) => {
+    router.push(`./event/${eventId}/edit`);
     setMenuEventId(null);
   };
 
-  const onDelete = () => {
+  const onDelete = (eventId: string) => {
+    setMenuEventId(eventId);
     setShowDeleteModal(true);
   };
 
@@ -145,8 +151,8 @@ export default function EventsPage() {
         showsVerticalScrollIndicator={false}
       >
         {filteredEvents.map((event) => (
+          <View key={event._id} style={{ position: "relative" }}>
             <TouchableOpacity
-              key={event._id}
               style={styles.eventCard}
               onPress={() => handleEventPress(event._id)}
               activeOpacity={0.7}
@@ -160,10 +166,43 @@ export default function EventsPage() {
                 {/* 3‑dot menu trigger */}
                 <TouchableOpacity
                   style={styles.menuButton}
-                  onPress={() => openMenu(event._id)}
+                  onPress={(e) => {
+                    e.stopPropagation && e.stopPropagation();
+                    setMenuEventId((prev) => (prev === event._id ? null : event._id));
+                  }}
+                  activeOpacity={0.7}
                 >
                   <MoreVertical size={20} color="#6B7280" />
                 </TouchableOpacity>
+
+                {/* Context menu for Edit/Delete */}
+                {menuEventId === event._id && (
+                  <View style={styles.contextMenu}>
+                    <TouchableOpacity
+                      style={styles.menuItem}
+                      onPress={() => {
+                        onEdit(event._id);
+                        closeMenu();
+                      }}
+                      activeOpacity={0.7}
+                    >
+                      <Edit3 size={16} color="#374151" />
+                      <Text style={styles.menuText}>Edit</Text>
+                    </TouchableOpacity>
+                    <View style={styles.menuSeparator} />
+                    <TouchableOpacity
+                      style={styles.menuItem}
+                      onPress={() => {
+                        onDelete(event._id);
+                        closeMenu();
+                      }}
+                      activeOpacity={0.7}
+                    >
+                      <Trash2 size={16} color="#dc2626" />
+                      <Text style={[styles.menuText, { color: '#dc2626' }]}>Delete</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
 
                 <View style={styles.eventHeader}>
                   <View style={styles.eventBadge}>
@@ -189,6 +228,22 @@ export default function EventsPage() {
                 </View>
               </View>
             </TouchableOpacity>
+            {/* Overlay to close menu when clicking outside */}
+            {menuEventId === event._id && (
+              <TouchableOpacity
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  zIndex: 9,
+                }}
+                onPress={closeMenu}
+                activeOpacity={1}
+              />
+            )}
+          </View>
         ))}
 
         {/* No events state & spacing */}
