@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -6,44 +6,45 @@ import {
   ScrollView,
   TouchableOpacity,
   useColorScheme,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Trophy, Users, Target, ChartBar as BarChart3, Plus } from 'lucide-react-native';
+import { Trophy, Users, Target, ChartBar as BarChart3 } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { theme } from '@/constants/theme';
+import { useMyEvents } from '@/hooks/useGetMyEvents';
+import { IEvent } from '@/types/event';
+import {styles} from '@/styles/liveGameStyles';
+interface Competition {
+  id: string;
+  name: string;
+  date: string;
+  location: string;
+  events: string[];
+  groups: string[];
+  participants: number;
+  status: 'active' | 'upcoming' | 'completed';
+}
 
-const sampleCompetitions = [
-  {
-    id: '1',
-    name: 'National Powerlifting Championship 2024',
-    date: '2024-03-15',
-    location: 'Iron Temple Gym, Los Angeles',
-    events: ['S', 'BP', 'D'],
-    groups: ['A', 'B'],
-    participants: 45,
-    status: 'active',
-  },
-  {
-    id: '2',
-    name: 'Regional Bench Press Meet',
-    date: '2024-04-20',
-    location: 'Strength Academy, Chicago',
-    events: ['BP'],
-    groups: ['A'],
-    participants: 28,
-    status: 'upcoming',
-  },
-  {
-    id: '3',
-    name: 'Women\'s Powerlifting Championship',
-    date: '2024-05-10',
-    location: 'Elite Fitness Center, Miami',
-    events: ['S', 'BP', 'D'],
-    groups: ['A', 'B', 'C'],
-    participants: 67,
-    status: 'completed',
-  },
-];
+const getStatus = (date: string): Competition['status'] => {
+  const eventDate = new Date(date);
+  const today = new Date();
+
+  if (eventDate.toDateString() === today.toDateString()) return 'active';
+  return eventDate > today ? 'upcoming' : 'completed';
+};
+
+const mapEventToCompetition = (event: IEvent): Competition => ({
+  id: event._id,
+  name: event.title,
+  date: event.date,
+  location: event.venue,
+  // Assuming all powerlifting events include squat, bench press and deadlift
+  events: ['S', 'BP', 'D'],
+  groups: event.weightCategories || [],
+  participants: 0,
+  status: getStatus(event.date),
+});
 
 const getEventName = (event: string) => {
   switch (event) {
@@ -68,11 +69,40 @@ export default function CompetitionsScreen() {
   const isDark = colorScheme === 'dark';
   const colors = isDark ? theme.dark : theme.light;
 
+  const {
+    data: events = [],
+    isLoading,
+    error,
+  } = useMyEvents();
+
+  const competitions: Competition[] = events.map(mapEventToCompetition);
+
+  const stats = {
+    active: competitions.filter((c) => c.status === 'active').length,
+    athletes: competitions.reduce((acc, c) => acc + c.participants, 0),
+    events: competitions.length,
+    records: competitions.reduce((acc, c) => acc + c.groups.length, 0),
+  };
+
   const handleCompetitionPress = (gameId: string) => {
     router.push(`./${gameId}`);
   };
 
+  if (isLoading) {
+    return (
+      <SafeAreaView style={[styles.container, { justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }]}> 
+        <ActivityIndicator size="large" color={colors.primary} />
+      </SafeAreaView>
+    );
+  }
 
+  if (error) {
+    return (
+      <SafeAreaView style={[styles.container, { justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }]}> 
+        <Text style={{ color: colors.error }}>Failed to load competitions.</Text>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
@@ -96,29 +126,29 @@ export default function CompetitionsScreen() {
       <View style={[styles.statsContainer, { backgroundColor: colors.surface }]}>
         <View style={[styles.statCard, { backgroundColor: colors.surfaceVariant }]}>
           <Trophy size={24} color={colors.warning} />
-          <Text style={[styles.statNumber, { color: colors.onSurface }]}>3</Text>
+          <Text style={[styles.statNumber, { color: colors.onSurface }]}>{stats.active}</Text>
           <Text style={[styles.statLabel, { color: colors.onSurfaceVariant }]}>Active</Text>
         </View>
         <View style={[styles.statCard, { backgroundColor: colors.surfaceVariant }]}>
           <Users size={24} color={colors.primary} />
-          <Text style={[styles.statNumber, { color: colors.onSurface }]}>140</Text>
+          <Text style={[styles.statNumber, { color: colors.onSurface }]}>{stats.athletes}</Text>
           <Text style={[styles.statLabel, { color: colors.onSurfaceVariant }]}>Athletes</Text>
         </View>
         <View style={[styles.statCard, { backgroundColor: colors.surfaceVariant }]}>
           <Target size={24} color={colors.success} />
-          <Text style={[styles.statNumber, { color: colors.onSurface }]}>12</Text>
+          <Text style={[styles.statNumber, { color: colors.onSurface }]}>{stats.events}</Text>
           <Text style={[styles.statLabel, { color: colors.onSurfaceVariant }]}>Events</Text>
         </View>
         <View style={[styles.statCard, { backgroundColor: colors.surfaceVariant }]}>
           <BarChart3 size={24} color={colors.accent} />
-          <Text style={[styles.statNumber, { color: colors.onSurface }]}>8</Text>
+          <Text style={[styles.statNumber, { color: colors.onSurface }]}>{stats.records}</Text>
           <Text style={[styles.statLabel, { color: colors.onSurfaceVariant }]}>Records</Text>
         </View>
       </View>
 
       {/* Competitions List */}
       <ScrollView style={styles.competitionsList} showsVerticalScrollIndicator={false}>
-        {sampleCompetitions.map((competition) => (
+        {competitions.map((competition) => (
           <TouchableOpacity
             key={competition.id}
             style={[styles.competitionCard, { backgroundColor: colors.surface }]}
@@ -169,131 +199,14 @@ export default function CompetitionsScreen() {
           </TouchableOpacity>
         ))}
 
+        {competitions.length === 0 && (
+          <View style={{ alignItems: 'center', marginTop: 20 }}>
+            <Text style={{ color: colors.onSurfaceVariant }}>No competitions found.</Text>
+          </View>
+        )}
+
         <View style={styles.bottomSpacing} />
       </ScrollView>
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 20,
-    borderBottomWidth: 1,
-  },
-  headerTitle: {
-    fontSize: 28,
-    fontFamily: 'Inter-Bold',
-  },
-  headerSubtitle: {
-    fontSize: 16,
-    fontFamily: 'Inter-Regular',
-    marginTop: 4,
-  },
-  createButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  statsContainer: {
-    flexDirection: 'row',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    gap: 12,
-  },
-  statCard: {
-    flex: 1,
-    alignItems: 'center',
-    paddingVertical: 16,
-    borderRadius: 12,
-  },
-  statNumber: {
-    fontSize: 24,
-    fontFamily: 'Inter-Bold',
-    marginTop: 8,
-  },
-  statLabel: {
-    fontSize: 12,
-    fontFamily: 'Inter-Medium',
-    marginTop: 4,
-  },
-  competitionsList: {
-    flex: 1,
-    paddingHorizontal: 20,
-  },
-  competitionCard: {
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  competitionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: 16,
-  },
-  competitionInfo: {
-    flex: 1,
-  },
-  competitionName: {
-    fontSize: 18,
-    fontFamily: 'Inter-Bold',
-    marginBottom: 4,
-  },
-  competitionDate: {
-    fontSize: 14,
-    fontFamily: 'Inter-Medium',
-    marginBottom: 2,
-  },
-  competitionLocation: {
-    fontSize: 12,
-    fontFamily: 'Inter-Regular',
-  },
-  statusBadge: {
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  statusText: {
-    fontSize: 10,
-    fontFamily: 'Inter-Bold',
-    color: '#FFFFFF',
-    letterSpacing: 0.5,
-  },
-  competitionDetails: {
-    gap: 8,
-  },
-  detailRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  detailLabel: {
-    fontSize: 14,
-    fontFamily: 'Inter-Medium',
-    minWidth: 80,
-  },
-  detailValue: {
-    fontSize: 14,
-    fontFamily: 'Inter-Regular',
-    flex: 1,
-  },
-  bottomSpacing: {
-    height: 20,
-  },
-});
