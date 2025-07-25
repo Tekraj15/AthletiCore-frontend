@@ -6,6 +6,7 @@ import {
   ScrollView,
   Image,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import {
   User,
@@ -22,9 +23,11 @@ import {
 
 interface ProfileOverviewProps {
   colors: any;
+  onLogout?: () => void;
+  logoutLoading?: boolean;
 }
 
-export default function ProfileOverview({ colors }: ProfileOverviewProps) {
+export default function ProfileOverview({ colors, onLogout, logoutLoading = false }: ProfileOverviewProps) {
   const userStats = [
     { icon: Trophy, label: 'Events Participated', value: '12', color: colors.warning },
     { icon: Award, label: 'Achievements', value: '8', color: colors.success },
@@ -178,10 +181,17 @@ export default function ProfileOverview({ colors }: ProfileOverviewProps) {
           
           <TouchableOpacity 
             style={[styles.actionButton, styles.logoutButton, { backgroundColor: colors.error + '20' }]}
-            onPress={handleLogout}
+            onPress={onLogout}
+            disabled={logoutLoading}
           >
-            <LogOut size={20} color={colors.error} />
-            <Text style={[styles.actionButtonText, { color: colors.error }]}>Logout</Text>
+            {logoutLoading ? (
+              <ActivityIndicator size="small" color={colors.error} />
+            ) : (
+              <>
+                <LogOut size={20} color={colors.error} />
+                <Text style={[styles.actionButtonText, { color: colors.error }]}>Logout</Text>
+              </>
+            )}
           </TouchableOpacity>
         </View>
       </View>
