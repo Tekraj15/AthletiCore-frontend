@@ -12,6 +12,8 @@ import {
   IUpdateFormFieldsRequest,
   IUpdateFormFieldsResponse,
   IMySubmission,
+  IReviewSubmissionRequest,
+  IReviewSubmissionResponse,
 } from "@/types/eventForm";
 import {
   CREATE_EVENT_FORM_URL,
@@ -60,7 +62,7 @@ export const updateFinalStatsByOfficialAPI = (
   submissionId: string,
   data: IUpdateFinalStatsRequest
 ) => {
-  const url = `/submissions/${submissionId}/stats`; // replace with your actual API base
+  const url = `/form-events/submissions/${submissionId}/stats`; // replace with your actual API base
   return baseFetcher<IUpdateFinalStatsResponse>(url, {
     method: "PATCH",
     data,
@@ -71,7 +73,7 @@ export const updateFormFieldsByPlayerAPI = (
   submissionId: string,
   data: IUpdateFormFieldsRequest
 ) => {
-  const url = `/submissions/${submissionId}`; // replace with full API URL if needed
+  const url = `/submissions/${submissionId}`;
   return baseFetcher<IUpdateFormFieldsResponse>(url, {
     method: "PATCH",
     data,
@@ -92,5 +94,19 @@ export const getMySubmissionsAPI = (eventId: string) => {
   const url = GET_MY_EVENT_REGISTRATION_FORM_URL.replace(":eventId", eventId);
   return baseFetcher<IMySubmission[]>(url, {
     method: "GET",
+  });
+};
+
+export const reviewPlayerSubmissionAPI = (
+  submissionId: string,
+  data: IReviewSubmissionRequest
+) => {
+  const url = `/form-events/submissions/${submissionId}/review`;
+  console.log("Making PATCH request to:", url);
+  console.log("Request data:", JSON.stringify(data)); // Log the request body
+
+  return baseFetcher<IReviewSubmissionResponse>(url, {
+    method: "PATCH",
+    data,
   });
 };

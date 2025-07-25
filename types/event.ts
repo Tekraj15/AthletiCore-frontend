@@ -87,4 +87,6 @@ export interface IEvent {
   };
   createdAt?: string;
   updatedAt?: string;
+  participantCount: number;
+  discipline: string[];
 }
