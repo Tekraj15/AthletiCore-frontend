@@ -1,4 +1,3 @@
-import { styles } from '@/styles/competitionStyles';
 import React from "react";
 import {
   View,
@@ -6,7 +5,13 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
-import { Attempt, AttemptStatus, AttemptResult, LiftType } from "@/constants/Player/liveGameTypes";
+import {
+  Attempt,
+  AttemptStatus,
+  AttemptResult,
+  LiftType,
+} from "@/constants/Player/liveGameTypes";
+import { styles } from "@/styles/competitionStyles";
 
 interface AttemptCardProps {
   attempt: Attempt;
@@ -27,6 +32,9 @@ const AttemptCard: React.FC<AttemptCardProps> = ({
   getStatusColor,
   getStatusIcon,
 }) => {
+  const isAttemptOne = attempt.round === 1;
+  const isLocked = isAttemptOne || attempt.locked || attempt.status === "submitted";
+
   return (
     <View
       style={[
@@ -37,24 +45,20 @@ const AttemptCard: React.FC<AttemptCardProps> = ({
         },
       ]}
     >
+      {/* Attempt Header */}
       <View style={styles.attemptHeader}>
         <Text style={[styles.attemptTitle, { color: colors.onSurface }]}>
           Attempt {attempt.round}
         </Text>
         <View style={styles.attemptStatus}>
-          <Text
-            style={{ color: getStatusColor(attempt.status, attempt.result) }}
-          >
+          <Text style={{ color: getStatusColor(attempt.status, attempt.result) }}>
             {getStatusIcon(attempt.status, attempt.result)}
           </Text>
-          {!attempt.locked && attempt.changes > 0 && (
+          {!isLocked && attempt.changes > 0 && (
             <View
-              style={[
-                styles.changesTag,
-                { backgroundColor: colors.primary + "20" },
-              ]}
+              style={[styles.changesTag, { backgroundColor: colors.primary + "20" }]}
             >
-              <Text style={[styles.changesText, { color: colors.primary }]}>
+              <Text style={{ color: colors.primary }}>
                 {attempt.changes} changes
               </Text>
             </View>
@@ -62,48 +66,50 @@ const AttemptCard: React.FC<AttemptCardProps> = ({
         </View>
       </View>
 
+      {/* Weight Input */}
       <TextInput
         style={[
           styles.weightInput,
           {
-            backgroundColor: attempt.locked
-              ? colors.surfaceVariant
-              : colors.surface,
+            backgroundColor: isLocked ? colors.surfaceVariant : colors.surface,
             borderColor: colors.border,
             color: colors.onSurface,
-            opacity: attempt.locked ? 0.5 : 1,
+            opacity: isLocked ? 0.5 : 1,
           },
         ]}
-        value={attempt.weight.toString()}
-        onChangeText={(text) =>
-          handleWeightChange(activeTab, attempt.round, text)
-        }
+        editable={!isLocked}
         keyboardType="numeric"
-        editable={!attempt.locked}
+        value={attempt.weight.toString()}
+        onChangeText={(text) => handleWeightChange(activeTab, attempt.round, text)}
         placeholder="0"
         placeholderTextColor={colors.onSurfaceVariant}
       />
-      <Text style={[styles.weightUnit, { color: colors.onSurfaceVariant }]}>
-        kg
-      </Text>
+      <Text style={[styles.weightUnit, { color: colors.onSurfaceVariant }]}>kg</Text>
 
+      {/* Optional Message for Attempt 1 */}
+      {isAttemptOne && (
+        <Text style={{ color: colors.onSurfaceVariant, fontSize: 12, marginTop: 4 }}>
+          First attempt weight cannot be changed.
+        </Text>
+      )}
+
+      {/* Submit / Update Button */}
       <TouchableOpacity
+        onPress={() => handleSubmit(activeTab, attempt.round)}
         style={[
           styles.submitButton,
           {
-            backgroundColor:
-              attempt.locked || attempt.status === "submitted"
-                ? colors.surfaceVariant
-                : attempt.status === "pending"
-                ? colors.warning
-                : colors.primary,
-            opacity: attempt.locked || attempt.status === "submitted" ? 0.5 : 1,
+            backgroundColor: isLocked
+              ? colors.surfaceVariant
+              : attempt.status === "pending"
+              ? colors.warning
+              : colors.primary,
+            opacity: isLocked ? 0.5 : 1,
           },
         ]}
-        onPress={() => handleSubmit(activeTab, attempt.round)}
-        disabled={attempt.locked || attempt.status === "submitted"}
+        disabled={isLocked}
       >
-        <Text style={[styles.submitButtonText, { color: colors.onSurface }]}>
+        <Text style={{ color: colors.onSurface }}>
           {attempt.status === "submitted"
             ? "Submitted"
             : attempt.status === "pending"
@@ -114,6 +120,5 @@ const AttemptCard: React.FC<AttemptCardProps> = ({
     </View>
   );
 };
-
 
 export default AttemptCard;

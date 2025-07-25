@@ -150,3 +150,22 @@ export interface IMySubmission {
 export interface IGetMySubmissionsResponse {
   submissions: IMySubmission[];
 }
+
+export interface IReviewSubmissionRequest {
+  status: "approved" | "rejected" | "pending";
+  note?: string;
+}
+
+export interface IReviewSubmissionResponse {
+  message: string;
+  submission: {
+    _id: string;
+    event: string;
+    user: string;
+    formFields: { key: string; value: string }[];
+    status: "pending" | "approved" | "rejected";
+    reviewNote?: string;
+    createdAt: string;
+    updatedAt: string;
+  };
+}
